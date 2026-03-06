@@ -1,0 +1,202 @@
+@use "../default/color_variable";
+
+/*--------------------------------------------------------------
+  Why Doctors Choose Best of IDs? – Doctors page
+  Size and shine animation like home "Why Choose Best of IDs?" (iconbox cs_style_1)
+--------------------------------------------------------------*/
+
+/* Shine animation (same as iconbox) */
+@keyframes cs_why_doctors_shine {
+  100% {
+    left: 125%;
+  }
+}
+
+.cs_why_doctors_choose {
+  padding: 4rem 0;
+  @media (max-width: 991px) {
+    padding: 3rem 0;
+  }
+  @media (max-width: 575px) {
+    padding: 2.5rem 0;
+  }
+}
+
+.cs_why_doctors_choose_container {
+  max-width: 100%;
+}
+
+.cs_why_doctors_choose_heading {
+  text-align: center;
+  color: color_variable.$primary;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 600;
+  margin: 0 0 2.5rem;
+  line-height: 1.3;
+  @media (max-width: 991px) {
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 575px) {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.cs_why_doctors_choose_grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px 28px;
+  align-items: stretch;
+  @media (max-width: 1399px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 991px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 575px) {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+/* Card: same size as home Why Choose (iconbox cs_style_1) – padding 25px 30px 40px, radius 15px, shadow */
+.cs_why_doctors_choose_card {
+  display: flex;
+  flex-direction: column;
+  padding: 25px 30px 40px 30px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 21px 1px rgba(color_variable.$primary, 0.08);
+  min-height: 0;
+  min-width: 0;
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 6px 20px rgba(color_variable.$primary, 0.15);
+  }
+
+  @media (max-width: 1700px) {
+    padding: 25px 20px 30px 20px;
+  }
+  @media (max-width: 1280px) {
+    padding: 25px 25px 30px 25px;
+  }
+  @media (max-width: 991px) {
+    padding: 20px 20px 28px 20px;
+  }
+  @media (max-width: 575px) {
+    padding: 1.25rem 1rem 1.5rem;
+  }
+}
+
+/* Top row: icon + title (like iconbox_top) */
+.cs_why_doctors_choose_card_top {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 1.25rem;
+  max-width: 100%;
+
+  @media (max-width: 1700px) {
+    gap: 15px;
+    margin-bottom: 1rem;
+  }
+  @media (max-width: 991px) {
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Icon: same size as home (120px), with shine effect on card hover */
+.cs_why_doctors_choose_card_icon {
+  flex-shrink: 0;
+  width: 120px;
+  height: 120px;
+  padding: 25px;
+  background-color: color_variable.$primary;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    z-index: 1;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.13)
+    );
+    transform: skewX(-25deg);
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cs_why_doctors_choose_card:hover &::before {
+    animation: cs_why_doctors_shine 1.3s ease;
+  }
+
+  @media (max-width: 1700px) {
+    width: 90px;
+    height: 90px;
+    padding: 15px;
+  }
+  @media (max-width: 991px) {
+    width: 72px;
+    height: 72px;
+    padding: 12px;
+  }
+  @media (max-width: 575px) {
+    width: 64px;
+    height: 64px;
+    padding: 10px;
+  }
+}
+
+.cs_why_doctors_choose_card_title {
+  font-size: 1.25rem;
+  line-height: 1.35;
+  color: color_variable.$primary;
+  font-weight: 600;
+  margin: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  @media (max-width: 1700px) {
+    font-size: 1.1rem;
+    line-height: 1.4;
+  }
+  @media (max-width: 991px) {
+    font-size: 1rem;
+  }
+}
+
+.cs_why_doctors_choose_card_text {
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: #4a5568;
+  margin: 0;
+  padding-left: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+
+  @media (max-width: 1199px) {
+    padding-left: 0;
+  }
+  @media (max-width: 991px) {
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,55 @@
+/*--------------------------------------------------------------
+>> TABLE OF CONTENTS:
+----------------------------------------------------------------
+1. Typography
+2. Preloader
+3. Spacing
+4. General
+5. Slider
+6. Video Popup
+7. Header
+8. Footer
+9. Sidebar
+10. Isotope
+11. Hero
+12. Iconbox
+13. Posts
+14. Banner
+15. Testimonial
+16. Portfolio
+17. Brands
+18. Accordians
+19. Departments
+20. About
+21. Team
+22. Funfact
+---------------------------------------------------------------*/
+@use 'default/color_variable';
+@use 'default/typography';
+@use 'common/preloader';
+@use 'common/spacing';
+@use 'common/general';
+@use 'common/slider';
+@use 'common/video-modal';
+@use 'common/header';
+@use 'common/footer';
+@use 'common/sidebar';
+@use 'common/isotope';
+@use 'shortcode/hero';
+@use 'shortcode/iconbox';
+@use 'shortcode/post';
+@use 'shortcode/banner';
+@use 'shortcode/testimonial';
+@use 'shortcode/portfolio';
+@use 'shortcode/brands';
+@use 'shortcode/accordion';
+@use 'shortcode/department';
+@use 'shortcode/about';
+@use 'shortcode/team';
+@use 'shortcode/funfact';
+@use 'shortcode/cta';
+@use 'shortcode/pricing_card';
+@use 'shortcode/why_doctors_choose';
+@use 'shortcode/education_knowledge_hub';
+@use 'custom';
+@use 'admin';

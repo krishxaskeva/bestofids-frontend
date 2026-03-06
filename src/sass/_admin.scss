@@ -1,0 +1,225 @@
+/*--------------------------------------------------------------
+  Admin Panel – brand-aligned styles (same palette as main site)
+  Uses: $primary #117574, $primary-light, $primary-mid, neutral greys
+----------------------------------------------------------------*/
+@use 'default/color_variable';
+
+/* Sidebar: brand teal background, white text, active = darker teal + left bar */
+.admin-sidebar.ant-layout-sider {
+  background: color_variable.$primary !important;
+  .ant-layout-sider-children {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.admin-sidebar-brand {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: var(--admin-sidebar-brand-justify, flex-start);
+  padding: 0 24px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  flex-shrink: 0;
+  &.collapsed {
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+  }
+}
+
+/* Override Ant Design dark menu to use brand teal */
+.admin-sidebar .ant-menu-dark {
+  background: transparent !important;
+  margin-top: 8px;
+  border-right: none !important;
+  .ant-menu-item,
+  .ant-menu-submenu-title {
+    color: rgba(255, 255, 255, 0.9);
+    margin: 2px 8px;
+    border-radius: 8px;
+    height: 44px;
+    line-height: 44px;
+    &:hover {
+      color: #fff;
+      background: rgba(0, 0, 0, 0.12) !important;
+    }
+  }
+  .ant-menu-item-selected {
+    color: #fff;
+    background: rgba(0, 0, 0, 0.2) !important;
+    border-left: 4px solid #fff;
+    padding-left: 20px !important;
+    font-weight: 600;
+  }
+  .ant-menu-item-icon,
+  .ant-menu-submenu-arrow {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .ant-menu-item-selected .ant-menu-item-icon {
+    color: #fff;
+  }
+}
+
+/* Header: white bg, brand teal for icon and avatar */
+.admin-header.ant-layout-header {
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgba(17, 117, 116, 0.08);
+  .anticon {
+    color: color_variable.$text-primary;
+  }
+  .anticon:hover {
+    color: color_variable.$primary;
+  }
+  .ant-avatar {
+    background: color_variable.$primary !important;
+  }
+}
+
+/* Content area: soft grey, rounded corners */
+.admin-content.ant-layout-content {
+  margin: 24px;
+  padding: 24px;
+  min-height: 280px;
+  background: color_variable.$ternary;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(17, 117, 116, 0.06);
+}
+
+/* Page title – brand color */
+.admin-page-title {
+  color: color_variable.$primary;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+/* Cards: white, radius 12–16px, soft shadow, light border */
+.admin-content .ant-card {
+  border-radius: 12px;
+  border: 1px solid rgba(17, 117, 116, 0.12);
+  box-shadow: 0 2px 8px rgba(17, 117, 116, 0.06);
+  .ant-card-head {
+    border-bottom-color: rgba(17, 117, 116, 0.1);
+    font-weight: 600;
+    color: color_variable.$primary;
+  }
+}
+
+/* Tables: header light grey, row hover light teal tint */
+.admin-content .ant-table {
+  .ant-table-thead > tr > th {
+    background: #f0f2f5 !important;
+    color: color_variable.$text-primary;
+    font-weight: 600;
+  }
+  .ant-table-tbody > tr:hover > td {
+    background: rgba(17, 117, 116, 0.06) !important;
+  }
+}
+
+/* Buttons: primary = teal (handled by ConfigProvider); link buttons use brand color */
+.admin-content .ant-btn-link {
+  color: color_variable.$primary;
+  &:hover {
+    color: color_variable.$primary-mid;
+  }
+}
+
+/* KPI / Statistic: icon and value in brand color */
+.admin-kpi-card .ant-statistic-title {
+  color: color_variable.$text-primary;
+}
+.admin-kpi-card .ant-statistic-content {
+  color: color_variable.$primary;
+}
+.admin-kpi-card .ant-statistic-content-prefix .anticon {
+  color: color_variable.$primary;
+}
+
+/* Form focus: brand teal border (ConfigProvider covers most; this reinforces) */
+.admin-content .ant-input:focus,
+.admin-content .ant-input-focused,
+.admin-content .ant-picker-focused {
+  border-color: color_variable.$primary;
+  box-shadow: 0 0 0 2px rgba(17, 117, 116, 0.15);
+}
+
+/* Tags: use brand tint for default/success states where appropriate */
+.admin-content .ant-tag {
+  border-radius: 6px;
+}
+
+/* Charts / dashboard secondary elements */
+.admin-content .ant-card .ant-card-head-title {
+  color: color_variable.$primary;
+  font-size: 1rem;
+}
+
+/* Admin notifications (Message) – visible above sidebar/header, clearer styling */
+.admin-message-root {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.admin-message-root .ant-message-notice {
+  pointer-events: auto;
+}
+.admin-message-root .ant-message-notice-content {
+  padding: 12px 20px;
+  min-width: 280px;
+  max-width: 420px;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.admin-message-root .ant-message-success .ant-message-notice-content {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+}
+.admin-message-root .ant-message-error .ant-message-notice-content {
+  background: #fff2f0;
+  border-color: #ffccc7;
+}
+.admin-message-root .ant-message-info .ant-message-notice-content {
+  background: #e6f7ff;
+  border-color: #91d5ff;
+}
+.admin-message-root .ant-message-warning .ant-message-notice-content {
+  background: #fffbe6;
+  border-color: #ffe58f;
+}
+.admin-message-root .ant-message-notice-content .anticon {
+  font-size: 16px;
+  margin-right: 10px;
+}
+
+/* Education admin: force Drawer to open from the right (override any modal-like styles) */
+.admin-education-drawer.ant-drawer {
+  position: fixed !important;
+  inset: 0 !important;
+  pointer-events: none;
+}
+.admin-education-drawer.ant-drawer .ant-drawer-mask {
+  pointer-events: auto;
+}
+.admin-education-drawer.ant-drawer .ant-drawer-content-wrapper {
+  pointer-events: auto;
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  left: auto !important;
+}
+.admin-education-drawer.ant-drawer.ant-drawer-open .ant-drawer-content-wrapper {
+  box-shadow: -6px 0 16px 0 rgba(0, 0, 0, 0.08), -3px 0 6px -4px rgba(0, 0, 0, 0.12);
+}
