@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Row, Col, Card, Button, Tabs, Tag, Spin, message } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import Section from './Section';
@@ -11,10 +11,13 @@ import { useAuth } from '../contexts/AuthContext';
 import { getBlogs, createBlogOrder, verifyBlogPayment } from '../services/blogService';
 import { getPurchasedBlogs } from '../services/userService';
 import { config, getAssetUrl } from '../config';
+import LoginModal from './auth/LoginModal';
 import dayjs from 'dayjs';
 
+const SITE_TEAL = '#117574';
+
 function loadRazorpayScript() {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     if (window.Razorpay) {
       resolve();
       return;
@@ -23,7 +26,7 @@ function loadRazorpayScript() {
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
     script.onload = () => resolve();
-    script.onerror = () => resolve();
+    script.onerror = () => reject(new Error('Could not load payment script. Check your connection or try again.'));
     document.body.appendChild(script);
   });
 }
@@ -31,18 +34,25 @@ function loadRazorpayScript() {
 export default function BlogList() {
   pageTitle('Blog');
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const location = useLocation();
+  const { isLoggedIn, isSuperAdmin } = useAuth();
   const [blogs, setBlogs] = useState([]);
   const [purchasedBlogs, setPurchasedBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
   const [payingBlogId, setPayingBlogId] = useState(null);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     getBlogs()
       .then(setBlogs)
       .catch(() => setBlogs([]))
       .finally(() => setLoading(false));
+  }, []);
+
+  // Preload Razorpay script so the modal can open right after createOrder (reduces popup-blocking).
+  useEffect(() => {
+    loadRazorpayScript().catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -63,8 +73,7 @@ export default function BlogList() {
 
   const handleBuyClick = async (blog) => {
     if (!isLoggedIn) {
-      message.info('Please log in to purchase.');
-      navigate('/login');
+      setLoginModalOpen(true);
       return;
     }
     setPayingBlogId(blog.id);
@@ -73,7 +82,13 @@ export default function BlogList() {
       await loadRazorpayScript();
       const key = keyId || config.razorpayKey;
       if (!key) {
+        setPayingBlogId(null);
         message.error('Payment is not configured.');
+        return;
+      }
+      if (typeof window.Razorpay !== 'function') {
+        setPayingBlogId(null);
+        message.error('Payment script did not load. Please refresh and try again.');
         return;
       }
       const options = {
@@ -117,9 +132,29 @@ export default function BlogList() {
     }
   };
 
+  const handleCardClick = (e, blog) => {
+    if (e.target.closest('button')) return;
+    const isFree = blog.price == null || Number(blog.price) === 0;
+    const isPurchased = purchasedIds.has(blog.id) || isSuperAdmin;
+    const href = `/blog/${blog.id}`;
+    if (isFree) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isLoggedIn) {
+      const returnPath = location.pathname + location.search;
+      navigate(`/login?redirect=${encodeURIComponent(returnPath)}`);
+      return;
+    }
+    if (isPurchased) {
+      navigate(href);
+      return;
+    }
+    handleBuyClick(blog);
+  };
+
   const renderBlogCard = (blog, showPurchaseButton = true) => {
     const isFree = blog.price == null || Number(blog.price) === 0;
-    const isPurchased = purchasedIds.has(blog.id);
+    const isPurchased = purchasedIds.has(blog.id) || isSuperAdmin;
     const pdfUrl = pdfUrlByBlogId[blog.id];
     const href = `/blog/${blog.id}`;
     const coverUrl = blog.coverImage || getAssetUrl('/images/blog/post_1.jpeg');
@@ -131,6 +166,7 @@ export default function BlogList() {
           className="cs_blog_card"
           hoverable
           style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
+          onClickCapture={(e) => handleCardClick(e, blog)}
           cover={
             <Link to={href} className="cs_blog_card_cover">
               <img alt={blog.title} src={coverUrl.startsWith('http') ? coverUrl : getAssetUrl(coverUrl)} style={{ width: '100%', height: 200, objectFit: 'cover' }} />
@@ -156,13 +192,21 @@ export default function BlogList() {
           )}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
             {isFree && (
-              <Button type="primary" onClick={() => navigate(href)}>
+              <Button
+                type="primary"
+                style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+                onClick={() => navigate(href)}
+              >
                 Read Free
               </Button>
             )}
             {!isFree && isPurchased && (
               <>
-                <Button type="primary" onClick={() => navigate(href)}>
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+                  onClick={() => navigate(href)}
+                >
                   Read Now
                 </Button>
                 {pdfUrl && (
@@ -178,13 +222,23 @@ export default function BlogList() {
                 )}
               </>
             )}
-            {showPurchaseButton && !isFree && !isPurchased && (
+            {showPurchaseButton && !isFree && !isPurchased && isLoggedIn && !isSuperAdmin && (
               <Button
                 type="primary"
+                style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
                 loading={payingBlogId === blog.id}
                 onClick={() => handleBuyClick(blog)}
               >
                 Buy — ₹{blog.price}
+              </Button>
+            )}
+            {showPurchaseButton && !isFree && !isPurchased && !isLoggedIn && (
+              <Button
+                type="primary"
+                style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+                onClick={() => setLoginModalOpen(true)}
+              >
+                Sign in
               </Button>
             )}
           </div>
@@ -228,12 +282,12 @@ export default function BlogList() {
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="Blog" />
       </Section>
       <div className="container">
         <SectionHeading title="Latest Articles" subTitle="Updates and insights from Best of IDs." center />
-        <Spacing md="28" lg="24" />
+        <Spacing md="20" lg="16" />
         {loading ? (
           <div className="text-center py-5">
             <Spin size="large" />
@@ -241,14 +295,19 @@ export default function BlogList() {
         ) : (
           <>
             <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
-            <Spacing md="48" lg="40" />
+            <Spacing md="32" lg="28" />
             {activeTab === 'all' && blogs.length === 0 && (
               <p className="text-center cs_heading_color">No blog posts yet. Check back soon.</p>
             )}
           </>
         )}
       </div>
-      <Spacing md="200" xl="150" lg="110" />
+      <Spacing md="80" xl="64" lg="52" />
+      <LoginModal
+        open={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+        onSuccess={() => setLoginModalOpen(false)}
+      />
     </>
   );
 }

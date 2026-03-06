@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ContactInfoWidget from './ContactInfoWidget';
 import MenuWidget from './MenuWidget';
 import SocialWidget from './SocialWidget';
 import Newsletter from './Newsletter';
 import TextWidget from './TextWidget';
 import { getAssetUrl } from '../config';
-import { getCmsPage } from '../services/apiService';
 
 const menuDataOne = [
   { title: 'Doctor & Hospital Services', href: '/doctor-hospital-services' },
@@ -23,18 +22,12 @@ const DEFAULT_TAGLINE = 'Best of IDs – Transforming Infectious Disease Care';
 const DEFAULT_COPYRIGHT = 'Copyright © 2024 Best of IDs. All rights reserved.';
 
 export default function Footer() {
-  const [cmsFooter, setCmsFooter] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('footer').then((p) => setCmsFooter(p)).catch(() => {});
-  }, []);
-
-  const d = cmsFooter?.data || {};
+  const d = {};
   const tagline = d.title || d.description || DEFAULT_TAGLINE;
   const copyrightText = d.content || DEFAULT_COPYRIGHT;
 
   return (
-    <footer className="cs_footer cs_style_1 cs_heading_color">
+    <footer className="cs_footer cs_style_1">
       <div
         className="cs_footer_logo_wrap"
         style={{ backgroundImage: `url(${getAssetUrl('/images/footer_bg_1.svg')})` }}

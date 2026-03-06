@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
 import SectionHeading from './SectionHeading';
-import DoctorDetailsSection from './DoctorDetailsSection';
 import { pageTitle } from '../utils/PageTitle';
 import { Modal } from 'antd';
 import dayjs from 'dayjs';
@@ -10,7 +9,7 @@ import { getPatientCarePosts } from '../services/patientCareService';
 import { getAssetUrl } from '../config';
 
 export default function PatientsForum() {
-  pageTitle('Patient Care & Appointments');
+  pageTitle('Patient Care & Knowledge');
   const [posts, setPosts] = useState([]);
   // eslint-disable-next-line no-unused-vars -- used in JSX for loading state
   const [loading, setLoading] = useState(true);
@@ -18,34 +17,29 @@ export default function PatientsForum() {
 
   useEffect(() => {
     getPatientCarePosts()
-      .then(setPosts)
+      .then((data) => {
+        // Clone "Vaccination Announcement" post 2 more times for display (show 3 total on page)
+        const vaccinationTitle = /vaccination\s*announcement/i;
+        const expanded = [];
+        data.forEach((post) => {
+          expanded.push(post);
+          if (post.title && vaccinationTitle.test(post.title.trim())) {
+            expanded.push({ ...post, _displayKey: `${post.id}-clone-1` });
+            expanded.push({ ...post, _displayKey: `${post.id}-clone-2` });
+          }
+        });
+        setPosts(expanded);
+      })
       .catch(() => setPosts([]))
       .finally(() => setLoading(false));
   }, []);
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
-        <Breadcrumb title="Patient Care & Appointments" />
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
+        <Breadcrumb title="Patient Care & Knowledge" />
       </Section>
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={190} bottomLg={150} bottomXl={110}>
-        <DoctorDetailsSection
-          bgUrl="/images/doctors/doctor_details_bg.svg"
-          imgUrl="/images/doctors/dr_patient_care.png"
-          name="Dr. Sarah Lee, MD, MPH"
-          designation="Infectious Disease Specialist"
-          description="Dr. Sarah Lee brings over 15 years of experience in infectious disease medicine. She specializes in diagnosing and treating complex infections, antimicrobial stewardship, and patient-centered care for conditions ranging from routine infections to HIV and travel medicine."
-          contactInfo={[
-            { iconUrl: '/images/icons/call.svg', title: '+1 (234) 567-8900' },
-            {
-              iconUrl: '/images/icons/envlope.svg',
-              title: 'sarahlee@bestofids.com',
-            },
-          ]}
-          contactInfoHeading="Contact Info"
-        />
-      </Section>
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={80} bottomLg={60} bottomXl={48}>
+      <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <SectionHeading title="Patient care updates" center />
           {loading ? (
@@ -53,7 +47,7 @@ export default function PatientsForum() {
           ) : posts.length > 0 ? (
             <div className="row g-4">
               {posts.map((post) => (
-                <div key={post.id} className="col-12 col-sm-6 col-lg-4">
+                <div key={post._displayKey || post.id} className="col-12 col-sm-6 col-lg-4">
                   <article
                     role="button"
                     tabIndex={0}
@@ -131,6 +125,7 @@ export default function PatientsForum() {
         footer={null}
         width={640}
         destroyOnClose
+        className="patient-care-modal"
       >
         {detailPost && (
           <div className="patient-care-detail">

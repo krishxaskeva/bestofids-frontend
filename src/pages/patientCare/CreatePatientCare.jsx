@@ -66,6 +66,8 @@ export default function CreatePatientCare({ open, onClose, onSuccess }) {
       open={open}
       onClose={handleClose}
       destroyOnClose
+      getContainer={() => document.body}
+      rootClassName="admin-education-drawer"
       footer={
         <div style={{ textAlign: 'right' }}>
           <Button style={{ marginRight: 8 }} onClick={handleClose}>
@@ -77,11 +79,13 @@ export default function CreatePatientCare({ open, onClose, onSuccess }) {
         </div>
       }
     >
-      <PatientCareForm
-        form={form}
-        thumbnailFileList={thumbnailFileList}
-        onThumbnailChange={handleThumbnailChange}
-      />
+      {open && (
+        <PatientCareForm
+          form={form}
+          thumbnailFileList={thumbnailFileList}
+          onThumbnailChange={handleThumbnailChange}
+        />
+      )}
     </Drawer>
   );
 }

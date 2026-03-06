@@ -10,8 +10,17 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
+import { config } from '../config';
 
 const { Header } = Layout;
+
+/** Build full URL for avatar (backend path or external URL). */
+function getAvatarUrl(avatar) {
+  if (!avatar || typeof avatar !== 'string') return undefined;
+  if (avatar.startsWith('http')) return avatar;
+  const base = config.backendUrl || config.apiUrl?.replace(/\/api\/?$/, '') || '';
+  return base + (avatar.startsWith('/') ? avatar : `/${avatar}`);
+}
 
 const notifications = [
   { id: 1, title: 'New user registered', time: '2 min ago' },
@@ -21,8 +30,9 @@ const notifications = [
 
 export default function AdminHeader({ collapsed, onToggle }) {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [notifVisible, setNotifVisible] = useState(false);
+  const avatarUrl = getAvatarUrl(user?.avatar);
 
   const handleLogout = () => {
     logout();
@@ -88,8 +98,8 @@ export default function AdminHeader({ collapsed, onToggle }) {
         </Dropdown>
         <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
           <Space style={{ cursor: 'pointer' }}>
-            <Avatar icon={<UserOutlined />} />
-            <span>Admin</span>
+            <Avatar src={avatarUrl} icon={<UserOutlined />} alt="" />
+            <span>{user?.name || 'Admin'}</span>
           </Space>
         </Dropdown>
       </Space>

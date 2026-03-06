@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Banner from './BannerSection';
 import Section from './Section';
 import parse from 'html-react-parser';
 import { pageTitle } from '../utils/PageTitle';
-import { getCmsPage } from '../services/apiService';
 import { getAssetUrl } from '../config';
 
 const DEFAULT_BANNER_TITLE = 'Best of IDs <br>Timetable';
@@ -38,20 +37,14 @@ function parseTimetableContent(content) {
 
 export default function Timetable() {
   pageTitle('Timetable');
-  const [cms, setCms] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('timetable').then((p) => setCms(p)).catch(() => {});
-  }, []);
-
-  const d = cms?.data || {};
+  const d = {};
   const bannerTitle = d.title || DEFAULT_BANNER_TITLE;
   const bannerSubtitle = d.description || DEFAULT_BANNER_SUBTITLE;
   const timeTable = parseTimetableContent(d.content) || defaultTimeTable;
 
   return (
     <>
-      <Section topMd={170} topLg={120} topXl={100}>
+      <Section topMd={56} topLg={48} topXl={40}>
         <Banner
           bgUrl="/images/timetable/banner_bg.svg"
           imgUrl={getAssetUrl('/images/timetable/banner_img.png')}
@@ -63,9 +56,9 @@ export default function Timetable() {
         topMd={0}
         topLg={0}
         topXl={0}
-        bottomMd={200}
-        bottomLg={150}
-        bottomXl={110}
+        bottomMd={80}
+        bottomLg={64}
+        bottomXl={52}
       >
         <div className="container">
           <div className="table-responsive-xl">

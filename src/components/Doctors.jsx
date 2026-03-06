@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Row, Col, Card, Button } from 'antd';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
 import SectionHeading from './SectionHeading';
 import Spacing from './Spacing';
 import WhyDoctorsChoose from './WhyDoctorsChoose';
 import { pageTitle } from '../utils/PageTitle';
-import { getCmsPage } from '../services/apiService';
-import { getBlogs } from '../services/blogService';
 import { getAssetUrl } from '../config';
-import dayjs from 'dayjs';
 
 const CONTACT_URL = '/contact-testimonials';
 
@@ -37,46 +33,21 @@ const whoWeWorkWithData = [
 
 export default function Doctors() {
   pageTitle('Doctor & Hospital Services');
-  const navigate = useNavigate();
-  const [cmsDoctors, setCmsDoctors] = useState(null);
-  const [blogs, setBlogs] = useState([]);
   const [doctorsQaActiveIndex, setDoctorsQaActiveIndex] = useState(0);
-
-  useEffect(() => {
-    getCmsPage('doctors').then((p) => setCmsDoctors(p)).catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    getBlogs()
-      .then((list) => {
-        setBlogs(list.map((b) => ({
-          id: b.id,
-          title: b.title,
-          description: b.description || '',
-          thumbUrl: b.coverImage || '/images/Infectious_Disease_Clinical_Care.jpg',
-          href: `/blog/${b.id}`,
-          author: b.author || 'Best of IDs',
-          date: b.createdAt ? dayjs(b.createdAt).format('MMM D, YYYY') : '—',
-        })));
-      })
-      .catch(() => setBlogs([]));
-  }, []);
-
-  const d = cmsDoctors?.data || {};
-  const heroTitle = d.title || 'Infectious Disease Expertise to Support Safe, Confident Clinical Decisions';
-  const heroPara1 = d.description || 'At Best of IDs, we work alongside doctors when infectious disease decisions are complex, time-sensitive, and carry significant responsibility. Our role is not to replace clinical judgment—but to strengthen it with specialist insight, experience, and balance.';
-  const heroPara2 = d.content || 'We support doctors across outpatient clinics, emergency settings, and hospitals with practical infectious disease opinions that are evidence-based, context-appropriate, and defensible.';
-  const ctaTitle = d.seoTitle || 'Get Clinical Support When You Need It';
-  const ctaSubtitle = d.seoDescription || "If you are managing a challenging infection or need specialist input to support your clinical decision-making, Best of IDs is here to help.";
+  const heroTitle = 'Infectious Disease Expertise to Support Safe, Confident Clinical Decisions';
+  const heroPara1 = 'At Best of IDs, we work alongside doctors when infectious disease decisions are complex, time-sensitive, and carry significant responsibility. Our role is not to replace clinical judgment—but to strengthen it with specialist insight, experience, and balance.';
+  const heroPara2 = 'We support doctors across outpatient clinics, emergency settings, and hospitals with practical infectious disease opinions that are evidence-based, context-appropriate, and defensible.';
+  const ctaTitle = 'Get Clinical Support When You Need It';
+  const ctaSubtitle = "If you are managing a challenging infection or need specialist input to support your clinical decision-making, Best of IDs is here to help.";
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="Doctor & Hospital Services" />
       </Section>
 
       {/* Hero / Services for Doctors */}
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={72} bottomLg={60} bottomXl={50}>
+      <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <div className="cs_doctors_hero_section">
             <SectionHeading
@@ -112,7 +83,7 @@ export default function Doctors() {
       </Section>
 
       {/* Blog – same layout as before, real blogs from API */}
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={72} bottomLg={60} bottomXl={50}>
+      <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <div className="cs_edu_hub_blog_section cs_edu_hub_card cs_shadow_1 cs_radius_25 cs_white_bg cs_doctors_blog_section_wrap">
             <div className="cs_edu_hub_blog_content">
@@ -139,48 +110,12 @@ export default function Doctors() {
                 </i>
               </Link>
             </div>
-            <div className="cs_doctors_blog_grid_wrap">
-              <Row gutter={[24, 24]}>
-                {blogs.map((post) => (
-                  <Col xs={24} sm={12} lg={8} key={post.id} style={{ display: 'flex' }}>
-                    <Card
-                      className="cs_blog_card"
-                      hoverable
-                      style={{ width: '100%', display: 'flex', flexDirection: 'column' }}
-                      cover={
-                        <Link to={post.href} className="cs_blog_card_cover">
-                          <img
-                            alt={post.title}
-                            src={post.thumbUrl.startsWith('http') ? post.thumbUrl : getAssetUrl(post.thumbUrl)}
-                            style={{ width: '100%', height: 200, objectFit: 'cover' }}
-                          />
-                        </Link>
-                      }
-                      bodyStyle={{ padding: 20, display: 'flex', flexDirection: 'column', flex: 1 }}
-                    >
-                      <div className="cs_post_meta cs_heading_color" style={{ fontSize: 12, marginBottom: 8 }}>
-                        {post.author} · {post.date || '—'}
-                      </div>
-                      <h3 className="cs_post_title cs_semibold m-0" style={{ fontSize: 18, marginBottom: 8, lineHeight: 1.3 }}>
-                        <Link to={post.href}>{post.title}</Link>
-                      </h3>
-                      <p className="cs_heading_color m-0" style={{ fontSize: 14, flex: 1, marginBottom: 16 }}>
-                        {post.description}
-                      </p>
-                      <Button type="primary" block onClick={() => navigate(post.href)}>
-                        Read more
-                      </Button>
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </div>
           </div>
         </div>
       </Section>
 
       {/* Unified Q&A */}
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="cs_doctors_qa_wrap">
           <div className="container">
             <div className="cs_doctors_qa_layout">
@@ -359,7 +294,7 @@ export default function Doctors() {
       </Section>
 
       {/* Get Clinical Support - CTA */}
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={200} bottomLg={150} bottomXl={110}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={80} bottomLg={64} bottomXl={52}>
         <div className="container">
           <div className="cs_banner cs_style_1 cs_bg_filed cs_banner_cta" style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}>
             <div className="cs_banner_content">

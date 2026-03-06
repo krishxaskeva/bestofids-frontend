@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Drawer, Form, Input, Select, message, Skeleton } from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Table, Button, Space, Modal, Drawer, Form, Input, Select, message, Skeleton, Progress, Alert } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getEducationList, createEducation, updateEducation, deleteEducation } from '../../services/educationService';
-import { CloudinaryUploadField } from '../../components/educationHub/CloudinaryUploadField';
+import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
+import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
 
 const { TextArea } = Input;
 const CATEGORY = 'webinar';
@@ -31,11 +32,14 @@ function toDateTimeLocal(isoOrDate) {
   return `${y}-${m}-${day}T${h}:${min}`;
 }
 
+const initialMediaFiles = () => ({ contentLink: null, thumbnail: null });
+
 export default function WebinarsTab() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [mediaFiles, setMediaFiles] = useState(initialMediaFiles);
   const [form] = Form.useForm();
 
   const load = () => {
@@ -44,50 +48,143 @@ export default function WebinarsTab() {
   };
   useEffect(() => { load(); }, []);
 
-  const handleAdd = () => { setEditingId(null); form.resetFields(); setDrawerOpen(true); };
+  const handleAdd = () => {
+    setEditingId(null);
+    setMediaFiles(initialMediaFiles());
+    form.resetFields();
+    setDrawerOpen(true);
+  };
+
   const handleEdit = (record) => {
     setEditingId(record.id);
+    setMediaFiles({
+      contentLink: record.contentLink || null,
+      thumbnail: record.thumbnail || null,
+    });
     form.setFieldsValue({
       title: record.title,
       description: record.description,
-      contentLink: record.contentLink,
-      thumbnail: record.thumbnail,
       type: record.type || 'recording',
       platform: record.platform,
+      contentLink: record.type === 'live' ? record.contentLink : undefined,
       scheduledAt: record.scheduledAt ? toDateTimeLocal(record.scheduledAt) : undefined,
     });
     setDrawerOpen(true);
   };
+
   const handleDelete = (id) => {
-    Modal.confirm({ title: 'Delete webinar?', okType: 'danger', onOk: () => deleteEducation(id).then(() => { setData((prev) => prev.filter((r) => r.id !== id)); message.success('Deleted.'); }).catch((e) => message.error(e.message)) });
-  };
-  const handleSubmit = () => {
-    form.validateFields().then((values) => {
-      const { scheduledAt, ...rest } = values;
-      const payload = { ...rest, category: CATEGORY, scheduledAt: scheduledAt || undefined };
-      if (editingId) {
-        updateEducation(editingId, payload).then((updated) => { setData((prev) => prev.map((r) => (r.id === editingId ? { ...updated, id: editingId } : r))); message.success('Updated.'); setDrawerOpen(false); }).catch((e) => message.error(e.message));
-      } else {
-        createEducation(payload).then((created) => { setData((prev) => [{ ...created }, ...prev]); message.success('Created.'); setDrawerOpen(false); form.resetFields(); }).catch((e) => message.error(e.message));
-      }
+    Modal.confirm({
+      title: 'Delete webinar?',
+      okType: 'danger',
+      onOk: () =>
+        deleteEducation(id)
+          .then(() => {
+            setData((prev) => prev.filter((r) => r.id !== id));
+            message.success('Deleted.');
+          })
+          .catch((e) => message.error(e.message)),
     });
   };
 
   const typeValue = Form.useWatch('type', form);
   const isLive = typeValue === 'live';
 
+  const getTempFiles = useCallback(() => {
+    const list = [];
+    if (!isLive && mediaFiles.contentLink instanceof File) {
+      list.push({ key: 'contentLink', file: mediaFiles.contentLink, resourceType: 'video' });
+    }
+    if (mediaFiles.thumbnail instanceof File) {
+      list.push({ key: 'thumbnail', file: mediaFiles.thumbnail, resourceType: 'image' });
+    }
+    return list;
+  }, [mediaFiles, isLive]);
+
+  const validateTempFiles = useCallback(() => {
+    if (isLive) return; // contentLink is join link from form
+    if (!editingId && !(mediaFiles.contentLink instanceof File) && !mediaFiles.contentLink) {
+      throw new Error('Please upload recording video');
+    }
+  }, [isLive, editingId, mediaFiles]);
+
+  const buildPayload = useCallback(
+    (values, urlMap) => {
+      const { scheduledAt, ...rest } = values;
+      return {
+        ...rest,
+        category: CATEGORY,
+        scheduledAt: scheduledAt || undefined,
+        contentLink: isLive
+          ? values.contentLink
+          : urlMap.contentLink ?? (typeof mediaFiles.contentLink === 'string' ? mediaFiles.contentLink : undefined),
+        thumbnail: urlMap.thumbnail ?? (typeof mediaFiles.thumbnail === 'string' ? mediaFiles.thumbnail : undefined),
+      };
+    },
+    [mediaFiles, isLive]
+  );
+
+  const { handlePublish, uploadProgress, uploadStatus, errorMessage, resetUploadState, isUploading } = usePublishWithUpload({
+    form,
+    getTempFiles,
+    buildPayload,
+    validateTempFiles,
+    submitApi: createEducation,
+    updateApi: updateEducation,
+    isEdit: !!editingId,
+    editId: editingId,
+    onSuccess: () => {
+      message.success(editingId ? 'Updated.' : 'Created.');
+      setDrawerOpen(false);
+      setMediaFiles(initialMediaFiles());
+      form.resetFields();
+      resetUploadState();
+      load();
+    },
+    onError: (msg) => message.error(msg),
+  });
+
+  const handleCancel = () => {
+    setDrawerOpen(false);
+    setMediaFiles(initialMediaFiles());
+    form.resetFields();
+    resetUploadState();
+  };
+
   const columns = [
     { title: 'Title', dataIndex: 'title', key: 'title' },
     { title: 'Type', dataIndex: 'type', key: 'type', width: 90, render: (v) => (v === 'live' ? 'Live' : 'Recording') },
     { title: 'Scheduled', dataIndex: 'scheduledAt', key: 'scheduledAt', width: 150 },
     { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
-    { title: 'Actions', key: 'actions', width: 120, render: (_, record) => (
-      <Space>
-        <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-        <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-      </Space>
-    ) },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 120,
+      render: (_, record) => (
+        <Space>
+          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
+        </Space>
+      ),
+    },
   ];
+
+  const publishFooter = (
+    <Space direction="vertical" style={{ width: '100%' }} size="small">
+      {errorMessage && <Alert type="error" message={errorMessage} showIcon />}
+      {isUploading && (
+        <>
+          <Progress percent={uploadProgress} size="small" status="active" />
+          <span style={{ fontSize: 12, color: '#666' }}>
+            {uploadStatus === 'uploading' ? `Uploading media... ${uploadProgress}%` : 'Upload complete. Publishing webinar...'}
+          </span>
+        </>
+      )}
+      <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
+        <Button onClick={handleCancel} disabled={isUploading}>Cancel</Button>
+        <Button type="primary" onClick={handlePublish} loading={isUploading}>Publish</Button>
+      </Space>
+    </Space>
+  );
 
   return (
     <>
@@ -99,17 +196,12 @@ export default function WebinarsTab() {
         title={editingId ? 'Edit webinar' : 'Create webinar'}
         placement="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleCancel}
         width={560}
         getContainer={() => document.body}
         rootClassName="admin-education-drawer"
         destroyOnClose
-        footer={
-          <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
-            <Button onClick={() => setDrawerOpen(false)}>Cancel</Button>
-            <Button type="primary" onClick={handleSubmit}>Publish</Button>
-          </Space>
-        }
+        footer={publishFooter}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="title" label="Title" rules={[{ required: true }]}><Input placeholder="Webinar title" /></Form.Item>
@@ -125,12 +217,32 @@ export default function WebinarsTab() {
               <Input placeholder="Paste join link (Zoom, Meet, Teams, etc.)" />
             </Form.Item>
           ) : (
-            <CloudinaryUploadField form={form} name="contentLink" label="Recording video" resourceType="video" accept="video/mp4,.mp4" placeholder="Upload recording (MP4)" required />
+            <LocalFileUploadField
+              form={form}
+              name="contentLink"
+              label="Recording video"
+              resourceType="video"
+              accept="video/mp4,.mp4"
+              placeholder="Upload recording (MP4)"
+              required
+              value={mediaFiles.contentLink}
+              onChange={(file) => setMediaFiles((prev) => ({ ...prev, contentLink: file }))}
+              disabled={isUploading}
+            />
           )}
           <Form.Item name="scheduledAt" label="Scheduled date & time" rules={isLive ? [{ required: true, message: 'Required for Live' }] : []}>
             <Input type="datetime-local" />
           </Form.Item>
-          <CloudinaryUploadField form={form} name="thumbnail" label="Thumbnail" resourceType="image" accept="image/jpeg,image/png,.jpg,.jpeg,.png" />
+          <LocalFileUploadField
+            form={form}
+            name="thumbnail"
+            label="Thumbnail"
+            resourceType="image"
+            accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+            value={mediaFiles.thumbnail}
+            onChange={(file) => setMediaFiles((prev) => ({ ...prev, thumbnail: file }))}
+            disabled={isUploading}
+          />
         </Form>
       </Drawer>
     </>

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
+import { Popover, Drawer } from 'antd';
 import { useAuth } from '../contexts/AuthContext';
 import SocialWidget from './SocialWidget';
 import Newsletter from './Newsletter';
@@ -13,24 +14,10 @@ export default function Header({ logoSrc, variant }) {
   const [isSticky, setIsSticky] = useState(false);
   const [mobileToggle, setMobileToggle] = useState(false);
   const [sideNav, setSideNav] = useState(false);
-  const [avatarDropdownOpen, setAvatarDropdownOpen] = useState(false);
+  const [avatarPopoverOpen, setAvatarPopoverOpen] = useState(false);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
   const navListRef = useRef(null);
-  const avatarDropdownRef = useRef(null);
   const { pathname } = useLocation();
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        avatarDropdownRef.current &&
-        !avatarDropdownRef.current.contains(e.target)
-      ) {
-        setAvatarDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,7 +92,7 @@ export default function Header({ logoSrc, variant }) {
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
                       >
-                        Our Services
+                        Appointments & Our Services
                       </NavLink>
                     </li>
                     <li>
@@ -115,7 +102,7 @@ export default function Header({ logoSrc, variant }) {
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
                       >
-                        Patient Care & Appointments
+                        Patient Care & Knowledge
                       </NavLink>
                     </li>
                     <li>
@@ -171,118 +158,123 @@ export default function Header({ logoSrc, variant }) {
                 </nav>
               </div>
               <div className="cs_main_header_right">
-                <div className="cs_toolbox" ref={avatarDropdownRef}>
-                  <div className="cs_avatar_dropdown_wrap">
+                <div className="cs_toolbox">
+                  <Popover
+                    content={
+                      <div className="cs_avatar_dropdown" role="menu" style={{ minWidth: 200 }}>
+                        {isSuperAdmin && (
+                          <>
+                            <Link
+                              to="/admin"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:cog" aria-hidden />
+                              <span>Admin Panel</span>
+                            </Link>
+                            <button
+                              type="button"
+                              className="cs_avatar_dropdown_item cs_avatar_dropdown_btn"
+                              role="menuitem"
+                              onClick={() => {
+                                setAvatarPopoverOpen(false);
+                                logout();
+                              }}
+                            >
+                              <Icon icon="mdi:logout" aria-hidden />
+                              <span>Logout</span>
+                            </button>
+                          </>
+                        )}
+                        {!isSuperAdmin && isLoggedIn && (
+                          <>
+                            <Link
+                              to="/profile"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:account" aria-hidden />
+                              <span>Profile</span>
+                            </Link>
+                            <Link
+                              to="/my-learning"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:school" aria-hidden />
+                              <span>My Learning</span>
+                            </Link>
+                            <Link
+                              to="/patient-care-appointments"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:calendar-account" aria-hidden />
+                              <span>Patient Care & Knowledge</span>
+                            </Link>
+                            <button
+                              type="button"
+                              className="cs_avatar_dropdown_item cs_avatar_dropdown_btn"
+                              role="menuitem"
+                              onClick={() => {
+                                setAvatarPopoverOpen(false);
+                                logout();
+                              }}
+                            >
+                              <Icon icon="mdi:logout" aria-hidden />
+                              <span>Logout</span>
+                            </button>
+                          </>
+                        )}
+                        {!isSuperAdmin && !isLoggedIn && (
+                          <>
+                            <Link
+                              to="/login"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:login" aria-hidden />
+                              <span>Login</span>
+                            </Link>
+                            <Link
+                              to="/signup"
+                              className="cs_avatar_dropdown_item"
+                              role="menuitem"
+                              onClick={() => setAvatarPopoverOpen(false)}
+                            >
+                              <Icon icon="mdi:account-plus" aria-hidden />
+                              <span>Sign Up</span>
+                            </Link>
+                          </>
+                        )}
+                      </div>
+                    }
+                    trigger="click"
+                    open={avatarPopoverOpen}
+                    onOpenChange={setAvatarPopoverOpen}
+                    placement="bottomRight"
+                    arrow={false}
+                    overlayClassName="cs_avatar_popover"
+                  >
                     <button
                       type="button"
                       className="cs_toolbox_btn cs_header_user_avatar"
                       aria-label="User menu"
-                      aria-expanded={avatarDropdownOpen}
+                      aria-expanded={avatarPopoverOpen}
                       aria-haspopup="true"
-                      onClick={() => setAvatarDropdownOpen(!avatarDropdownOpen)}
                     >
                       <Icon icon="mdi:account-circle" aria-hidden />
                     </button>
-                    <div
-                      className={`cs_avatar_dropdown ${avatarDropdownOpen ? 'cs_avatar_dropdown_open' : ''}`}
-                      role="menu"
-                    >
-                      {isSuperAdmin && (
-                        <>
-                          <Link
-                            to="/admin"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:cog" aria-hidden />
-                            <span>Admin Panel</span>
-                          </Link>
-                          <button
-                            type="button"
-                            className="cs_avatar_dropdown_item cs_avatar_dropdown_btn"
-                            role="menuitem"
-                            onClick={() => {
-                              setAvatarDropdownOpen(false);
-                              logout();
-                            }}
-                          >
-                            <Icon icon="mdi:logout" aria-hidden />
-                            <span>Logout</span>
-                          </button>
-                        </>
-                      )}
-                      {!isSuperAdmin && isLoggedIn && (
-                        <>
-                          <Link
-                            to="/profile"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:account" aria-hidden />
-                            <span>Profile</span>
-                          </Link>
-                          <Link
-                            to="/my-learning"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:school" aria-hidden />
-                            <span>My Learning</span>
-                          </Link>
-                          <Link
-                            to="/patient-care-appointments"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:calendar-account" aria-hidden />
-                            <span>Patient Care & Appointments</span>
-                          </Link>
-                          <button
-                            type="button"
-                            className="cs_avatar_dropdown_item cs_avatar_dropdown_btn"
-                            role="menuitem"
-                            onClick={() => {
-                              setAvatarDropdownOpen(false);
-                              logout();
-                            }}
-                          >
-                            <Icon icon="mdi:logout" aria-hidden />
-                            <span>Logout</span>
-                          </button>
-                        </>
-                      )}
-                      {!isSuperAdmin && !isLoggedIn && (
-                        <>
-                          <Link
-                            to="/login"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:login" aria-hidden />
-                            <span>Login</span>
-                          </Link>
-                          <Link
-                            to="/signup"
-                            className="cs_avatar_dropdown_item"
-                            role="menuitem"
-                            onClick={() => setAvatarDropdownOpen(false)}
-                          >
-                            <Icon icon="mdi:account-plus" aria-hidden />
-                            <span>Sign Up</span>
-                          </Link>
-                        </>
-                      )}
-                    </div>
-                  </div>
+                  </Popover>
                   <button
                     className="cs_toolbox_btn cs_sidebar_toggle_btn"
                     type="button"
-                    onClick={() => setSideNav(!sideNav)}
+                    onClick={() => setSideNav(true)}
                   >
                     <svg
                       width={35}
@@ -311,27 +303,24 @@ export default function Header({ logoSrc, variant }) {
           </div>
         </div>
       </header>
-      <div className={`cs_sidenav ${sideNav ? 'active' : ''}`}>
-        <div
-          className="cs_sidenav_overlay"
-          onClick={() => setSideNav(!sideNav)}
-        />
+      <Drawer
+        title={null}
+        placement="right"
+        open={sideNav}
+        onClose={() => setSideNav(false)}
+        width={620}
+        styles={{ body: { padding: 0 } }}
+        rootClassName="cs_header_sidenav_drawer"
+        closeIcon={<img src={getAssetUrl('/images/icons/close.svg')} alt="Close" />}
+      >
         <div className="cs_sidenav_in">
-          <button
-            className="cs_close"
-            type="button"
-            onClick={() => setSideNav(!sideNav)}
-          >
-            <img src={getAssetUrl('/images/icons/close.svg')} alt="Close" />
-          </button>
-          <div className="cs_logo_box">
+          <div className="cs_logo_box" style={{ marginBottom: 24 }}>
             <img src={getAssetUrl(logoSrc)} alt="Logo" />
             <div className="cs_height_15" />
             <h3 className="cs_fs_24 cs_semibold mb-0">
               Your Partner in Health and Wellness
             </h3>
           </div>
-          <Spacing md="35" lg="35" xl="35" />
           <hr />
           <Spacing md="35" lg="50" xl="35" />
           <IconBox
@@ -358,7 +347,7 @@ export default function Header({ logoSrc, variant }) {
           <Spacing md="70" lg="50" xl="50" />
           <SocialWidget />
         </div>
-      </div>
+      </Drawer>
     </>
   );
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Input, Select, Tag, Drawer, Descriptions, message, Modal, Skeleton } from 'antd';
-import { SearchOutlined, EyeOutlined, StopOutlined, CheckCircleOutlined, DeleteOutlined } from '@ant-design/icons';
-import { getUsers } from '../../services/apiService';
+import { Card, Table, Button, Space, Input, Select, Tag, Drawer, Descriptions, message, Skeleton, List } from 'antd';
+import { SearchOutlined, EyeOutlined, BookOutlined, FileTextOutlined } from '@ant-design/icons';
+import { getUsers, getUserEnrollments, getUserPurchasedBlogs } from '../../services/apiService';
+import dayjs from 'dayjs';
 
 export default function UsersPage() {
   const [data, setData] = useState([]);
@@ -12,6 +13,9 @@ export default function UsersPage() {
   const [statusFilter, setStatusFilter] = useState(undefined);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [enrollments, setEnrollments] = useState([]);
+  const [purchasedBlogs, setPurchasedBlogs] = useState([]);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   const ROLE_TYPE_LABELS = {
     student: 'Student',
@@ -27,6 +31,24 @@ export default function UsersPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!selectedUser?.id || !drawerOpen) {
+      setEnrollments([]);
+      setPurchasedBlogs([]);
+      return;
+    }
+    setDetailLoading(true);
+    Promise.all([
+      getUserEnrollments(selectedUser.id).catch(() => []),
+      getUserPurchasedBlogs(selectedUser.id).catch(() => []),
+    ])
+      .then(([enr, blogs]) => {
+        setEnrollments(enr);
+        setPurchasedBlogs(blogs);
+      })
+      .finally(() => setDetailLoading(false));
+  }, [selectedUser?.id, drawerOpen]);
+
   const filteredData = data.filter((row) => {
     const matchSearch =
       !searchText ||
@@ -37,24 +59,6 @@ export default function UsersPage() {
     const matchStatus = statusFilter == null || (row.status || 'active') === statusFilter;
     return matchSearch && matchRole && matchRoleType && matchStatus;
   }).map((row) => ({ ...row, joinedDate: row.createdAt, status: row.status || 'active' }));
-
-  const handleBlock = (record) => {
-    setData((prev) => prev.map((r) => (r.id === record.id ? { ...r, status: 'blocked' } : r)));
-    message.info('Block action (implement API if needed).');
-    setDrawerOpen(false);
-  };
-
-  const handleUnblock = (record) => {
-    setData((prev) => prev.map((r) => (r.id === record.id ? { ...r, status: 'active' } : r)));
-    message.info('Unblock action (implement API if needed).');
-    setDrawerOpen(false);
-  };
-
-  const handleDelete = (record) => {
-    setData((prev) => prev.filter((r) => r.id !== record.id));
-    message.info('Delete action (implement API if needed).');
-    setDrawerOpen(false);
-  };
 
   const columns = [
     { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => (a.name || '').localeCompare(b.name || '') },
@@ -82,17 +86,9 @@ export default function UsersPage() {
     {
       title: 'Actions',
       key: 'actions',
-      width: 180,
+      width: 100,
       render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => { setSelectedUser(record); setDrawerOpen(true); }} />
-          {record.status === 'active' ? (
-            <Button type="link" size="small" icon={<StopOutlined />} onClick={() => handleBlock(record)}>Block</Button>
-          ) : (
-            <Button type="link" size="small" icon={<CheckCircleOutlined />} onClick={() => handleUnblock(record)}>Unblock</Button>
-          )}
-          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => { Modal.confirm({ title: 'Delete user?', okType: 'danger', onOk: () => handleDelete(record) }); }} />
-        </Space>
+        <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => { setSelectedUser(record); setDrawerOpen(true); }}>View</Button>
       ),
     },
   ];
@@ -157,35 +153,80 @@ export default function UsersPage() {
       <Drawer
         title="User profile"
         placement="right"
-        width={400}
+        width={480}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        extra={
-          selectedUser && (
-            <Space>
-              {selectedUser.status === 'active' ? (
-                <Button size="small" icon={<StopOutlined />} onClick={() => handleBlock(selectedUser)}>Block</Button>
-              ) : (
-                <Button size="small" icon={<CheckCircleOutlined />} onClick={() => handleUnblock(selectedUser)}>Unblock</Button>
-              )}
-              <Button size="small" danger icon={<DeleteOutlined />} onClick={() => { handleDelete(selectedUser); }}>Delete</Button>
-            </Space>
-          )
-        }
       >
         {selectedUser && (
-          <Descriptions column={1} bordered size="small">
-            <Descriptions.Item label="Name">{selectedUser.name}</Descriptions.Item>
-            <Descriptions.Item label="Email">{selectedUser.email}</Descriptions.Item>
-            <Descriptions.Item label="Role">
-              {selectedUser.role === 'admin' ? 'Admin' : (ROLE_TYPE_LABELS[selectedUser.roleType] || selectedUser.roleType || 'User')}
-            </Descriptions.Item>
-            <Descriptions.Item label="Phone">{selectedUser.phone || '—'}</Descriptions.Item>
-            <Descriptions.Item label="Joined">{selectedUser.joinedDate}</Descriptions.Item>
-            <Descriptions.Item label="Status">
-              <Tag color={selectedUser.status === 'active' ? 'green' : 'red'}>{selectedUser.status}</Tag>
-            </Descriptions.Item>
-          </Descriptions>
+          <>
+            <Descriptions column={1} bordered size="small" style={{ marginBottom: 24 }}>
+              <Descriptions.Item label="Name">{selectedUser.name}</Descriptions.Item>
+              <Descriptions.Item label="Email">{selectedUser.email}</Descriptions.Item>
+              <Descriptions.Item label="Role">
+                {selectedUser.role === 'admin' ? 'Admin' : (ROLE_TYPE_LABELS[selectedUser.roleType] || selectedUser.roleType || 'User')}
+              </Descriptions.Item>
+              <Descriptions.Item label="Phone">{selectedUser.phone || '—'}</Descriptions.Item>
+              <Descriptions.Item label="Joined">{selectedUser.joinedDate}</Descriptions.Item>
+              <Descriptions.Item label="Status">
+                <Tag color={selectedUser.status === 'active' ? 'green' : 'red'}>{selectedUser.status}</Tag>
+              </Descriptions.Item>
+            </Descriptions>
+
+            {detailLoading ? (
+              <Skeleton active paragraph={{ rows: 4 }} />
+            ) : (
+              <>
+                <h4 style={{ marginBottom: 8, fontWeight: 600 }}>
+                  <BookOutlined style={{ marginRight: 6 }} />
+                  Enrolled in ({enrollments.length})
+                </h4>
+                {enrollments.length === 0 ? (
+                  <p style={{ color: '#999', marginBottom: 20 }}>No enrollments</p>
+                ) : (
+                  <List
+                    size="small"
+                    dataSource={enrollments}
+                    renderItem={(e) => (
+                      <List.Item>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{e.title || '—'}</div>
+                          <div style={{ fontSize: 12, color: '#666' }}>
+                            {e.category && <Tag style={{ marginRight: 4 }}>{e.category}</Tag>}
+                            {e.enrollDate && dayjs(e.enrollDate).format('MMM D, YYYY')}
+                          </div>
+                        </div>
+                      </List.Item>
+                    )}
+                    style={{ marginBottom: 24 }}
+                  />
+                )}
+
+                <h4 style={{ marginBottom: 8, fontWeight: 600 }}>
+                  <FileTextOutlined style={{ marginRight: 6 }} />
+                  Purchased blogs ({purchasedBlogs.length})
+                </h4>
+                {purchasedBlogs.length === 0 ? (
+                  <p style={{ color: '#999' }}>No blog purchases</p>
+                ) : (
+                  <List
+                    size="small"
+                    dataSource={purchasedBlogs}
+                    renderItem={(p) => (
+                      <List.Item>
+                        <div>
+                          <div style={{ fontWeight: 500 }}>{p.title || '—'}</div>
+                          <div style={{ fontSize: 12, color: '#666' }}>
+                            {p.amount != null && `₹${p.amount}`}
+                            {p.purchaseDate && ` · ${dayjs(p.purchaseDate).format('MMM D, YYYY')}`}
+                          </div>
+                        </div>
+                      </List.Item>
+                    )}
+                  />
+                )}
+              </>
+            )}
+          </>
         )}
       </Drawer>
     </div>

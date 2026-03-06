@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Hero from './Hero';
 import ImpactStatsSection from './ImpactStatsSection';
 import AboutSection from './AboutSection';
@@ -8,7 +8,6 @@ import AwardSection from './AwardSection';
 import OurServicesCards from './OurServicesCards';
 import { pageTitle } from '../utils/PageTitle';
 import { getAssetUrl } from '../config';
-import { getCmsPage } from '../services/apiService';
 
 const featureListData = [
   {
@@ -64,16 +63,8 @@ const awardData = [
 ];
 export default function Home() {
   pageTitle('Home');
-  const [cmsHome, setCmsHome] = useState(null);
-  const [cmsAbout, setCmsAbout] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('home').then((p) => setCmsHome(p)).catch(() => {});
-    getCmsPage('about').then((p) => setCmsAbout(p)).catch(() => {});
-  }, []);
-
-  const homeData = cmsHome?.data || {};
-  const aboutData = cmsAbout?.data || {};
+  const homeData = {};
+  const aboutData = {};
   const defaultSlides = [
     {
       label: 'Welcome to Best of IDs',
@@ -117,13 +108,13 @@ export default function Home() {
         quickLinks={[]}
       />
       <ImpactStatsSection />
-      {/* Start Our Services Section */}
-      <Section topMd={25} topLg={20} topXl={10}>
+      {/* Start Appointments & Our Services Section */}
+      <Section topMd={16} topLg={14} topXl={8}>
         <OurServicesCards />
       </Section>
-      {/* End Our Services Section */}
+      {/* End Appointments & Our Services Section */}
       {/* Start About Section */}
-      <Section topMd={40} topLg={35} topXl={30}>
+      <Section topMd={28} topLg={24} topXl={20}>
         <AboutSection
           imgUrl="/images/home_1/about.png"
           spiningImgUrl="/images/home_1/about_mini.svg"
@@ -134,9 +125,9 @@ export default function Home() {
       {/* End About Section */}
       {/* Start Feature Section (Our Values) */}
       <Section
-        topMd={45}
-        topLg={40}
-        topXl={35}
+        topMd={28}
+        topLg={24}
+        topXl={20}
         bottomMd={0}
         bottomLg={0}
         bottomXl={0}
@@ -147,7 +138,7 @@ export default function Home() {
       </Section>
       {/* End Feature Section */}
       {/* Start Why Choose Best of IDs Section */}
-      <Section topMd={50} topLg={45} topXl={40}>
+      <Section topMd={32} topLg={28} topXl={24}>
         <AwardSection
           sectionTitle="Why Choose Best of IDs?"
           sectionTitleDown="Expert Infectious Disease Care You Can Trust"
@@ -157,7 +148,7 @@ export default function Home() {
       </Section>
       {/* End Why Choose Best of IDs Section */}
       {/* Vision & Mission – editorial diagonal layout, no cards, typography-led */}
-      <Section topMd={55} topLg={45} topXl={38} bottomMd={80} bottomLg={60} bottomXl={50}>
+      <Section topMd={32} topLg={28} topXl={24} bottomMd={0} bottomLg={0} bottomXl={0} className="cs_footer_margin_0">
         <div className="cs_vision_mission_editorial">
           <div className="container position-relative cs_vm_row">
             <img

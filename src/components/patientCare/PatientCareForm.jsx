@@ -1,8 +1,7 @@
 import React from 'react';
-import { Form, Input, Select, Upload, Switch } from 'antd';
+import { Form, Input, Select, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import QuillWithTooltips from '../QuillWithTooltips';
 import { usePatientCare } from '../../contexts/PatientCareContext';
 
 const { TextArea } = Input;
@@ -41,7 +40,7 @@ export default function PatientCareForm({ form, thumbnailFileList, onThumbnailCh
         label="Detailed Content"
         rules={[{ required: true, message: 'Please add content' }]}
       >
-        <ReactQuill
+        <QuillWithTooltips
           theme="snow"
           modules={quillModules}
           placeholder="Write health content..."
@@ -57,14 +56,6 @@ export default function PatientCareForm({ form, thumbnailFileList, onThumbnailCh
           placeholder="Select category"
           options={categories.map((c) => ({ value: c.value, label: c.label }))}
         />
-      </Form.Item>
-      <Form.Item
-        name="showInWebsite"
-        label="Show on website"
-        valuePropName="checked"
-        initialValue={true}
-      >
-        <Switch checkedChildren="Yes" unCheckedChildren="No" />
       </Form.Item>
       <Form.Item label="Thumbnail Image">
         <Upload

@@ -28,10 +28,11 @@ export default function DashboardPage() {
       setRecentUsers(u.map((x, i) => ({ id: x.id || i, name: x.name, email: x.email, date: x.createdAt })));
       setRecentPayments(p.map((x, _i) => ({
         id: x.id,
+        type: x.type,
         user: x.userName || x.userId,
         amount: x.amount,
         status: x.status,
-        date: x.createdAt,
+        date: x.date || x.createdAt,
       })));
     }).finally(() => setLoading(false));
   }, []);
@@ -51,11 +52,12 @@ export default function DashboardPage() {
   ];
 
   const paymentColumns = [
+    { title: 'Type', dataIndex: 'type', key: 'type', width: 100, render: (v) => (v === 'blog_purchase' ? 'Blog' : 'Payment') },
     { title: 'ID', dataIndex: 'id', key: 'id', width: 100, render: (v) => (v ? String(v).slice(-8) : '—') },
     { title: 'User', dataIndex: 'user', key: 'user' },
     { title: 'Amount', dataIndex: 'amount', key: 'amount', render: (v) => (v != null ? `₹${v}` : '—') },
     { title: 'Status', dataIndex: 'status', key: 'status' },
-    { title: 'Date', dataIndex: 'date', key: 'date', width: 110 },
+    { title: 'Date', dataIndex: 'date', key: 'date', width: 110, render: (d) => (d ? new Date(d).toLocaleDateString() : '—') },
   ];
 
   return (
@@ -115,7 +117,7 @@ export default function DashboardPage() {
               <Table
                 dataSource={recentPayments}
                 columns={paymentColumns}
-                rowKey="id"
+                rowKey={(r) => (r.type ? `${r.type}-${r.id}` : r.id)}
                 pagination={{ pageSize: 5 }}
                 size="small"
               />

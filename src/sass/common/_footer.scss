@@ -290,20 +290,46 @@
 .cs_footer.cs_style_1 {
   position: relative;
   margin-top: 120px;
+  overflow: hidden; /* prevent .cs_footer_logo_wrap from creating white space below footer */
   @media (max-width: 991px) {
     margin-top: 80px;
   }
+
+  /* All footer text white on every page */
+  color: #fff;
+  .cs_footer_main,
+  .cs_footer_bottom {
+    color: #fff;
+  }
+  .cs_text_widget,
+  .cs_text_widget p,
+  .cs_contact_widget,
+  .cs_contact_widget li,
+  .cs_menu_widget a,
+  .cs_menu_widget li,
+  .cs_newsletter_title,
+  .cs_newsletter_subTitle,
+  .cs_newsletter_subtitle,
+  .cs_social_links_wrap h2,
+  .cs_copyright {
+    color: #fff;
+  }
+  .cs_menu_widget a:hover,
+  .cs_contact_widget a:hover {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .cs_copyright {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
   .cs_footer_logo_wrap {
     position: absolute;
-    height: calc(100% + 80px);
+    height: 100%;
     width: 100%;
     left: 0;
     bottom: 0;
     background-position: top center;
     background-size: cover;
-    @media (max-width: 991px) {
-      height: calc(100% + 60px);
-    }
   }
   .cs_footer_brand {
     position: absolute;
@@ -359,6 +385,10 @@
   }
 }
 .cs_footer_margin_0 + .cs_footer.cs_style_1 {
+  margin-top: 0;
+}
+/* When Vision & Mission section (or any section with cs_footer_margin_0) is in the page, remove footer top margin (e.g. Home page) */
+.cs_layout:has(.cs_footer_margin_0) .cs_footer.cs_style_1 {
   margin-top: 0;
 }
 .cs_footer.cs_style_2 {

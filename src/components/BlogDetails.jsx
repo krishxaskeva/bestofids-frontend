@@ -2,26 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
-import Banner from './BannerSection';
-import { Icon } from '@iconify/react';
 import Spacing from './Spacing';
 import Post from './ui/Post';
 import Sidebar from './Sidebar';
-import AuthorWidget from './AuthorWidget';
-import CommentsWidget from './CommentsWidget';
-import ReplyWidget from './ReplyWidget';
 import { pageTitle } from '../utils/PageTitle';
 import { useAuth } from '../contexts/AuthContext';
 import { getBlogById, checkBlogPurchase, createBlogOrder, verifyBlogPayment, getBlogs } from '../services/blogService';
-import { Button, message} from 'antd';
+import { Button, message } from 'antd';
 import dayjs from 'dayjs';
 import htmlReactParser from 'html-react-parser';
 import { getAssetUrl } from '../config';
 
+const SITE_TEAL = '#117574';
+
 export default function BlogDetails() {
   const { blogId } = useParams();
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isSuperAdmin } = useAuth();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,7 +53,9 @@ export default function BlogDetails() {
       .then((data) => {
         setBlog(data);
         pageTitle(data.title || 'Blog');
-        if (data.price > 0 && isLoggedIn) {
+        if (isSuperAdmin) {
+          setPurchased(true);
+        } else if (data.price > 0 && isLoggedIn) {
           checkBlogPurchase(blogId).then(setPurchased);
         } else if (data.price === 0) {
           setPurchased(true);
@@ -67,7 +66,7 @@ export default function BlogDetails() {
         setBlog(null);
       })
       .finally(() => setLoading(false));
-  }, [blogId, isLoggedIn]);
+  }, [blogId, isLoggedIn, isSuperAdmin]);
 
   useEffect(() => {
     getBlogs()
@@ -76,9 +75,8 @@ export default function BlogDetails() {
         setRelatedBlogs(
           related.map((b) => ({
             title: b.title,
-            thumbUrl: b.coverImage || '/images/blog/post_1.jpeg',
+            thumbUrl: b.coverImage,
             date: b.createdAt ? dayjs(b.createdAt).format('MMM D, YYYY') : '',
-            btnText: 'Learn More',
             href: `/blog/${b.id}`,
           }))
         );
@@ -87,11 +85,6 @@ export default function BlogDetails() {
   }, [blogId]);
 
   const handleBuyClick = async () => {
-    if (!isLoggedIn) {
-      message.info('Please log in to purchase.');
-      navigate('/login');
-      return;
-    }
     if (!blogId || !blog) return;
     setPaymentLoading(true);
     try {
@@ -143,12 +136,13 @@ export default function BlogDetails() {
   };
 
   const canAccessContent = blog && (blog.price === 0 || purchased);
-  const showBuyCta = blog && blog.price > 0 && !purchased;
+  const showBuyCta = blog && blog.price > 0 && !purchased && isLoggedIn && !isSuperAdmin;
+  const showLoginPrompt = blog && blog.price > 0 && !purchased && !isLoggedIn;
 
   if (loading) {
     return (
       <>
-        <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+        <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
           <Breadcrumb title="Blog" />
         </Section>
         <div className="container text-center py-5">
@@ -161,7 +155,7 @@ export default function BlogDetails() {
   if (error || !blog) {
     return (
       <>
-        <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+        <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
           <Breadcrumb title="Blog" />
         </Section>
         <div className="container text-center py-5">
@@ -172,39 +166,37 @@ export default function BlogDetails() {
     );
   }
 
-  const tags = Array.isArray(blog.tags) && blog.tags.length
+  const tags = Array.isArray(blog.tags) && blog.tags.length > 0
     ? blog.tags.map((tag) => ({ tag, href: `/blog/${blogId}` }))
-    : [{ tag: 'Blog', href: `/blog/${blogId}` }];
+    : [];
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title={blog.title} />
       </Section>
       <div className="container">
         <div className="cs_blog_details_info">
           <div className="cs_blog_details_info_left">
-            <div className="cs_blog_details_tags">
-              {tags.map((item, index) => (
-                <Link key={index} to={item.href}>
-                  {item.tag}
-                </Link>
-              ))}
-            </div>
-            <div className="cs_blog_details_date">
-              {blog.createdAt ? dayjs(blog.createdAt).format('MMMM D, YYYY') : ''} | {blog.author || 'Admin'}
-            </div>
-          </div>
-          <div className="cs_social_links_wrap">
-            <h2>Share:</h2>
-            <div className="cs_social_links">
-              <Link to="/"><Icon icon="fa-brands:facebook-f" /></Link>
-              <Link to="/"><Icon icon="fa-brands:linkedin-in" /></Link>
-              <Link to="/"><Icon icon="fa-brands:twitter" /></Link>
-            </div>
+            {tags.length > 0 && (
+              <div className="cs_blog_details_tags">
+                {tags.map((item, index) => (
+                  <Link key={index} to={item.href}>
+                    {item.tag}
+                  </Link>
+                ))}
+              </div>
+            )}
+            {(blog.createdAt || blog.author) && (
+              <div className="cs_blog_details_date">
+                {blog.createdAt ? dayjs(blog.createdAt).format('MMMM D, YYYY') : ''}
+                {blog.createdAt && blog.author ? ' | ' : ''}
+                {blog.author || ''}
+              </div>
+            )}
           </div>
         </div>
-        <Spacing md="55" />
+        <Spacing md="36" />
 
         {blog.coverImage && (
           <>
@@ -213,24 +205,36 @@ export default function BlogDetails() {
               alt={blog.title}
               className="w-100 cs_radius_20"
             />
-            <Spacing md="30" />
+            <Spacing md="20" />
           </>
+        )}
+
+        {showLoginPrompt && (
+          <div className="cs_white_bg cs_radius_20 p-4 mb-4" style={{ boxShadow: '0 4px 20px rgba(0,0,0,.08)' }}>
+            <p className="cs_heading_color mb-3">Please log in to purchase this article.</p>
+            <Button
+              type="primary"
+              size="large"
+              style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+              onClick={() => navigate(`/login?redirect=${encodeURIComponent(`/blog/${blogId}`)}`)}
+            >
+              Log in
+            </Button>
+          </div>
         )}
 
         {showBuyCta && (
           <div className="cs_white_bg cs_radius_20 p-4 mb-4" style={{ boxShadow: '0 4px 20px rgba(0,0,0,.08)' }}>
-            <h3 className="cs_semibold mb-2">This content is paid</h3>
-            <p className="cs_heading_color mb-3">{blog.description || 'Purchase to access the full article and PDF download.'}</p>
-            <p className="mb-3" style={{ fontSize: 18, fontWeight: 600, color: '#117574' }}>₹{blog.price}</p>
-            {isLoggedIn ? (
-              <Button type="primary" size="large" onClick={handleBuyClick} loading={paymentLoading}>
-                Buy Blog — ₹{blog.price}
-              </Button>
-            ) : (
-              <Button type="primary" size="large" onClick={() => navigate('/login')}>
-                Login to Access
-              </Button>
-            )}
+            <p className="mb-3" style={{ fontSize: 18, fontWeight: 600, color: SITE_TEAL }}>₹{blog.price}</p>
+            <Button
+              type="primary"
+              size="large"
+              style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+              onClick={handleBuyClick}
+              loading={paymentLoading}
+            >
+              Buy — ₹{blog.price}
+            </Button>
           </div>
         )}
 
@@ -260,45 +264,32 @@ export default function BlogDetails() {
             {canAccessContent && (
               <div className="cs_blog_details">
                 {blog.content ? htmlReactParser(blog.content) : (
-                  <p className="cs_heading_color">{blog.description || 'No content.'}</p>
+                  blog.description ? <p className="cs_heading_color">{blog.description}</p> : null
                 )}
               </div>
             )}
-            <Spacing md="85" />
-            <AuthorWidget
-              imgUrl={getAssetUrl('/images/blog/author.png')}
-              name={blog.author || 'Author'}
-              description="Expert content from Best of IDs."
-            />
-            <Spacing md="110" />
-            <CommentsWidget title="Comments" />
-            <Spacing md="92" />
-            <ReplyWidget title="Leave a Reply" />
+            <Spacing md="52" />
           </div>
           <div className="col-lg-4">
             <Sidebar />
           </div>
         </div>
-        <Spacing md="135" lg="100" />
-        <h2 className="mb-0 cs_fs_40 cs_medium">Related Articles</h2>
-        <Spacing md="57" />
-        <div className="row cs_gap_y_40">
-          {relatedBlogs.map((item, index) => (
-            <div className="col-xl-4 col-md-6" key={index}>
-              <Post {...item} />
+        <Spacing md="80" lg="64" />
+        {relatedBlogs.length > 0 && (
+          <>
+            <h2 className="mb-0 cs_fs_40 cs_medium">Related Articles</h2>
+            <Spacing md="36" />
+            <div className="row cs_gap_y_40">
+              {relatedBlogs.map((item, index) => (
+                <div className="col-xl-4 col-md-6" key={index}>
+                  <Post {...item} />
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
-      <Spacing md="200" xl="150" lg="110" />
-      <Section className="cs_footer_margin_0">
-        <Banner
-          bgUrl=""
-          imgUrl={getAssetUrl('/images/doctors/banner_img_3.png')}
-          title="Don't Let Your Health Take a Backseat!"
-          subTitle="Schedule an appointment with one of our experienced medical professionals today!"
-        />
-      </Section>
+      <Spacing md="80" xl="64" lg="52" />
 
     </>
   );

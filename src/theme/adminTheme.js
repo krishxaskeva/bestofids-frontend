@@ -48,6 +48,9 @@ export const adminTheme = {
       darkItemSelectedColor: '#fff',
       darkItemColor: 'rgba(255,255,255,0.9)',
     },
+    Message: {
+      contentBg: '#ffffff',
+    },
   },
 };
 

@@ -113,11 +113,11 @@ function loginUrl() {
 export default function MarketingView() {
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="ID Education & Knowledge Hub" />
       </Section>
 
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={72} bottomLg={60} bottomXl={50}>
+      <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <div className="cs_doctors_hero_section">
             <SectionHeading
@@ -158,7 +158,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="cs_shape_wrap cs_edu_hub_section_wrap">
           <div className="cs_shape_1" />
           <div className="container">
@@ -209,7 +209,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="container">
           <div className="cs_edu_hub_two_cards_row">
             <div className="cs_edu_hub_two_cards_col">
@@ -265,7 +265,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="cs_shape_wrap cs_edu_hub_section_wrap">
           <div className="cs_shape_1" />
           <div className="container">
@@ -315,7 +315,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="cs_shape_wrap cs_edu_hub_who_join_row">
           <div className="cs_shape_1" />
           <div className="container">
@@ -365,7 +365,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={55} bottomLg={45} bottomXl={40}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={36} bottomLg={30} bottomXl={26}>
         <div className="cs_doctors_reach_section_wrap">
           <div className="container">
             <SectionHeading
@@ -408,7 +408,7 @@ export default function MarketingView() {
         </div>
       </Section>
 
-      <Section topMd={85} topLg={70} topXl={55} bottomMd={200} bottomLg={150} bottomXl={110}>
+      <Section topMd={48} topLg={40} topXl={32} bottomMd={80} bottomLg={64} bottomXl={52}>
         <div className="container">
           <div className="cs_banner cs_style_1 cs_bg_filed cs_banner_cta" style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}>
             <div className="cs_banner_content">

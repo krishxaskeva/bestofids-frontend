@@ -21,6 +21,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import AdminLayout from './layout/AdminLayout';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import EducationPage from './pages/education/EducationPage';
+import EducationDetailPage from './pages/education/EducationDetailPage';
 import UsersPage from './pages/users/UsersPage';
 import PaymentsPage from './pages/payments/PaymentsPage';
 import BlogPage from './pages/blog/BlogPage';
@@ -81,6 +82,7 @@ function App() {
         <Route path="our-services" element={<OurServices />} />
         <Route path="doctor-hospital-services" element={<Doctors />} />
         <Route path="id-education-knowledge-hub" element={<EducationKnowledgeHub />} />
+        <Route path="id-education-knowledge-hub/item/:id" element={<EducationDetailPage />} />
         <Route path="blog" element={<BlogList />} />
         <Route path="blog/:blogId" element={<BlogDetails />} />
         <Route path="gallery" element={<Gallery />} />

@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
+import DoctorDetailsSection from './DoctorDetailsSection';
 import OurServicesDetail from './OurServicesDetail';
 import { pageTitle } from '../utils/PageTitle';
-import { getCmsPage } from '../services/apiService';
 
 const DEFAULT_INTRO_TITLE = 'When Fever and Infections Are\nUnclear, Experience Matters';
 const DEFAULT_INTRO_SUBTITLE = 'Trusted Infectious Disease Care, Prevention and Education.';
@@ -11,15 +11,9 @@ const DEFAULT_INTRO_TAGLINE = 'Built on 3 Decades of Real Clinical Practice';
 const DEFAULT_WHITE_TEXT = 'At Best of IDs, we provide specialist infectious disease services for patients, doctors, and healthcare organizations facing complex, uncertain, or high-risk infection scenarios. Our work is grounded in 3 Decades of clinical experience across public and private healthcare systems, supporting everything from individual patient care to large hospital infection prevention and accreditation programs.';
 
 export default function OurServices() {
-  pageTitle('Our Services');
-  const [cms, setCms] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('our-services').then((p) => setCms(p)).catch(() => {});
-  }, []);
-
-  const d = cms?.data || {};
-  const introLabel = 'Our Services';
+  pageTitle('Appointments & Our Services');
+  const d = {};
+  const introLabel = 'Appointments & Our Services';
   const introTitle = d.title || DEFAULT_INTRO_TITLE;
   const introSubtitle = d.description || DEFAULT_INTRO_SUBTITLE;
   const introTagline = DEFAULT_INTRO_TAGLINE;
@@ -27,10 +21,10 @@ export default function OurServices() {
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={40} bottomLg={32} bottomXl={26}>
-        <Breadcrumb title="Our Services" />
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20} bottomXl={16}>
+        <Breadcrumb title="Appointments & Our Services" />
       </Section>
-      <Section topMd={40} topLg={32} topXl={26} bottomMd={40} bottomLg={32} bottomXl={26} className="cs_our_services_teal_section">
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16} className="cs_our_services_teal_section">
         <div className="cs_our_services_teal_intro">
           <div className="cs_our_services_teal_intro_inner">
             <p className="cs_our_services_teal_intro_label m-0">{introLabel}</p>
@@ -46,7 +40,7 @@ export default function OurServices() {
           </div>
         </div>
       </Section>
-      <Section topMd={40} topLg={32} topXl={26} bottomMd={40} bottomLg={32} bottomXl={26} className="cs_our_services_white_section">
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16} className="cs_our_services_white_section">
         <div className="cs_our_services_intro_white">
           <div className="cs_our_services_intro_white_inner">
             <p className="cs_our_services_intro_white_text m-0">
@@ -54,6 +48,23 @@ export default function OurServices() {
             </p>
           </div>
         </div>
+      </Section>
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16}>
+        <DoctorDetailsSection
+          bgUrl="/images/doctors/doctor_details_bg.svg"
+          imgUrl="/images/doctors/dr_patient_care.png"
+          name="Dr. D. Sureshkumar, Senior Consultant"
+          designation="Infectious Disease Specialist"
+          bulletPoints={[
+            'Fever of unknown origin (PUO) and difficult fever',
+            'Tuberculosis (TB)',
+            'HIV and sexually transmitted infections (STIs)',
+            'Post-exposure prophylaxis (PEP) after sexual exposure',
+            'Recurrent or resistant infections',
+            'Antimicrobial treatment complications',
+            'Exposure-related infections, including animal bites',
+          ]}
+        />
       </Section>
       <OurServicesDetail />
     </>

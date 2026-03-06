@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { getAssetUrl } from '../../config';
 
@@ -15,6 +16,7 @@ const PLATFORM_LABELS = {
   youtube_live: 'YouTube Live',
   other: 'Other',
 };
+const detailUrl = (educationId) => `/id-education-knowledge-hub/item/${educationId}`;
 const PODCAST_PLATFORM_LABELS = {
   spotify: 'Spotify',
   apple_podcasts: 'Apple Podcasts',
@@ -44,7 +46,9 @@ export function CourseCard({ item, enrolled, onEnroll, onContinue, loading }) {
     <div className={`cs_edu_hub_content_card cs_shadow_1 cs_radius_25 cs_white_bg ${enrolled ? 'cs_edu_hub_card_enrolled' : ''}`}>
       <Thumbnail src={item.thumbnail} alt={item.title} locked={!enrolled} />
       <div className="cs_edu_hub_content_card_body">
-        <h3 className="cs_edu_hub_content_card_title">{item.title}</h3>
+        <h3 className="cs_edu_hub_content_card_title">
+          <Link to={detailUrl(item.id)} className="cs_edu_hub_card_title_link">{item.title}</Link>
+        </h3>
         {item.description && <p className="cs_edu_hub_content_card_desc">{item.description}</p>}
         <div className="cs_edu_hub_content_card_meta">
           {levelLabel && <span className="cs_edu_hub_meta_badge">{levelLabel}</span>}
@@ -89,7 +93,9 @@ export function WebinarCard({ item, enrolled, onEnroll, onWatch, onAddToCalendar
           {isLive ? 'Live' : 'Recording'}
         </span>
         {platformLabel && <span className="cs_edu_hub_meta_badge">{platformLabel}</span>}
-        <h3 className="cs_edu_hub_content_card_title">{item.title}</h3>
+        <h3 className="cs_edu_hub_content_card_title">
+          <Link to={detailUrl(item.id)} className="cs_edu_hub_card_title_link">{item.title}</Link>
+        </h3>
         {(item.speakerName || item.speakerTitle) && (
           <p className="cs_edu_hub_content_card_speaker">
             {[item.speakerName, item.speakerTitle].filter(Boolean).join(' · ')}
@@ -147,7 +153,9 @@ export function InfographicCard({ item, enrolled, onEnroll, onView, loading }) {
       <Thumbnail src={previewSrc} alt={item.title} locked={!enrolled} className={!enrolled ? 'cs_edu_hub_thumb_blur' : ''} />
       <div className="cs_edu_hub_content_card_body">
         {categoryLabel && <span className="cs_edu_hub_meta_badge">{categoryLabel}</span>}
-        <h3 className="cs_edu_hub_content_card_title">{item.title}</h3>
+        <h3 className="cs_edu_hub_content_card_title">
+          <Link to={detailUrl(item.id)} className="cs_edu_hub_card_title_link">{item.title}</Link>
+        </h3>
         {item.description && <p className="cs_edu_hub_content_card_desc">{item.description}</p>}
         <button
           type="button"
@@ -179,7 +187,9 @@ export function PodcastCard({ item, enrolled, onEnroll, onPlay, loading }) {
         {item.episodeNumber != null && <span className="cs_edu_hub_meta_text">Ep. {item.episodeNumber}</span>}
         {item.topicTag && <span className="cs_edu_hub_meta_badge">{item.topicTag}</span>}
         {durationStr && <span className="cs_edu_hub_meta_text">{durationStr}</span>}
-        <h3 className="cs_edu_hub_content_card_title">{item.title}</h3>
+        <h3 className="cs_edu_hub_content_card_title">
+          <Link to={detailUrl(item.id)} className="cs_edu_hub_card_title_link">{item.title}</Link>
+        </h3>
         {item.description && <p className="cs_edu_hub_content_card_desc">{item.description}</p>}
         <button
           type="button"

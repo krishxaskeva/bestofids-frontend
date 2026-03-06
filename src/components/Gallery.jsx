@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Banner from './BannerSection';
 import Section from './Section';
 import GallerySection from './GallerySection';
 import { pageTitle } from '../utils/PageTitle';
-import { getCmsPage } from '../services/apiService';
 import { getAssetUrl } from '../config';
 
 const DEFAULT_GALLERY = [
@@ -27,13 +26,7 @@ function parseGalleryContent(content) {
 
 export default function Gallery() {
   pageTitle('Gallery');
-  const [cms, setCms] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('gallery').then((p) => setCms(p)).catch(() => {});
-  }, []);
-
-  const d = cms?.data || {};
+  const d = {};
   const bannerTitle = d.title || 'Welcome to Best of IDs Gallery';
   const bannerSubtitle = d.description || 'The special moment of our hospital';
   const bannerImg = d.banner || getAssetUrl('/images/about/banner_img.png');
@@ -41,7 +34,7 @@ export default function Gallery() {
 
   return (
     <>
-      <Section topMd={170} topLg={120} topXl={100}>
+      <Section topMd={56} topLg={48} topXl={40}>
         <Banner
           bgUrl="/images/about/banner_bg.svg"
           imgUrl={bannerImg}
@@ -50,12 +43,12 @@ export default function Gallery() {
         />
       </Section>
       <Section
-        topMd={65}
-        topLg={150}
-        topXl={110}
-        bottomMd={200}
-        bottomLg={150}
-        bottomXl={110}
+        topMd={32}
+        topLg={28}
+        topXl={24}
+        bottomMd={80}
+        bottomLg={64}
+        bottomXl={52}
       >
         <GallerySection data={galleryData} />
       </Section>

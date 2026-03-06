@@ -81,17 +81,21 @@ export default function EditPatientCare({ post, open, onClose, onSuccess }) {
       open={open}
       onClose={handleClose}
       destroyOnClose
+      getContainer={() => document.body}
+      rootClassName="admin-education-drawer"
       extra={
         <Button type="primary" onClick={handleSubmit} loading={submitting}>
           Save Changes
         </Button>
       }
     >
-      <PatientCareForm
-        form={form}
-        thumbnailFileList={thumbnailFileList}
-        onThumbnailChange={handleThumbnailChange}
-      />
+      {open && (
+        <PatientCareForm
+          form={form}
+          thumbnailFileList={thumbnailFileList}
+          onThumbnailChange={handleThumbnailChange}
+        />
+      )}
     </Drawer>
   );
 }

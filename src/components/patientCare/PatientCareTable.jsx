@@ -30,6 +30,7 @@ export default function PatientCareTable({
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
+      minWidth: 180,
       ellipsis: true,
       render: (text) => text || '—',
     },
@@ -49,7 +50,7 @@ export default function PatientCareTable({
       title: 'Thumbnail',
       dataIndex: 'thumbnailUrl',
       key: 'thumbnail',
-      width: 80,
+      width: 90,
       render: (url) =>
         url ? (
           <Image src={url} alt="" width={48} height={48} style={{ objectFit: 'cover', borderRadius: 4 }} />
@@ -148,6 +149,7 @@ export default function PatientCareTable({
         <Skeleton active paragraph={{ rows: 8 }} />
       ) : (
       <Table
+        className="patient-care-table"
         dataSource={dataSource}
         columns={columns}
         rowKey="id"

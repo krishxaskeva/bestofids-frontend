@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Breadcrumb from './Breadcrumb';
 import Banner from './BannerSection';
 import Section from './Section';
@@ -9,7 +9,6 @@ import FaqSection from './FaqSection';
 import ContactModal from './ContactModal';
 import { pageTitle } from '../utils/PageTitle';
 import { getAssetUrl } from '../config';
-import { getCmsPage } from '../services/apiService';
 
 const faqData = [
   {
@@ -50,20 +49,14 @@ const galleryData = [
 export default function AboutContacts() {
   pageTitle('Contact & Testimonials');
   const [contactModalOpen, setContactModalOpen] = useState(false);
-  const [cmsContact, setCmsContact] = useState(null);
-
-  useEffect(() => {
-    getCmsPage('contact').then((p) => setCmsContact(p)).catch(() => {});
-  }, []);
-
-  const contactData = cmsContact?.data || {};
+  const contactData = {};
   const bannerTitle = contactData.title || 'Welcome to Best of IDs – Transforming Infectious Disease Care';
   const bannerSubTitle = contactData.description || 'Your Partner in Health and Wellness';
   const bannerImg = contactData.banner || getAssetUrl('/images/best-of-ids-logo-watermark.png');
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="Contact & Testimonials" />
       </Section>
       <Banner
@@ -75,7 +68,7 @@ export default function AboutContacts() {
         ctaLabel="Contact us"
         ctaOnClick={() => setContactModalOpen(true)}
       />
-      <Section topMd={170} topLg={120} topXl={80}>
+      <Section topMd={56} topLg={48} topXl={40}>
         <GallerySection
           sectionTitle="Our Facilities and <br />Latest Activities"
           sectionTitleUp="HAVE A LOOK AT"
@@ -83,12 +76,12 @@ export default function AboutContacts() {
         />
       </Section>
       <Section
-        topMd={185}
-        topLg={145}
-        topXl={105}
-        bottomMd={200}
-        bottomLg={150}
-        bottomXl={110}
+        topMd={56}
+        topLg={48}
+        topXl={40}
+        bottomMd={80}
+        bottomLg={64}
+        bottomXl={52}
         className="cs_gray_bg_1 cs_faq_reviews_section"
       >
         <div className="container">
@@ -111,12 +104,12 @@ export default function AboutContacts() {
         </div>
       </Section>
       <Section
-        topMd={200}
-        topLg={150}
-        topXl={100}
-        bottomMd={200}
-        bottomLg={150}
-        bottomXl={110}
+        topMd={56}
+        topLg={48}
+        topXl={40}
+        bottomMd={80}
+        bottomLg={64}
+        bottomXl={52}
       >
         <ContactInfoSection sectionTitle="Find Us Here" />
       </Section>

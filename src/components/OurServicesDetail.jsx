@@ -1,21 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Section from './Section';
 import SectionHeading from './SectionHeading';
 import Spacing from './Spacing';
 import { getAssetUrl } from '../config';
+import InquiryModal from './InquiryModal';
 
 const CONTACT_URL = '/contact-testimonials';
 
-const FOR_PATIENTS_ITEMS = [
-  'Fever of unknown origin (PUO) and difficult fever',
-  'Tuberculosis (TB)',
-  'HIV and sexually transmitted infections (STIs)',
-  'Post-exposure prophylaxis (PEP) after sexual exposure',
-  'Recurrent or resistant infections',
-  'Antimicrobial treatment complications',
-  'Exposure-related infections, including animal bites',
-];
+const INQUIRY_TYPES = {
+  ID_OPINION: 'id-opinion',
+  PARTNERSHIP: 'partnership',
+};
 
 const FOR_DOCTORS_ITEMS = [
   'ID opinions for complex fever and infection cases',
@@ -38,7 +34,8 @@ const EDUCATION_ITEMS = [
   'Ongoing updates through newsletters and educational content',
 ];
 
-function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMoreHref, headerImage }) {
+function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMoreHref, headerImage, onInquiryClick, inquiryType }) {
+  const isInquiry = Boolean(onInquiryClick && inquiryType);
   return (
     <div className={`cs_our_services_detail_card ${headerImage ? 'cs_our_services_detail_card_has_header_img' : ''}`}>
       {headerImage ? (
@@ -57,13 +54,23 @@ function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMore
           ))}
         </ul>
         <div className="cs_our_services_detail_card_actions">
-          <Link to={buttonHref} className="cs_btn cs_style_1">
-            <span>{buttonText}</span>
-            <i>
-              <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
-              <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
-            </i>
-          </Link>
+          {isInquiry ? (
+            <button type="button" className="cs_btn cs_style_1" onClick={() => onInquiryClick(inquiryType)}>
+              <span>{buttonText}</span>
+              <i>
+                <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+                <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+              </i>
+            </button>
+          ) : (
+            <Link to={buttonHref} className="cs_btn cs_style_1">
+              <span>{buttonText}</span>
+              <i>
+                <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+                <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+              </i>
+            </Link>
+          )}
           <Link to={learnMoreHref} className="cs_our_services_detail_learn_more">
             Learn more
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
@@ -77,26 +84,24 @@ function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMore
 }
 
 export default function OurServicesDetail() {
+  const [inquiryModal, setInquiryModal] = useState({ open: false, title: '', type: null });
+
+  const openInquiry = (type) => {
+    const title = type === INQUIRY_TYPES.ID_OPINION ? 'Request an ID Opinion' : 'Partner with Us';
+    setInquiryModal({ open: true, title, type });
+  };
+
+  const closeInquiry = () => setInquiryModal({ open: false, title: '', type: null });
+
   return (
     <div className="cs_our_services_detail">
       {/* Service cards – shape wrap + container pattern like Doctors page */}
-      <Section topMd={40} topLg={32} topXl={26} bottomMd={40} bottomLg={32} bottomXl={26}>
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16}>
         <div className="cs_shape_wrap cs_our_services_detail_wrap">
           <div className="cs_shape_1" />
           <div className="container">
             <div className="cs_our_services_detail_cards">
-              {/* Row 1: one full-width card */}
-              <div className="cs_our_services_detail_cards_row cs_our_services_detail_cards_row_1">
-                <ServiceCard
-                  title="For Patients"
-                  subtitle="Conditions we commonly manage"
-                  items={FOR_PATIENTS_ITEMS}
-                  buttonText="Request an appointment"
-                  buttonHref="/patient-care-appointments"
-                  learnMoreHref="/patient-care-appointments"
-                />
-              </div>
-              {/* Row 2: two cards side by side */}
+              {/* Row 1: two cards side by side (For Doctors, For Hospital) */}
               <div className="cs_our_services_detail_cards_row cs_our_services_detail_cards_row_2">
                 <ServiceCard
                   title="For Doctors"
@@ -105,6 +110,8 @@ export default function OurServicesDetail() {
                   buttonText="Request an ID opinion"
                   buttonHref="/doctor-hospital-services"
                   learnMoreHref="/doctor-hospital-services"
+                  onInquiryClick={openInquiry}
+                  inquiryType={INQUIRY_TYPES.ID_OPINION}
                 />
                 <ServiceCard
                   title="For Hospital and health organizations"
@@ -113,9 +120,11 @@ export default function OurServicesDetail() {
                   buttonText="Partner with us"
                   buttonHref="/doctor-hospital-services"
                   learnMoreHref="/doctor-hospital-services"
+                  onInquiryClick={openInquiry}
+                  inquiryType={INQUIRY_TYPES.PARTNERSHIP}
                 />
               </div>
-              {/* Row 3: one full-width card */}
+              {/* Row 2: one full-width card (Education) */}
               <div className="cs_our_services_detail_cards_row cs_our_services_detail_cards_row_1">
                 <ServiceCard
                   title="Education for healthcare professional"
@@ -133,7 +142,7 @@ export default function OurServicesDetail() {
       </Section>
 
       {/* Our approach – SectionHeading + separator lines from sides into text */}
-      <Section topMd={40} topLg={32} topXl={26} bottomMd={20} bottomLg={18} bottomXl={16}>
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={16} bottomLg={14} bottomXl={12}>
         <div className="container">
           <div className="cs_our_services_approach_separator">
             <span className="cs_our_services_approach_line" aria-hidden />
@@ -153,7 +162,7 @@ export default function OurServicesDetail() {
       </Section>
 
       {/* Let's get started – CTA banner pattern like Doctors page */}
-      <Section topMd={20} topLg={18} topXl={16} bottomMd={40} bottomLg={32} bottomXl={26}>
+      <Section topMd={16} topLg={14} topXl={12} bottomMd={24} bottomLg={20} bottomXl={16}>
         <div className="container">
           <div className="cs_banner cs_style_1 cs_bg_filed cs_banner_cta cs_our_services_cta cs_our_services_cta_left_right" style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}>
             <div className="cs_banner_content">
@@ -186,6 +195,13 @@ export default function OurServicesDetail() {
           </div>
         </div>
       </Section>
+
+      <InquiryModal
+        isOpen={inquiryModal.open}
+        onClose={closeInquiry}
+        title={inquiryModal.title}
+        type={inquiryModal.type}
+      />
     </div>
   );
 }

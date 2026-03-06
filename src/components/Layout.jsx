@@ -8,14 +8,16 @@ export default function Layout() {
   const { pathname } = useLocation();
   const isHome = pathname === '/';
   return (
-    <>
+    <div className="cs_layout">
       <Header
         logoSrc="/images/best-of-ids-logo.png"
         variant={isHome ? 'cs_white_color' : 'cs_heading_color'}
       />
-      <Outlet />
+      <main className="cs_layout_main">
+        <Outlet />
+      </main>
       <FloatingWhatsApp />
       <Footer />
-    </>
+    </div>
   );
 }

@@ -1,83 +1,180 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Space, Modal, Drawer, Form, Input, message, Skeleton } from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Table, Button, Space, Modal, Drawer, Form, Input, message, Skeleton, Progress, Alert } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getEducationList, createEducation, updateEducation, deleteEducation } from '../../services/educationService';
-import { CloudinaryUploadField } from '../../components/educationHub/CloudinaryUploadField';
+import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
+import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
 
 const { TextArea } = Input;
 const CATEGORY = 'infographic';
+
+const initialMediaFiles = () => ({ contentLink: null });
 
 export default function InfographicsTab() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [mediaFiles, setMediaFiles] = useState(initialMediaFiles);
   const [form] = Form.useForm();
 
-  const load = () => { setLoading(true); getEducationList({ category: CATEGORY }).then(setData).catch(() => {}).finally(() => setLoading(false)); };
+  const load = () => {
+    setLoading(true);
+    getEducationList({ category: CATEGORY }).then(setData).catch(() => {}).finally(() => setLoading(false));
+  };
   useEffect(() => { load(); }, []);
 
-  const handleAdd = () => { setEditingId(null); form.resetFields(); setDrawerOpen(true); };
+  const handleAdd = () => {
+    setEditingId(null);
+    setMediaFiles(initialMediaFiles());
+    form.resetFields();
+    setDrawerOpen(true);
+  };
+
   const handleEdit = (record) => {
     setEditingId(record.id);
+    setMediaFiles({ contentLink: record.contentLink || null });
     form.setFieldsValue({
       title: record.title,
       description: record.description,
-      contentLink: record.contentLink,
     });
     setDrawerOpen(true);
   };
+
   const handleDelete = (id) => {
-    Modal.confirm({ title: 'Delete infographic?', okType: 'danger', onOk: () => deleteEducation(id).then(() => { setData((prev) => prev.filter((r) => r.id !== id)); message.success('Deleted.'); }).catch((e) => message.error(e.message)) });
-  };
-  const handleSubmit = () => {
-    form.validateFields().then((values) => {
-      const { contentLink, ...rest } = values;
-      const payload = { ...rest, contentLink, category: CATEGORY };
-      if (contentLink) {
-        payload.thumbnail = contentLink;
-        payload.previewThumbnail = contentLink;
-      }
-      if (editingId) updateEducation(editingId, payload).then((updated) => { setData((prev) => prev.map((r) => (r.id === editingId ? { ...updated, id: editingId } : r))); message.success('Updated.'); setDrawerOpen(false); }).catch((e) => message.error(e.message));
-      else createEducation(payload).then((created) => { setData((prev) => [{ ...created }, ...prev]); message.success('Created.'); setDrawerOpen(false); form.resetFields(); }).catch((e) => message.error(e.message));
+    Modal.confirm({
+      title: 'Delete infographic?',
+      okType: 'danger',
+      onOk: () =>
+        deleteEducation(id)
+          .then(() => {
+            setData((prev) => prev.filter((r) => r.id !== id));
+            message.success('Deleted.');
+          })
+          .catch((e) => message.error(e.message)),
     });
+  };
+
+  const getTempFiles = useCallback(() => {
+    if (mediaFiles.contentLink instanceof File) {
+      return [{ key: 'contentLink', file: mediaFiles.contentLink, resourceType: 'image' }];
+    }
+    return [];
+  }, [mediaFiles]);
+
+  const validateTempFiles = useCallback(() => {
+    if (!editingId && !(mediaFiles.contentLink instanceof File) && !mediaFiles.contentLink) {
+      throw new Error('Please upload infographic image');
+    }
+  }, [editingId, mediaFiles]);
+
+  const buildPayload = useCallback(
+    (values, urlMap) => {
+      const contentLink = urlMap.contentLink ?? (typeof mediaFiles.contentLink === 'string' ? mediaFiles.contentLink : undefined);
+      return {
+        ...values,
+        category: CATEGORY,
+        contentLink,
+        thumbnail: contentLink,
+        previewThumbnail: contentLink,
+      };
+    },
+    [mediaFiles]
+  );
+
+  const { handlePublish, uploadProgress, uploadStatus, errorMessage, resetUploadState, isUploading } = usePublishWithUpload({
+    form,
+    getTempFiles,
+    buildPayload,
+    validateTempFiles,
+    submitApi: createEducation,
+    updateApi: updateEducation,
+    isEdit: !!editingId,
+    editId: editingId,
+    onSuccess: () => {
+      message.success(editingId ? 'Updated.' : 'Created.');
+      setDrawerOpen(false);
+      setMediaFiles(initialMediaFiles());
+      form.resetFields();
+      resetUploadState();
+      load();
+    },
+    onError: (msg) => message.error(msg),
+  });
+
+  const handleCancel = () => {
+    setDrawerOpen(false);
+    setMediaFiles(initialMediaFiles());
+    form.resetFields();
+    resetUploadState();
   };
 
   const columns = [
     { title: 'Title', dataIndex: 'title', key: 'title' },
     { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
-    { title: 'Actions', key: 'actions', width: 120, render: (_, record) => (
-      <Space>
-        <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-        <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-      </Space>
-    ) },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 120,
+      render: (_, record) => (
+        <Space>
+          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
+          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
+        </Space>
+      ),
+    },
   ];
+
+  const publishFooter = (
+    <Space direction="vertical" style={{ width: '100%' }} size="small">
+      {errorMessage && <Alert type="error" message={errorMessage} showIcon />}
+      {isUploading && (
+        <>
+          <Progress percent={uploadProgress} size="small" status="active" />
+          <span style={{ fontSize: 12, color: '#666' }}>
+            {uploadStatus === 'uploading' ? `Uploading media... ${uploadProgress}%` : 'Upload complete. Publishing infographic...'}
+          </span>
+        </>
+      )}
+      <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
+        <Button onClick={handleCancel} disabled={isUploading}>Cancel</Button>
+        <Button type="primary" onClick={handlePublish} loading={isUploading}>Publish</Button>
+      </Space>
+    </Space>
+  );
 
   return (
     <>
-      <Space style={{ marginBottom: 16, justifyContent: 'flex-end', width: '100%' }}><Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add infographic</Button></Space>
+      <Space style={{ marginBottom: 16, justifyContent: 'flex-end', width: '100%' }}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>Add infographic</Button>
+      </Space>
       {loading ? <Skeleton active paragraph={{ rows: 8 }} /> : <Table dataSource={data} columns={columns} rowKey="id" pagination={{ pageSize: 10 }} />}
       <Drawer
         title={editingId ? 'Edit infographic' : 'Add infographic'}
         placement="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleCancel}
         width={540}
         getContainer={() => document.body}
         rootClassName="admin-education-drawer"
         destroyOnClose
-        footer={
-          <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
-            <Button onClick={() => setDrawerOpen(false)}>Cancel</Button>
-            <Button type="primary" onClick={handleSubmit}>Publish</Button>
-          </Space>
-        }
+        footer={publishFooter}
       >
         <Form form={form} layout="vertical">
           <Form.Item name="title" label="Title" rules={[{ required: true }]}><Input placeholder="Infographic title" /></Form.Item>
           <Form.Item name="description" label="Description"><TextArea rows={3} placeholder="Brief description" /></Form.Item>
-          <CloudinaryUploadField form={form} name="contentLink" label="Infographic image" resourceType="image" accept="image/jpeg,image/png,.jpg,.jpeg,.png" placeholder="Upload image (also used as thumbnail)" required />
+          <LocalFileUploadField
+            form={form}
+            name="contentLink"
+            label="Infographic image"
+            resourceType="image"
+            accept="image/jpeg,image/png,.jpg,.jpeg,.png"
+            placeholder="Upload image (also used as thumbnail)"
+            required
+            value={mediaFiles.contentLink}
+            onChange={(file) => setMediaFiles((prev) => ({ ...prev, contentLink: file }))}
+            disabled={isUploading}
+          />
         </Form>
       </Drawer>
     </>

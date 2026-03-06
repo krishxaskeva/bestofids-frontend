@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Icon } from '@iconify/react';
 import { message, Modal } from 'antd';
 import { getEducationList, getMyEnrollments, enroll, updateAccess } from '../../services/educationService';
+import { useAuth } from '../../contexts/AuthContext';
 import { CourseCard, WebinarCard, InfographicCard, PodcastCard } from './ContentCard';
 
 const CATEGORY_MAP = {
@@ -14,6 +15,7 @@ const CATEGORY_MAP = {
 const EMPTY_MSG = 'Content coming soon — check back shortly.';
 
 export default function TabContent({ tabKey, webinarFilter }) {
+  const { isSuperAdmin } = useAuth();
   const [list, setList] = useState([]);
   const [enrolledIds, setEnrolledIds] = useState(new Set());
   const [loading, setLoading] = useState(true);
@@ -101,6 +103,8 @@ export default function TabContent({ tabKey, webinarFilter }) {
     loading: enrollingId !== null,
   };
 
+  const hasAccess = (item) => enrolledIds.has(item.id) || (isSuperAdmin && item.contentLink);
+
   return (
     <div className="cs_edu_hub_content_grid">
       {tabKey === 'courses' &&
@@ -108,7 +112,7 @@ export default function TabContent({ tabKey, webinarFilter }) {
           <CourseCard
             key={item.id}
             item={item}
-            enrolled={enrolledIds.has(item.id)}
+            enrolled={hasAccess(item)}
             onContinue={handleAccess}
             {...common}
           />
@@ -118,7 +122,7 @@ export default function TabContent({ tabKey, webinarFilter }) {
           <WebinarCard
             key={item.id}
             item={item}
-            enrolled={enrolledIds.has(item.id)}
+            enrolled={hasAccess(item)}
             onWatch={handleAccess}
             onAddToCalendar={handleAddToCalendar}
             {...common}
@@ -129,7 +133,7 @@ export default function TabContent({ tabKey, webinarFilter }) {
           <InfographicCard
             key={item.id}
             item={item}
-            enrolled={enrolledIds.has(item.id)}
+            enrolled={hasAccess(item)}
             onView={handleViewInfographic}
             {...common}
           />
@@ -139,7 +143,7 @@ export default function TabContent({ tabKey, webinarFilter }) {
           <PodcastCard
             key={item.id}
             item={item}
-            enrolled={enrolledIds.has(item.id)}
+            enrolled={hasAccess(item)}
             onPlay={handleAccess}
             {...common}
           />

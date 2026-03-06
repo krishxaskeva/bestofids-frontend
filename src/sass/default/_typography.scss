@@ -20,9 +20,14 @@ html {
 body {
   overflow-x: hidden;
 }
-/* Ensure React root never becomes a scroll container */
+/* Document height = content height only (no min-height) so footer sits flush with nothing below it */
+html,
+body {
+  min-height: 0;
+}
 #root {
   overflow: visible;
+  min-height: 0;
 }
 
 h1,

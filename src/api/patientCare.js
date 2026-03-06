@@ -1,5 +1,5 @@
 /**
- * Patient Care API – data for the Patient Care & Appointments website section.
+ * Patient Care API – data for the Patient Care & Knowledge website section.
  * In this app, data is read from PatientCareContext (and persisted in localStorage).
  * For a backend, replace this with a fetch to GET /api/patient-care.
  */

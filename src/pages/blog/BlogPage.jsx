@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Modal, Drawer, Form, Input, Select, Tag, InputNumber, message, Skeleton } from 'antd';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, Table, Button, Space, Modal, Drawer, Form, Input, Select, InputNumber, message, Skeleton, Tag, Progress, Alert } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import dayjs from 'dayjs';
 import {
   getBlogsAdmin,
   createBlog,
   updateBlog,
   deleteBlog as deleteBlogApi,
 } from '../../services/blogService';
-import { CloudinaryUploadField } from '../../components/educationHub/CloudinaryUploadField';
-import dayjs from 'dayjs';
+import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
+import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
+import QuillWithTooltips from '../../components/QuillWithTooltips';
 
 const quillModules = {
   toolbar: [
@@ -22,11 +22,14 @@ const quillModules = {
   ],
 };
 
+const initialMediaFiles = () => ({ coverImage: null, pdfUrl: null });
+
 export default function BlogPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [mediaFiles, setMediaFiles] = useState(initialMediaFiles);
   const [form] = Form.useForm();
 
   const loadBlogs = () => {
@@ -46,21 +49,23 @@ export default function BlogPage() {
 
   const handleAdd = () => {
     setEditingId(null);
+    setMediaFiles(initialMediaFiles());
     form.resetFields();
     setDrawerOpen(true);
   };
 
   const handleEdit = (record) => {
     setEditingId(record.id);
+    setMediaFiles({
+      coverImage: record.coverImage || null,
+      pdfUrl: record.pdfUrl || null,
+    });
     form.setFieldsValue({
       title: record.title,
       description: record.description,
-      author: record.author,
       tags: record.tags,
       content: record.content,
       price: record.price ?? 0,
-      coverImage: record.coverImage,
-      pdfUrl: record.pdfUrl,
     });
     setDrawerOpen(true);
   };
@@ -80,39 +85,55 @@ export default function BlogPage() {
     });
   };
 
-  const handleSubmit = () => {
-    form.validateFields().then((values) => {
-      const payload = {
-        ...values,
-        coverImage: values.coverImage || undefined,
-        pdfUrl: values.pdfUrl || undefined,
-        status: 'published',
-      };
-      if (editingId) {
-        updateBlog(editingId, payload)
-          .then((updated) => {
-            setData((prev) => prev.map((r) => (r.id === editingId ? { ...updated, id: editingId } : r)));
-            message.success('Post updated.');
-            setDrawerOpen(false);
-            form.resetFields();
-          })
-          .catch((err) => message.error(err.message || 'Update failed'));
-      } else {
-        createBlog(payload)
-          .then((created) => {
-            setData((prev) => [{ ...created }, ...prev]);
-            message.success('Post created.');
-            setDrawerOpen(false);
-            form.resetFields();
-          })
-          .catch((err) => message.error(err.message || 'Create failed'));
-      }
-    });
+  const getTempFiles = useCallback(() => {
+    const list = [];
+    if (mediaFiles.coverImage instanceof File) {
+      list.push({ key: 'coverImage', file: mediaFiles.coverImage, resourceType: 'image' });
+    }
+    if (mediaFiles.pdfUrl instanceof File) {
+      list.push({ key: 'pdfUrl', file: mediaFiles.pdfUrl, resourceType: 'raw' });
+    }
+    return list;
+  }, [mediaFiles]);
+
+  const buildPayload = useCallback(
+    (values, urlMap) => ({
+      ...values,
+      coverImage: urlMap.coverImage ?? (typeof mediaFiles.coverImage === 'string' ? mediaFiles.coverImage : undefined),
+      pdfUrl: urlMap.pdfUrl ?? (typeof mediaFiles.pdfUrl === 'string' ? mediaFiles.pdfUrl : undefined),
+      status: 'published',
+    }),
+    [mediaFiles]
+  );
+
+  const { handlePublish, uploadProgress, uploadStatus, errorMessage, resetUploadState, isUploading } = usePublishWithUpload({
+    form,
+    getTempFiles,
+    buildPayload,
+    submitApi: createBlog,
+    updateApi: updateBlog,
+    isEdit: !!editingId,
+    editId: editingId,
+    onSuccess: () => {
+      message.success(editingId ? 'Post updated.' : 'Post created.');
+      setDrawerOpen(false);
+      setMediaFiles(initialMediaFiles());
+      form.resetFields();
+      resetUploadState();
+      loadBlogs();
+    },
+    onError: (msg) => message.error(msg),
+  });
+
+  const handleCancel = () => {
+    setDrawerOpen(false);
+    setMediaFiles(initialMediaFiles());
+    form.resetFields();
+    resetUploadState();
   };
 
   const columns = [
     { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
-    { title: 'Author', dataIndex: 'author', key: 'author', width: 100 },
     { title: 'Price', dataIndex: 'price', key: 'price', width: 80, render: (v) => (v != null ? `₹${v}` : '—') },
     {
       title: 'Tags',
@@ -141,6 +162,24 @@ export default function BlogPage() {
     },
   ];
 
+  const publishFooter = (
+    <Space direction="vertical" style={{ width: '100%' }} size="small">
+      {errorMessage && <Alert type="error" message={errorMessage} showIcon />}
+      {isUploading && (
+        <>
+          <Progress percent={uploadProgress} size="small" status="active" />
+          <span style={{ fontSize: 12, color: '#666' }}>
+            {uploadStatus === 'uploading' ? `Uploading media... ${uploadProgress}%` : 'Upload complete. Publishing...'}
+          </span>
+        </>
+      )}
+      <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
+        <Button onClick={handleCancel} disabled={isUploading}>Cancel</Button>
+        <Button type="primary" onClick={handlePublish} loading={isUploading}>Publish</Button>
+      </Space>
+    </Space>
+  );
+
   return (
     <div>
       <h2 style={{ marginBottom: 24, fontWeight: 600 }}>Blog</h2>
@@ -165,54 +204,55 @@ export default function BlogPage() {
         title={editingId ? 'Edit blog post' : 'Create blog post'}
         placement="right"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={handleCancel}
         width={640}
         getContainer={() => document.body}
         rootClassName="admin-education-drawer"
         destroyOnClose
-        footer={
-          <Space style={{ justifyContent: 'flex-end', width: '100%' }}>
-            <Button onClick={() => setDrawerOpen(false)}>Cancel</Button>
-            <Button type="primary" onClick={handleSubmit}>Save</Button>
-          </Space>
-        }
+        footer={publishFooter}
+        styles={{ body: { paddingBottom: 24 } }}
       >
-        <Form form={form} layout="vertical">
-          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
-            <Input placeholder="Blog title" />
-          </Form.Item>
-          <Form.Item name="description" label="Short Description">
-            <Input.TextArea rows={3} placeholder="Short description" />
-          </Form.Item>
-          <Form.Item name="author" label="Author" rules={[{ required: true }]}>
-            <Input placeholder="Author name" />
-          </Form.Item>
-          <Form.Item name="price" label="Price in INR" rules={[{ required: true }]} initialValue={0}>
-            <InputNumber min={0} style={{ width: '100%' }} placeholder="0 for free" />
-          </Form.Item>
-          <Form.Item name="tags" label="Tags">
-            <Select mode="tags" placeholder="Add tags" style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="content" label="Content" rules={[{ required: true }]}>
-            <ReactQuill theme="snow" modules={quillModules} placeholder="Write content..." style={{ minHeight: 200 }} />
-          </Form.Item>
-          <CloudinaryUploadField
-            form={form}
-            name="coverImage"
-            label="Cover Image"
-            resourceType="image"
-            accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
-            placeholder="Upload cover image"
-          />
-          <CloudinaryUploadField
-            form={form}
-            name="pdfUrl"
-            label="PDF File"
-            resourceType="raw"
-            accept=".pdf,application/pdf"
-            placeholder="Upload PDF"
-          />
-        </Form>
+        {drawerOpen && (
+          <Form form={form} layout="vertical">
+            <Form.Item name="title" label="Title" rules={[{ required: true, message: 'Enter title' }]}>
+              <Input placeholder="Blog title" />
+            </Form.Item>
+            <Form.Item name="description" label="Short Description">
+              <Input.TextArea rows={3} placeholder="Short description" />
+            </Form.Item>
+            <LocalFileUploadField
+              form={form}
+              name="pdfUrl"
+              label="PDF File"
+              resourceType="raw"
+              accept=".pdf,application/pdf"
+              placeholder="Upload PDF"
+              value={mediaFiles.pdfUrl}
+              onChange={(file) => setMediaFiles((prev) => ({ ...prev, pdfUrl: file }))}
+              disabled={isUploading}
+            />
+            <LocalFileUploadField
+              form={form}
+              name="coverImage"
+              label="Cover Image"
+              resourceType="image"
+              accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+              placeholder="Upload cover image"
+              value={mediaFiles.coverImage}
+              onChange={(file) => setMediaFiles((prev) => ({ ...prev, coverImage: file }))}
+              disabled={isUploading}
+            />
+            <Form.Item name="price" label="Price in INR" rules={[{ required: true, message: 'Enter price' }]} initialValue={0}>
+              <InputNumber min={0} style={{ width: '100%' }} placeholder="0 for free" />
+            </Form.Item>
+            <Form.Item name="tags" label="Tags">
+              <Select mode="tags" placeholder="Add tags" style={{ width: '100%' }} />
+            </Form.Item>
+            <Form.Item name="content" label="Content" rules={[{ required: true, message: 'Enter content' }]}>
+              <QuillWithTooltips theme="snow" modules={quillModules} placeholder="Write content..." style={{ minHeight: 200 }} />
+            </Form.Item>
+          </Form>
+        )}
       </Drawer>
     </div>
   );

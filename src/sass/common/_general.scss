@@ -851,6 +851,7 @@ input::-ms-input-placeholder,
 }
 .cs_shape_wrap {
   position: relative;
+  overflow: hidden; /* prevent 1884px decorative shape from extending page and creating white space below footer */
   .cs_shape_1 {
     width: 1884px;
     height: 1884px;

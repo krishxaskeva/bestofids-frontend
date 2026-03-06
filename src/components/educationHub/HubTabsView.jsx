@@ -80,11 +80,11 @@ export default function HubTabsView() {
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={24} bottomLg={20}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="ID Education & Knowledge Hub" />
       </Section>
 
-      <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
+      <Section topMd={0} topLg={0} topXl={0} bottomMd={32} bottomLg={28} bottomXl={24}>
         <div className="container">
           <div className="cs_edu_hub_tabs_wrap">
             <Tabs

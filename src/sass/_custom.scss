@@ -1,6 +1,19 @@
 @use "default/color_variable";
 @use "sass:color";
 
+/* Layout: min-height 100vh so footer sits at bottom on short pages; main grows to fill, no white below footer */
+.cs_layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.cs_layout_main {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Nav bar: keep all menu items on the same line (no wrap) + active link underline */
 @media (min-width: 1200px) {
   .cs_site_header .cs_nav .cs_nav_list_wrap {
@@ -1026,6 +1039,45 @@
   border: 1px solid rgba(color_variable.$primary, 0.08);
 }
 
+/* Ant Popover avatar menu (portal) – reuse dropdown look */
+.cs_avatar_popover.ant-popover .ant-popover-inner {
+  padding: 0;
+  border-radius: 12px;
+  box-shadow: 0px 4px 21px 1px rgba(color_variable.$primary, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(color_variable.$primary, 0.08);
+}
+.cs_avatar_popover .cs_avatar_dropdown {
+  position: static;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  margin-top: 0;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  padding: 6px 0;
+}
+
+/* Header side nav: Ant Design Drawer (replaces custom cs_sidenav) */
+.cs_header_sidenav_drawer.ant-drawer .ant-drawer-content-wrapper {
+  max-width: 100%;
+}
+@media (max-width: 768px) {
+  .cs_header_sidenav_drawer.ant-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+}
+.cs_header_sidenav_drawer .cs_sidenav_in {
+  padding: 24px 24px 60px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+@media (min-width: 769px) {
+  .cs_header_sidenav_drawer .cs_sidenav_in {
+    padding: 60px 80px 80px;
+  }
+}
+
 /* Login pages: full-page layout without navbar/footer */
 .cs_login_page_wrapper {
   min-height: 100vh;
@@ -1209,7 +1261,7 @@
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.45);
   cursor: pointer;
 }
 .cs_contact_modal_content {
@@ -1218,62 +1270,113 @@
   top: 0;
   right: 0;
   bottom: 0;
-  overflow: auto;
   padding: 20px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   text-align: left;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  overflow: auto;
 }
 .cs_contact_modal_container {
   position: relative;
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-  max-width: 720px;
+  border-radius: 20px;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.1);
+  max-width: 560px;
   width: 100%;
-  max-height: calc(100vh - 4rem);
-  overflow-y: auto;
-  padding: 1.5rem 2rem 1.5rem;
+  max-height: calc(100vh - 2.5rem);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.cs_contact_modal_header {
+  position: relative;
+  flex-shrink: 0;
+  padding: 1.5rem 3rem 0 1.75rem;
+  padding-bottom: 0.5rem;
 }
 .cs_contact_modal_close {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 36px;
-  height: 36px;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 40px;
+  height: 40px;
   border: none;
   background: transparent;
-  color: color_variable.$primary;
+  color: color_variable.$accent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 24px;
   border-radius: 50%;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 .cs_contact_modal_close:hover {
-  background: rgba(0, 0, 0, 0.06);
-  color: color_variable.$primary;
+  background: rgba(color_variable.$accent, 0.1);
+  color: color_variable.$accent;
 }
 .cs_contact_modal_title {
-  font-size: 1.5rem;
+  font-size: 1.75rem;
   font-weight: 600;
-  margin: 0 0 0.5rem;
-  padding-right: 2.5rem;
+  margin: 0 0 0.35rem;
+  padding-right: 2.75rem;
+  color: color_variable.$accent;
+  line-height: 1.2;
 }
 .cs_contact_modal_desc {
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin: 0 0 1.5rem;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  margin: 0 0 0;
   opacity: 0.9;
+  color: color_variable.$primary;
 }
 .cs_contact_modal_container .cs_contact_form {
   margin: 0;
   box-shadow: none;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 1.25rem 1.75rem 1.5rem;
+  border-radius: 0 0 20px 20px;
+}
+.cs_contact_modal_container .cs_contact_form_modal .cs_form_field {
+  width: 100%;
+  box-sizing: border-box;
+}
+.cs_contact_modal_container .cs_contact_form_modal .cs_contact_form_textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+.cs_contact_modal_container .cs_contact_form_modal .cs_contact_form_submit_wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+.cs_contact_modal_container .cs_contact_form_modal .cs_contact_form_submit_btn {
+  width: fit-content;
+}
+.cs_contact_modal_container .cs_contact_form_modal .cs_input_label {
+  display: block;
+  margin-bottom: 8px;
+}
+.cs_contact_modal_container .cs_contact_form_modal .row.g-3 > [class*='col-'] {
+  margin-bottom: 0.5rem;
+}
+.cs_contact_modal_container .cs_contact_form_modal .row.g-3 {
+  margin-bottom: -0.5rem;
+}
+
+/* Inquiry modal (ID opinion / Partnership) success and error messages */
+.cs_inquiry_modal_success {
+  color: color_variable.$primary;
+  font-weight: 500;
+}
+.cs_inquiry_modal_error {
+  margin: 0 0 1rem;
+  padding: 0.5rem 0;
+  color: #c00;
+  font-size: 0.95rem;
 }
 
 /* All pages: when scrolled, header becomes white with dark text */
@@ -2758,6 +2861,14 @@
   line-height: 1.35;
   color: inherit;
 }
+.cs_edu_hub_card_title_link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s;
+  &:hover {
+    color: color_variable.$primary;
+  }
+}
 .cs_edu_hub_content_card_desc {
   font-size: 0.9rem;
   color: #4a5568;
@@ -2825,6 +2936,154 @@
 }
 .cs_edu_hub_card_enrolled .cs_edu_hub_card_thumb_lock {
   display: none;
+}
+
+/* Education detail page (single item) */
+.cs_edu_detail_page {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.cs_edu_detail_nav {
+  margin-bottom: 1.5rem;
+}
+.cs_edu_detail_back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: color_variable.$primary;
+  font-weight: 500;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  .iconify {
+    font-size: 1.25rem;
+  }
+}
+.cs_edu_detail_header {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
+  align-items: start;
+  margin-bottom: 2.5rem;
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+}
+.cs_edu_detail_thumb_wrap {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cs_edu_detail_thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.cs_edu_detail_thumb_lock {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  .iconify {
+    font-size: 3rem;
+  }
+}
+.cs_edu_detail_meta_col {
+  min-width: 0;
+}
+.cs_edu_detail_category {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  background: rgba(color_variable.$primary, 0.12);
+  color: color_variable.$primary;
+}
+.cs_edu_detail_cat_webinar.cs_edu_detail_live {
+  background: rgba(234, 88, 12, 0.15);
+  color: #ea580c;
+}
+.cs_edu_detail_title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 1rem;
+  line-height: 1.3;
+  color: inherit;
+  @media (max-width: 575px) {
+    font-size: 1.4rem;
+  }
+}
+.cs_edu_detail_desc {
+  font-size: 1rem;
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.cs_edu_detail_meta_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.cs_edu_detail_meta_item {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+.cs_edu_detail_actions {
+  margin-top: 1rem;
+}
+.cs_edu_detail_content {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 2rem;
+}
+.cs_edu_detail_content_title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+  color: inherit;
+}
+.cs_edu_detail_infographic_wrap {
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f1f5f9;
+}
+.cs_edu_detail_infographic_img {
+  width: 100%;
+  height: auto;
+  display: block;
+  vertical-align: top;
+}
+.cs_edu_detail_embed_wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.cs_edu_detail_embed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cs_edu_detail_external {
+  padding: 1.5rem 0;
+}
+.cs_edu_detail_external_hint {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0.5rem 0 0;
 }
 
 /* My Learning page */
@@ -3528,7 +3787,7 @@ $vm-gray: #3d4f5c;
   }
 }
 
-/* Patient Care & Appointments page: Back link + title stacked, teal title */
+/* Patient Care & Knowledge page: Back link + title stacked, teal title */
 .patients-forum-header {
   display: flex;
   flex-direction: column;
@@ -3596,9 +3855,19 @@ $vm-gray: #3d4f5c;
   min-width: 0;
 }
 
+/* Doctor details: right column matches left (photo) height; button at bottom */
+.cs_doctor_details .cs_doctor_details_col {
+  display: flex;
+  flex-direction: column;
+}
+.cs_doctor_details .cs_doctor_details_col .cs_doctor_details_book_btn {
+  margin-top: auto;
+}
+
 /* Doctor details: Book an Appointment button with WhatsApp icon, teal outline */
 .cs_doctor_details_book_btn {
   display: inline-flex;
+  width: fit-content;
   align-items: center;
   gap: 10px;
   margin-top: 24px;
@@ -4089,6 +4358,17 @@ $vm-gray: #3d4f5c;
   .course-purchase-modal .ant-modal-content {
     padding: 16px;
   }
+}
+
+/* Patient Care & Knowledge: modal body scrollable with space for long content */
+.patient-care-modal .ant-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 12px;
+  padding-bottom: 8px;
+}
+.patient-care-modal .patient-care-detail {
+  padding: 0 4px 4px 0;
 }
 
 /* Home: Impact / Stats – floating card below hero (same style as button section) */

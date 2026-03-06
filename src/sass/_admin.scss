@@ -73,8 +73,13 @@
   .anticon:hover {
     color: color_variable.$primary;
   }
+  /* Avatar with image: no forced background. Icon-only (no photo): light neutral circle instead of teal */
   .ant-avatar {
-    background: color_variable.$primary !important;
+    background: #e8e8e8 !important;
+    color: color_variable.$text-primary;
+  }
+  .ant-avatar img {
+    object-fit: cover;
   }
 }
 
@@ -113,10 +118,21 @@
     background: #f0f2f5 !important;
     color: color_variable.$text-primary;
     font-weight: 600;
+    padding: 12px 16px;
+    white-space: nowrap;
   }
   .ant-table-tbody > tr:hover > td {
     background: rgba(17, 117, 116, 0.06) !important;
   }
+}
+
+/* Patient Care table: ensure headers don’t wrap and have consistent spacing */
+.admin-content .patient-care-table .ant-table-thead > tr > th {
+  padding: 12px 16px;
+  white-space: nowrap;
+}
+.admin-content .patient-care-table .ant-table-tbody > tr > td {
+  padding: 12px 16px;
 }
 
 /* Buttons: primary = teal (handled by ConfigProvider); link buttons use brand color */
@@ -157,7 +173,7 @@
   font-size: 1rem;
 }
 
-/* Admin notifications (Message) – visible above sidebar/header, clearer styling */
+/* Admin notifications (Message) – visible above sidebar/header, opaque background (override Ant Design CSS-in-JS) */
 .admin-message-root {
   position: fixed;
   top: 80px;
@@ -172,6 +188,7 @@
 .admin-message-root .ant-message-notice {
   pointer-events: auto;
 }
+/* Base content box: ensure opaque background so it's never transparent */
 .admin-message-root .ant-message-notice-content {
   padding: 12px 20px;
   min-width: 280px;
@@ -181,21 +198,27 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff !important;
+  background-color: #fff !important;
 }
 .admin-message-root .ant-message-success .ant-message-notice-content {
-  background: #f6ffed;
+  background: #f6ffed !important;
+  background-color: #f6ffed !important;
   border-color: #b7eb8f;
 }
 .admin-message-root .ant-message-error .ant-message-notice-content {
-  background: #fff2f0;
+  background: #fff2f0 !important;
+  background-color: #fff2f0 !important;
   border-color: #ffccc7;
 }
 .admin-message-root .ant-message-info .ant-message-notice-content {
-  background: #e6f7ff;
+  background: #e6f7ff !important;
+  background-color: #e6f7ff !important;
   border-color: #91d5ff;
 }
 .admin-message-root .ant-message-warning .ant-message-notice-content {
-  background: #fffbe6;
+  background: #fffbe6 !important;
+  background-color: #fffbe6 !important;
   border-color: #ffe58f;
 }
 .admin-message-root .ant-message-notice-content .anticon {
@@ -203,7 +226,7 @@
   margin-right: 10px;
 }
 
-/* Education admin: force Drawer to open from the right (override any modal-like styles) */
+/* Education admin + Blog create/edit: force Drawer to open from the right; ensure form inputs work */
 .admin-education-drawer.ant-drawer {
   position: fixed !important;
   inset: 0 !important;
@@ -220,6 +243,128 @@
   bottom: 0 !important;
   left: auto !important;
 }
+.admin-education-drawer.ant-drawer .ant-drawer-content,
+.admin-education-drawer.ant-drawer .ant-drawer-body {
+  pointer-events: auto;
+}
+/* Ensure all form controls in the drawer can receive focus and clicks (fixes Detailed Content stealing input) */
+.admin-education-drawer.ant-drawer .ant-drawer-body .ant-form-item-control-input input,
+.admin-education-drawer.ant-drawer .ant-drawer-body .ant-form-item-control-input textarea,
+.admin-education-drawer.ant-drawer .ant-drawer-body .ant-select-selector,
+.admin-education-drawer.ant-drawer .ant-drawer-body .ant-input-number {
+  pointer-events: auto;
+}
 .admin-education-drawer.ant-drawer.ant-drawer-open .ant-drawer-content-wrapper {
   box-shadow: -6px 0 16px 0 rgba(0, 0, 0, 0.08), -3px 0 6px -4px rgba(0, 0, 0, 0.12);
+}
+
+/* Popover (e.g. Content / Detailed Content field hints) */
+.ant-popover-content p {
+  margin: 0;
+}
+.ant-popover-content p + p {
+  margin-top: 6px;
+}
+
+/* Quill with custom toolbar – each tool has Ant Design Popover */
+.quill-with-tooltips {
+  /* Prevent editor from overlapping other form fields and capturing their clicks/focus */
+  overflow: hidden;
+}
+.quill-with-tooltips .quill-toolbar-with-popover {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px 4px 0 0;
+  background: #fff;
+  /* Prevent paragraph/header picker from breaking flex layout */
+  .ql-formats {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  /* Ant Design Dropdown trigger for Paragraph / Heading */
+  .quill-toolbar-dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 110px;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #444;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    outline: none;
+    &:hover {
+      color: #06c;
+    }
+    .quill-toolbar-dropdown-label {
+      flex: 1;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .quill-toolbar-dropdown-icon {
+      font-size: 10px;
+      opacity: 0.75;
+    }
+  }
+  /* Legacy ql-picker (no longer used for header; keep for any other picker) */
+  .ql-picker {
+    float: none !important;
+    width: 98px;
+  }
+  .ql-picker-label {
+    padding-right: 24px;
+  }
+  /* Make toolbar icon SVGs visible (Quill uses .ql-stroke / .ql-fill) */
+  .ql-stroke {
+    stroke: #444;
+    fill: none;
+  }
+  .ql-fill {
+    fill: #444;
+    stroke: none;
+  }
+  .ql-even.ql-stroke {
+    stroke: #444;
+  }
+  .ql-even.ql-fill {
+    fill: #444;
+  }
+  .ql-thin {
+    stroke-width: 1;
+  }
+  button:hover .ql-stroke,
+  .ql-picker-label:hover .ql-stroke {
+    stroke: #06c;
+  }
+  button:hover .ql-fill,
+  .ql-picker-label:hover .ql-fill {
+    fill: #06c;
+  }
+  button.ql-active .ql-stroke {
+    stroke: #06c;
+  }
+  button.ql-active .ql-fill {
+    fill: #06c;
+  }
+  /* Size toolbar icons */
+  button svg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+}
+.quill-with-tooltips .quill .ql-container.ql-snow {
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
 }

@@ -10,6 +10,7 @@ export default function DoctorDetailsSection({
   name,
   designation,
   description,
+  bulletPoints,
   contactInfo,
   contactInfoHeading,
   bookAppointmentHref = 'https://wa.me/',
@@ -24,19 +25,27 @@ export default function DoctorDetailsSection({
       />
       <Spacing md="85" />
       <div className="container">
-        <div className="row">
+        <div className="row align-items-center">
           <div className="col-lg-5">
             <div className="cs_single_doctor overflow-hidden cs_radius_20">
               <img src={getAssetUrl(imgUrl)} alt="Doctor" className="w-100" />
             </div>
           </div>
-          <div className="col-lg-6 offset-lg-1 position-relative">
+          <div className="col-lg-6 offset-lg-1 position-relative cs_doctor_details_col">
             <Spacing md="55" />
             <h2 className="cs_fs_48 mb-0 cs_semibold">{name}</h2>
             <Spacing md="12" />
             <h3 className="cs_semibold cs_fs_24 mb-0">{designation}</h3>
             <Spacing md="32" />
-            <p className="mb-0 cs_heading_color">{description}</p>
+            {bulletPoints && bulletPoints.length > 0 ? (
+              <ul className="mb-0 cs_heading_color ps-3" style={{ lineHeight: 1.8 }}>
+                {bulletPoints.map((item, index) => (
+                  <li key={index}>{item}</li>
+                ))}
+              </ul>
+            ) : (
+              description && <p className="mb-0 cs_heading_color">{description}</p>
+            )}
             <a
               href={bookAppointmentHref}
               target="_blank"
@@ -46,12 +55,16 @@ export default function DoctorDetailsSection({
               <Icon icon="fa6-brands:whatsapp" aria-hidden />
               <span>Book an Appointment</span>
             </a>
-            <Spacing md="35" lg="32" />
-            <List
-              heading={contactInfoHeading}
-              iconUrl="/images/icons/schedule.svg"
-              data={contactInfo}
-            />
+            {contactInfo && contactInfo.length > 0 && (
+              <>
+                <Spacing md="35" lg="32" />
+                <List
+                  heading={contactInfoHeading}
+                  iconUrl="/images/icons/schedule.svg"
+                  data={contactInfo}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

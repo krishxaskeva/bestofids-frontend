@@ -16,7 +16,7 @@ export default function Post({
   return (
     <div className={`cs_post cs_style_1 ${variant}`}>
       <Link to={href} className="cs_post_thumb cs_view_mouse">
-        <img src={getAssetUrl(thumbUrl)} alt={title} />
+        {thumbUrl && <img src={getAssetUrl(thumbUrl)} alt={title} />}
         {badge && (
           <span className="cs_post_badge">{badge}</span>
         )}
