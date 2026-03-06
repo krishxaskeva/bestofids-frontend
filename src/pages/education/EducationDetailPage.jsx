@@ -70,7 +70,7 @@ export default function EducationDetailPage() {
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [enrolled, setEnrolled] = useState(false);
+  const [_enrolled, setEnrolled] = useState(false);
   const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
