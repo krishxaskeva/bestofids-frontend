@@ -38,17 +38,9 @@
       "react-app",
       "react-app/jest"
     ],
-    "overrides": [
-      {
-        "files": [
-          "src/pages/education/CoursesTab.jsx",
-          "src/pages/payments/PaymentsPage.jsx"
-        ],
-        "rules": {
-          "no-unused-vars": "off"
-        }
-      }
-    ]
+    "rules": {
+      "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+    }
   },
   "browserslist": {
     "production": [
@@ -65,7 +57,8 @@
   "overrides": {
     "jsonpath": "^1.2.1",
     "nth-check": ">=2.0.1",
-    "postcss": ">=8.4.31"
+    "postcss": ">=8.4.31",
+    "resolve-url-loader": "^5.0.0"
   },
   "devDependencies": {
     "sharp": "^0.34.5"

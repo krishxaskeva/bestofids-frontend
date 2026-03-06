@@ -21,7 +21,7 @@ export default function DepartmentCarousel({ data, scrollToSection, activeDivisi
   }, [data]);
 
   /** Slider Settings **/
-  const SlickArrowLeft = ({ currentSlide, slideCount: total, ...props }) => (
+  const SlickArrowLeft = ({ currentSlide, slideCount: _total, ...props }) => (
     <div
       {...props}
       className={

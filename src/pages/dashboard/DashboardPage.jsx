@@ -26,7 +26,7 @@ export default function DashboardPage() {
     ]).then(([s, u, p]) => {
       setStats(s || {});
       setRecentUsers(u.map((x, i) => ({ id: x.id || i, name: x.name, email: x.email, date: x.createdAt })));
-      setRecentPayments(p.map((x, i) => ({
+      setRecentPayments(p.map((x, _i) => ({
         id: x.id,
         user: x.userName || x.userId,
         amount: x.amount,

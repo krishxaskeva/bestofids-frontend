@@ -13,7 +13,7 @@ import ReplyWidget from './ReplyWidget';
 import { pageTitle } from '../utils/PageTitle';
 import { useAuth } from '../contexts/AuthContext';
 import { getBlogById, checkBlogPurchase, createBlogOrder, verifyBlogPayment, getBlogs } from '../services/blogService';
-import { Button, message, Skeleton } from 'antd';
+import { Button, message} from 'antd';
 import dayjs from 'dayjs';
 import htmlReactParser from 'html-react-parser';
 import { getAssetUrl } from '../config';

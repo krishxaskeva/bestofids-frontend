@@ -110,7 +110,7 @@ export default function FloatingWhatsApp() {
     }
   }, []);
 
-  const handlePointerUp = useCallback((e) => {
+  const handlePointerUp = useCallback((_e) => {
     if (isDraggingRef.current) {
       const pos = pixelPosRef.current;
       const centerX = pos.x + CIRCLE_SIZE / 2;

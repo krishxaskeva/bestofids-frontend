@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import Section from '../../components/Section';
 import Breadcrumb from '../../components/Breadcrumb';
-import Spacing from '../../components/Spacing';
 import { getMyEnrollments, updateAccess } from '../../services/educationService';
 import { getAssetUrl } from '../../config';
 import { pageTitle } from '../../utils/PageTitle';

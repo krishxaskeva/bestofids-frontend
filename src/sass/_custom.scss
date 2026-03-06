@@ -1,4 +1,5 @@
 @use "default/color_variable";
+@use "sass:color";
 
 /* Nav bar: keep all menu items on the same line (no wrap) + active link underline */
 @media (min-width: 1200px) {
@@ -799,7 +800,7 @@
   align-items: center;
   gap: 0.25rem;
   &:hover {
-    color: darken(color_variable.$primary, 8%);
+    color: color.adjust(color_variable.$primary, $lightness: -8%);
     text-decoration: underline;
   }
   svg {
@@ -2524,7 +2525,7 @@
     color: #fff;
     border-color: color_variable.$primary;
     &:hover {
-      background: darken(color_variable.$primary, 6%);
+      background: color.adjust(color_variable.$primary, $lightness: -6%);
     }
   }
 }

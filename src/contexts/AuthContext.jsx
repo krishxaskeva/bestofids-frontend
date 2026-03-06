@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as authService from '../services/authService';
-import { getStoredToken, clearStoredAuth, setStoredAuth } from '../api/client';
+import { getStoredToken, clearStoredAuth } from '../api/client';
 
 const ROLE_SUPER_ADMIN = 'admin';
 const ROLE_MEMBER = 'user';
@@ -42,19 +42,19 @@ export function AuthProvider({ children }) {
   };
 
   const login = async (email, password) => {
-    const { user: u, token } = await authService.login(email, password);
+    const { user: u} = await authService.login(email, password);
     setUser({ ...u, role: u.role || ROLE_MEMBER });
     return u;
   };
 
   const adminLogin = async (email, password) => {
-    const { user: u, token } = await authService.adminLogin(email, password);
+    const { user: u} = await authService.adminLogin(email, password);
     setUser({ ...u, role: u.role || ROLE_SUPER_ADMIN });
     return u;
   };
 
   const signup = async (name, email, password, roleType, phone) => {
-    const { user: u, token } = await authService.signup(name, email, password, roleType, phone);
+    const { user: u} = await authService.signup(name, email, password, roleType, phone);
     setUser({ ...u, role: u.role || ROLE_MEMBER });
     return u;
   };
