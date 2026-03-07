@@ -10,6 +10,13 @@ The app uses Cloudinary for client-side uploads. Configure in `.env`:
 
 Vite replaces `VITE_*` variables **at build time**. If you don't set them in Vercel, the production build will not have your Cloudinary base URL and will fall back to the `public` folder (so Cloudinary images won't show).
 
+**If images and logos don’t show on Vercel (but work locally):**
+
+1. **Static files** – This repo includes a `vercel.json` that rewrites only non-asset paths to `index.html`, so `/images/*` and `/assets/*` are served from the build. Redeploy after pulling the latest code.
+2. **Load from Cloudinary** – In Vercel → **Settings** → **Environment Variables**, set **VITE_ASSETS_BASE** to your Cloudinary base URL. Then **redeploy**. All `getAssetUrl()` URLs will then point to Cloudinary and work even if static file rewrites were wrong.
+
+Steps for Cloudinary (optional but recommended for production):
+
 1. In Vercel: open your project → **Settings** → **Environment Variables**.
 2. Add these (for **Production**, and optionally **Preview**):
    - **VITE_ASSETS_BASE** = `https://res.cloudinary.com/dgifgbzdl/image/upload/bestofids/public`  
