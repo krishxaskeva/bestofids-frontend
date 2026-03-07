@@ -13,7 +13,10 @@ export default function GallerySection({ sectionTitle, sectionTitleUp, data }) {
         </div>
         <div className="cs_grid_item"></div>
         {data?.map((item, index) => (
-          <div className="cs_grid_item" key={index}>
+          <div
+            className={`cs_grid_item${index === 1 ? ' cs_gallery_second_img' : ''}${index === 2 ? ' cs_gallery_third_img' : ''}`}
+            key={index}
+          >
             <Portfolio key={index} {...item} />
           </div>
         ))}

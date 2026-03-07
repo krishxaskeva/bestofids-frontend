@@ -108,11 +108,11 @@ export default function Home() {
         quickLinks={[]}
       />
       <ImpactStatsSection />
-      {/* Start Appointments & Our Services Section */}
+      {/* Start Services & Appointments Section */}
       <Section topMd={16} topLg={14} topXl={8}>
         <OurServicesCards />
       </Section>
-      {/* End Appointments & Our Services Section */}
+      {/* End Services & Appointments Section */}
       {/* Start About Section */}
       <Section topMd={28} topLg={24} topXl={20}>
         <AboutSection
@@ -128,9 +128,9 @@ export default function Home() {
         topMd={30}
         topLg={28}
         topXl={24}
-        bottomMd={0}
-        bottomLg={0}
-        bottomXl={0}
+        bottomMd={16}
+        bottomLg={14}
+        bottomXl={12}
         className="cs_our_values_wrapper"
       >
         <div className="cs_our_values_section">
@@ -139,7 +139,7 @@ export default function Home() {
       </Section>
       {/* End Feature Section */}
       {/* Start Why Choose Best of IDs Section */}
-      <Section topMd={24} topLg={12} topXl={10}>
+      <Section topMd={20} topLg={18} topXl={16}>
         <AwardSection
           sectionTitle="Why Choose Best of IDs?"
           sectionTitleDown="Expert Infectious Disease Care You Can Trust"

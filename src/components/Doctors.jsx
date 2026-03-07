@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Card } from 'antd';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
 import SectionHeading from './SectionHeading';
@@ -7,6 +8,8 @@ import Spacing from './Spacing';
 import WhyDoctorsChoose from './WhyDoctorsChoose';
 import { pageTitle } from '../utils/PageTitle';
 import { getAssetUrl } from '../config';
+import { getBlogs } from '../services/blogService';
+import dayjs from 'dayjs';
 
 const CONTACT_URL = '/contact-testimonials';
 
@@ -34,6 +37,20 @@ const whoWeWorkWithData = [
 export default function Doctors() {
   pageTitle('Doctor & Hospital Services');
   const [doctorsQaActiveIndex, setDoctorsQaActiveIndex] = useState(0);
+  const [latestBlogs, setLatestBlogs] = useState([]);
+
+  useEffect(() => {
+    getBlogs()
+      .then((data) => {
+        const sorted = Array.isArray(data) ? [...data].sort((a, b) => {
+          const da = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const db = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return db - da;
+        }) : [];
+        setLatestBlogs(sorted.slice(0, 2));
+      })
+      .catch(() => setLatestBlogs([]));
+  }, []);
   const heroTitle = 'Infectious Disease Expertise to Support Safe, Confident Clinical Decisions';
   const heroPara1 = 'At Best of IDs, we work alongside doctors when infectious disease decisions are complex, time-sensitive, and carry significant responsibility. Our role is not to replace clinical judgment—but to strengthen it with specialist insight, experience, and balance.';
   const heroPara2 = 'We support doctors across outpatient clinics, emergency settings, and hospitals with practical infectious disease opinions that are evidence-based, context-appropriate, and defensible.';
@@ -41,8 +58,8 @@ export default function Doctors() {
   const ctaSubtitle = "If you are managing a challenging infection or need specialist input to support your clinical decision-making, Best of IDs is here to help.";
 
   return (
-    <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
+    <div className="cs_doctors_page_wrap">
+      <Section topMd={56} topLg={48} topXl={40} bottomMd={16} bottomLg={14}>
         <Breadcrumb title="Doctor & Hospital Services" />
       </Section>
 
@@ -86,29 +103,73 @@ export default function Doctors() {
       <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <div className="cs_edu_hub_blog_section cs_edu_hub_card cs_shadow_1 cs_radius_25 cs_white_bg cs_doctors_blog_section_wrap">
-            <div className="cs_edu_hub_blog_content">
-              <h2 className="cs_edu_hub_blog_title cs_heading_color m-0">Blog</h2>
-              <Spacing md="16" lg="14" />
-              <p className="cs_heading_color m-0">
-                Our blog offers articles, clinical pearls, and updates on infectious disease practice,
-                antimicrobial stewardship, and evidence-based care. Stay informed with short reads
-                written by our ID specialists and guest contributors, covering topics from common
-                infections to emerging pathogens and guideline changes.
-              </p>
-              <Spacing md="20" lg="18" />
-              <p className="cs_heading_color m-0">
-                Access full articles, case discussions, and downloadable resources with a subscription.
-                New content is added regularly to support your continuous learning and day-to-day
-                clinical decisions.
-              </p>
-              <Spacing md="28" lg="24" />
-              <Link to="/blog" className="cs_btn cs_style_1">
-                <span>Explore our Blogs</span>
-                <i>
-                  <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
-                  <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
-                </i>
-              </Link>
+            <div className="cs_doctors_blog_row">
+              <div className="cs_edu_hub_blog_content">
+                <h2 className="cs_edu_hub_blog_title cs_heading_color m-0">Blog</h2>
+                <Spacing md="16" lg="14" />
+                <p className="cs_heading_color m-0">
+                  Our blog offers articles, clinical pearls, and updates on infectious disease practice,
+                  antimicrobial stewardship, and evidence-based care. Stay informed with short reads
+                  written by our ID specialists and guest contributors, covering topics from common
+                  infections to emerging pathogens and guideline changes.
+                </p>
+                <Spacing md="20" lg="18" />
+                <p className="cs_heading_color m-0">
+                  Access full articles, case discussions, and downloadable resources with a subscription.
+                  New content is added regularly to support your continuous learning and day-to-day
+                  clinical decisions.
+                </p>
+                <Spacing md="28" lg="24" />
+                <Link to="/blog" className="cs_btn cs_style_1">
+                  <span>Explore our Blogs</span>
+                  <i>
+                    <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+                    <img src={getAssetUrl('/images/icons/arrow_white.svg')} alt="" />
+                  </i>
+                </Link>
+              </div>
+              <div className="cs_doctors_blog_latest_wrap">
+                {latestBlogs.length > 0 ? (
+                  <div className="cs_doctors_blog_latest_list">
+                    {latestBlogs.map((blog) => {
+                      const coverUrl = blog.coverImage || getAssetUrl('/images/blog/post_1.jpeg');
+                      const dateStr = blog.createdAt ? dayjs(blog.createdAt).format('MMM D, YYYY') : '';
+                      const href = `/blog/${blog.id}`;
+                      return (
+                        <Card
+                          key={blog.id}
+                          className="cs_blog_card cs_doctors_blog_preview_card"
+                          hoverable
+                          cover={
+                            <Link to={href} className="cs_blog_card_cover">
+                              <img
+                                alt={blog.title}
+                                src={coverUrl.startsWith('http') ? coverUrl : getAssetUrl(coverUrl)}
+                                className="cs_doctors_blog_preview_cover"
+                              />
+                            </Link>
+                          }
+                          bodyStyle={{ padding: '12px 16px' }}
+                        >
+                          <div className="cs_post_meta cs_heading_color cs_doctors_blog_preview_meta">
+                            {blog.author || 'Author'} · {dateStr || '—'}
+                          </div>
+                          <h3 className="cs_post_title cs_semibold m-0 cs_doctors_blog_preview_title">
+                            <Link to={href}>{blog.title}</Link>
+                          </h3>
+                          <Link to="/blog" className="cs_doctors_blog_preview_read_more">
+                            Read More
+                          </Link>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="cs_doctors_blog_latest_empty cs_heading_color m-0">
+                    New articles coming soon
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -294,18 +355,19 @@ export default function Doctors() {
       </Section>
 
       {/* Get Clinical Support - CTA */}
-      <Section topMd={48} topLg={40} topXl={32} bottomMd={80} bottomLg={64} bottomXl={52}>
+      <Section topMd={16} topLg={14} topXl={12} bottomMd={0} bottomLg={0} bottomXl={0}>
         <div className="container">
-          <div className="cs_banner cs_style_1 cs_bg_filed cs_banner_cta" style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}>
-            <div className="cs_banner_content">
-              <h2 className="cs_banner_title cs_white_color cs_fs_72">
-                {ctaTitle}
-              </h2>
-              <p className="cs_banner_subtitle cs_white_color cs_fs_20 cs_medium m-0">
-                {ctaSubtitle}
-              </p>
-              <Spacing md="24" lg="20" />
-              <div className="d-flex flex-wrap gap-3">
+          <div className="cs_banner cs_style_1 cs_banner_cta">
+            <div className="cs_banner_content cs_banner_cta_inner">
+              <div className="cs_banner_cta_text">
+                <h2 className="cs_banner_title cs_heading_color cs_fs_72">
+                  {ctaTitle}
+                </h2>
+                <p className="cs_banner_subtitle cs_heading_color cs_fs_20 cs_medium m-0">
+                  {ctaSubtitle}
+                </p>
+              </div>
+              <div className="cs_banner_cta_buttons d-flex flex-wrap gap-3">
                 <Link to={CONTACT_URL} className="cs_btn cs_style_1">
                   <span>Request an ID Opinion</span>
                   <i>
@@ -325,6 +387,6 @@ export default function Doctors() {
           </div>
         </div>
       </Section>
-    </>
+    </div>
   );
 }

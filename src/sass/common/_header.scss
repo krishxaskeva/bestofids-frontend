@@ -65,7 +65,7 @@
       color: #fff;
     }
 
-    @media (max-width: 1199px) {
+    @media (max-width: 900px) {
       .cs_nav .cs_nav_list {
         color: #fff;
         background-color: color_variable.$primary;
@@ -266,7 +266,7 @@
     gap: 0 15px;
   }
 }
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 900px) {
   .cs_main_header .container {
     max-width: 100%;
   }
@@ -324,7 +324,7 @@
   }
 }
 
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 901px) {
   .cs_site_header.cs_style1.cs_white_color {
     .menu-item-has-children {
       ul {
@@ -375,7 +375,7 @@
 
     .cs_nav_list {
       display: flex !important;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       height: inherit;
 
       > li {
@@ -559,7 +559,7 @@
   }
 }
 
-@media screen and (max-width: 1199px) {
+@media screen and (max-width: 900px) {
   .cs_site_header.cs_style1.cs_mobile_toggle_active {
     background-color: #fff;
     &.cs_white_color {
@@ -680,8 +680,11 @@
         line-height: 16px;
         min-height: 44px;
         box-sizing: border-box;
+        width: 100%;
       }
       > li {
+        width: 100%;
+        margin-right: 0;
         > a {
           font-size: 18px;
           line-height: 1.4em;
@@ -790,6 +793,20 @@
       transform: translateY(-50%);
     }
   }
+  /* Nav list is in fixed overlay when open; hide wrap in header bar so only hamburger shows */
+  .cs_site_header .cs_nav .cs_nav_list_wrap {
+    width: 0;
+    min-width: 0;
+    overflow: visible;
+    position: absolute;
+    pointer-events: none;
+  }
+  .cs_site_header .cs_nav .cs_nav_list_wrap .cs_nav_indicator {
+    display: none;
+  }
+  .cs_site_header .cs_nav .cs_nav_list_wrap .cs_nav_list {
+    pointer-events: auto;
+  }
   .cs_site_header.cs_style1 {
     top: 0;
   }
@@ -815,7 +832,7 @@
   }
 }
 /*Start Demo Menu*/
-@media (min-width: 1200px) {
+@media (min-width: 901px) {
   .cs_nav .cs_nav_list > li > ul.cs_demo_mega {
     width: 1110px;
     display: flex !important;
@@ -845,7 +862,7 @@
     }
   }
 }
-@media (max-width: 1199px) {
+@media (max-width: 900px) {
   .cs_nav .cs_nav_list > li > ul.cs_demo_mega {
     display: none !important;
   }

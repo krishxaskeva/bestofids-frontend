@@ -9,6 +9,8 @@ import IconBox from './ui/IconBox';
 import Spacing from './Spacing';
 import { getAssetUrl } from '../config';
 
+const NAV_OUR_SERVICES = 'Services & Appointments';
+
 export default function Header({ logoSrc, variant }) {
   const { isSuperAdmin, isLoggedIn, logout } = useAuth();
   const [isSticky, setIsSticky] = useState(false);
@@ -94,7 +96,7 @@ export default function Header({ logoSrc, variant }) {
                         }
                         onClick={() => setMobileToggle(false)}
                       >
-                        Appointments & Our Services
+                        {NAV_OUR_SERVICES}
                       </NavLink>
                     </li>
                     <li>
@@ -154,7 +156,7 @@ export default function Header({ logoSrc, variant }) {
                   <span
                     className={
                       mobileToggle
-                        ? 'cs_menu_toggle cs_teggle_active'
+                        ? 'cs_menu_toggle cs_toggle_active'
                         : 'cs_menu_toggle'
                     }
                     onClick={() => setMobileToggle(!mobileToggle)}

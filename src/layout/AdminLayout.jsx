@@ -43,16 +43,6 @@ export default function AdminLayout() {
         className={`admin-layout-wrapper ${isMobile ? 'admin-layout-mobile' : ''}`}
       >
         <AdminSidebar collapsed={collapsed} />
-        {isMobile && !collapsed && (
-          <div
-            className="admin-sidebar-overlay"
-            role="button"
-            tabIndex={0}
-            onClick={() => setCollapsed(true)}
-            onKeyDown={(e) => e.key === 'Escape' && setCollapsed(true)}
-            aria-label="Close menu"
-          />
-        )}
         <Layout
           style={{
             marginLeft: mainMarginLeft,
@@ -74,6 +64,16 @@ export default function AdminLayout() {
             <Outlet />
           </Content>
         </Layout>
+        {isMobile && !collapsed && (
+          <div
+            className="admin-sidebar-overlay"
+            role="button"
+            tabIndex={0}
+            onClick={() => setCollapsed(true)}
+            onKeyDown={(e) => e.key === 'Escape' && setCollapsed(true)}
+            aria-label="Close menu"
+          />
+        )}
       </Layout>
     </ConfigProvider>
   );

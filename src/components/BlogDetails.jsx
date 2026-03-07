@@ -12,7 +12,7 @@ import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpayCheck
 import { Button, message } from 'antd';
 import dayjs from 'dayjs';
 import htmlReactParser from 'html-react-parser';
-import { getAssetUrl } from '../config';
+import { getAssetUrl, config } from '../config';
 
 const SITE_TEAL = '#117574';
 
@@ -75,7 +75,6 @@ export default function BlogDetails() {
     setPaymentLoading(true);
     try {
       const { orderId, amount, currency, keyId } = await createBlogOrder(blogId);
-      const { config } = await import('../config');
       await loadRazorpayScript();
       const key = keyId || config.razorpayKey;
       if (!key) {

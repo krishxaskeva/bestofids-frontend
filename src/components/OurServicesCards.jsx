@@ -2,7 +2,7 @@ import React from 'react';
 import DepartmentSection from './DepartmentSection';
 
 /**
- * Shared card data used on the Home page and Appointments & Our Services page.
+ * Shared card data used on the Home page and Services & Appointments page.
  * Renders the same 4 cards: Patients, Doctors, Hospitals & Organization, ID knowledge and education.
  */
 const ourServicesCardData = [
@@ -40,7 +40,7 @@ const ourServicesCardData = [
   },
 ];
 
-const DEFAULT_SECTION_TITLE = 'Appointments & Our Services';
+const DEFAULT_SECTION_TITLE = 'Services & Appointments';
 const DEFAULT_BG_URL = '/images/home_1/our_service_bg.png';
 
 export default function OurServicesCards({

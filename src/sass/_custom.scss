@@ -8,6 +8,7 @@
   flex: 1 1 auto;
   padding-bottom: 0;
   margin-bottom: 0;
+  background-color: #fff;
 }
 /* main must grow with content (flex: 1 1 auto) so when content is long the footer moves down; when short, main expands to push footer to bottom */
 .cs_layout_main {
@@ -15,6 +16,7 @@
   min-height: 0; /* allow flex to shrink when needed; content height still drives when content is long */
   display: flex;
   flex-direction: column;
+  background-color: #fff;
 }
 /* Content wrapper grows with page content so main height = content height when content is tall */
 .cs_layout_content {
@@ -22,6 +24,7 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
 }
 /* Footer must not shrink and must stay in flow (no absolute/fixed) so it never overlaps content */
 .cs_layout .cs_footer {
@@ -30,18 +33,69 @@
   padding-bottom: 0;
 }
 
-/* Nav bar: keep all menu items on the same line (no wrap) + active link underline */
-@media (min-width: 1200px) {
+/* Nav bar: keep menu items in one row; allow link text to wrap to two lines before switching to hamburger. */
+/* Breakpoint 901px: horizontal nav with two-line labels; below 901px show 3-line hamburger menu (see _header.scss). */
+@media (min-width: 901px) {
+  /* Prevent any horizontal overflow from nav; center the nav link group */
+  .cs_site_header.cs_style1 .cs_main_header_in {
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .cs_site_header.cs_style1 .cs_main_header_center {
+    position: static;
+    left: auto;
+    top: auto;
+    transform: none;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    max-width: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .cs_site_header.cs_style1 .cs_main_header_left,
+  .cs_site_header.cs_style1 .cs_main_header_right {
+    flex: 0 0 auto;
+  }
   .cs_site_header .cs_nav .cs_nav_list_wrap {
     position: relative;
+    display: flex;
+    justify-content: center;
   }
   .cs_site_header .cs_nav .cs_nav_list {
     flex-wrap: nowrap;
+    justify-content: center;
   }
   .cs_site_header .cs_nav .cs_nav_list > li {
     margin-right: 44px;
     &:last-child {
       margin-right: 0;
+    }
+  }
+  .cs_site_header .cs_nav .cs_nav_list > li > .cs_nav_link {
+    white-space: normal;
+    text-align: center;
+    max-width: 10em; /* allow page names to wrap to two lines */
+    line-height: 1.25;
+    display: block;
+    font-weight: 600;
+  }
+  /* Home stays on one line */
+  .cs_site_header .cs_nav .cs_nav_list > li:first-child > .cs_nav_link {
+    white-space: nowrap;
+    max-width: none;
+  }
+  /* Tighter spacing when viewport is narrow so two-line labels still fit in one row */
+  @media (max-width: 1100px) {
+    .cs_site_header .cs_nav .cs_nav_list > li {
+      margin-right: 24px;
+    }
+  }
+  @media (max-width: 1000px) {
+    .cs_site_header .cs_nav .cs_nav_list > li {
+      margin-right: 16px;
     }
   }
   /* Sliding underline under active nav link */
@@ -67,6 +121,7 @@
   margin-top: 0;
   padding: 10px 18px;
   font-size: 0.95rem;
+  font-weight: 600;
   white-space: nowrap;
   .iconify {
     font-size: 20px;
@@ -478,14 +533,76 @@
   padding: 2.5rem 1.5rem;
   text-align: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 1px;
+  /* When used with background image (Let's get started same image): overlay so text stays readable */
+  &.cs_bg_filed {
+    background-size: 45% auto;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  &.cs_bg_filed::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(color_variable.$primary, 0.82);
+    pointer-events: none;
+  }
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
   @media (min-width: 768px) {
     padding: 3rem 2rem;
   }
   @media (min-width: 992px) {
-    padding: 3.5rem 3rem;
+    flex-direction: row;
+    justify-content: center;
+    align-items: stretch;
+    text-align: center;
+    padding: 0;
+    min-height: 320px;
+  }
+}
+.cs_our_services_teal_intro_img_wrap {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  @media (min-width: 992px) {
+    width: 28%;
+    max-width: 360px;
+    min-height: 320px;
+  }
+}
+.cs_our_services_teal_intro_img_wrap_left {
+  @media (min-width: 992px) {
+    order: 1;
+  }
+}
+.cs_our_services_teal_intro_img_wrap_right {
+  @media (min-width: 992px) {
+    order: 3;
+  }
+}
+.cs_our_services_teal_intro_img {
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  object-fit: cover;
+  object-position: center;
+  @media (min-width: 768px) {
+    max-height: 280px;
+  }
+  @media (min-width: 992px) {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    min-height: 320px;
   }
 }
 .cs_our_services_teal_intro_inner {
@@ -506,7 +623,14 @@
     padding: 0 2rem;
   }
   @media (min-width: 992px) {
-    padding: 0 3rem;
+    flex: 1;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 3rem 2rem;
+    align-items: center;
+    text-align: center;
+    max-width: none;
+    order: 2;
   }
 }
 .cs_our_services_teal_intro_label {
@@ -519,6 +643,9 @@
   text-align: center;
   @media (min-width: 768px) {
     font-size: 1.2rem;
+  }
+  @media (min-width: 992px) {
+    text-align: center;
   }
 }
 .cs_our_services_teal_intro_title {
@@ -533,6 +660,7 @@
   }
   @media (min-width: 992px) {
     font-size: 2.25rem;
+    text-align: center;
   }
 }
 .cs_our_services_teal_intro_subtitle {
@@ -544,6 +672,9 @@
   @media (min-width: 768px) {
     font-size: 1.15rem;
   }
+  @media (min-width: 992px) {
+    text-align: center;
+  }
 }
 .cs_our_services_teal_intro_tagline {
   color: rgba(255, 255, 255, 0.95);
@@ -554,6 +685,9 @@
   text-align: center;
   @media (min-width: 768px) {
     font-size: 1rem;
+  }
+  @media (min-width: 992px) {
+    text-align: center;
   }
 }
 .cs_our_services_teal_intro_text {
@@ -625,27 +759,57 @@
   box-sizing: border-box;
   text-align: center;
   @media (min-width: 768px) {
-    padding: 0 2rem;
+    padding: 0 1.5rem;
   }
   @media (min-width: 992px) {
-    padding: 0 3rem;
+    padding: 0 1.5rem;
+  }
+  @media (min-width: 1200px) {
+    padding: 0 2rem;
   }
 }
 .cs_our_services_intro_white_text {
   color: #333;
-  font-size: 1.05rem;
-  line-height: 1.75;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: 1.5;
   width: 100%;
   max-width: 100%;
   margin-left: auto;
   margin-right: auto;
   text-align: center;
-  @media (min-width: 768px) {
+  padding: 0 0.5rem;
+  box-sizing: border-box;
+}
+.cs_our_services_intro_white_line {
+  display: block;
+  max-width: 100%;
+}
+.cs_our_services_intro_white_line + .cs_our_services_intro_white_line {
+  margin-top: 0.4em;
+}
+/* From 1200px up: keep each sentence on one line so paragraph is exactly 2 lines; larger text */
+@media (min-width: 1200px) {
+  .cs_our_services_intro_white_text {
     font-size: 1.1rem;
+    padding: 0 1rem;
   }
-  @media (min-width: 992px) {
-    font-size: 1.15rem;
-    line-height: 1.8;
+  .cs_our_services_intro_white_line {
+    white-space: nowrap;
+  }
+}
+@media (min-width: 1400px) {
+  .cs_our_services_intro_white_text {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1600px) {
+  .cs_our_services_intro_white_text {
+    font-size: 1.25rem;
+  }
+}
+@media (min-width: 1800px) {
+  .cs_our_services_intro_white_text {
+    font-size: 1rem;
   }
 }
 
@@ -802,6 +966,46 @@
   padding: 1.25rem 1.25rem 1.5rem;
   flex: 1;
 }
+/* Body with image on the right (Education card): two-column layout */
+.cs_our_services_detail_card_body_with_img {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 1.5rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+}
+.cs_our_services_detail_card_body_content {
+  flex: 1;
+  min-width: 0;
+}
+.cs_our_services_detail_card_has_right_img .cs_our_services_detail_card_actions {
+  padding-left: 0;
+}
+.cs_our_services_detail_card_body_img_wrap {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  @media (max-width: 767px) {
+    justify-content: center;
+    order: -1;
+  }
+}
+.cs_our_services_detail_card_body_img {
+  width: 100%;
+  max-width: 280px;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  @media (max-width: 767px) {
+    max-width: 240px;
+  }
+}
 .cs_our_services_detail_card_subtitle {
   font-size: 0.95rem;
   color: #4a5568;
@@ -900,21 +1104,16 @@
   opacity: 0.6;
 }
 
-/* Remove gap between Our approach and Let's get started */
+/* Space below "Our approach" pushes "Let's get started" lower towards footer (no margin-top on banner) */
 .cs_our_services_approach_section {
   margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-.cs_our_services_cta_section {
-  margin-top: 0 !important;
-  padding-top: 0 !important;
-}
-/* Remove excessive gap between "Our approach" and "Let's get started" – override banner's large margin-top */
-.cs_our_services_cta_section .cs_banner.cs_style_1 {
-  margin-top: 3.5rem;
+  padding-bottom: 5rem;
   @media (max-width: 991px) {
-    margin-top: 1rem;
+    padding-bottom: 2rem;
   }
+}
+.cs_our_services_cta_section .cs_banner.cs_style_1 {
+  margin-top: 0;
 }
 
 /* Our Services CTA: content left, buttons right */
@@ -1001,7 +1200,7 @@
 }
 
 /* Desktop: hide sidebar toggle and show user avatar in its place */
-@media (min-width: 1200px) {
+@media (min-width: 901px) {
   .cs_toolbox .cs_sidebar_toggle_btn {
     display: none;
   }
@@ -1545,6 +1744,11 @@
     }
   }
 }
+
+/* Navbar text: strong weight for all nav links (desktop and mobile) */
+.cs_site_header .cs_nav .cs_nav_list a {
+  font-weight: 600;
+}
 .cs_logo_box img {
   max-height: 48px;
   width: auto;
@@ -1620,27 +1824,50 @@
     opacity: 1;
   }
 }
-/* Our Values section: all 4 cards in one row, same line, uniform height; stack above following sections */
+/* Our Values section: cards on top layer so they always paint above any overlapping content. */
 .cs_our_values_wrapper {
   position: relative;
+  overflow: visible !important;
   z-index: 10;
+  padding-bottom: 0; /* bottom gap from Section Spacing + .cs_our_values_section padding */
 }
-/* Section that follows Our Values (Why Choose / etc.) stays behind the cards */
+/* Next section (Why Choose) stays below the values cards. */
 .cs_our_values_wrapper + section {
   position: relative;
+  margin-top: 2rem !important;
   z-index: 1;
 }
-/* Our Values section: contain the decorative shape so it does not bleed into Vision & Mission or Why Choose. */
+/* Our Values section: do not clip cards. Override global .cs_shape_wrap { overflow: hidden } from _general.scss so card shadows are visible. */
 .cs_our_values_section {
-  /* Contain .cs_shape_1 within section boundary so teal gradient scrolls with page and stays in section */
+  position:relative;
+  isolation: isolate;
+  overflow: visible !important;
   .cs_shape_wrap {
+    overflow: visible !important;
+    position: relative;
+    isolation: isolate;
+  }
+  .cs_shape_wrap .cs_shape_1 {
+    z-index: 0;
     overflow: hidden;
   }
-  /* Bottom padding so tallest card including shadow is fully contained */
-  padding-bottom: 32px;
+  /* Bottom padding: room for card shadow + clear gap before next section */
+  padding-bottom: 48px;
+  @media (min-width: 576px) {
+    padding-bottom: 56px;
+  }
+  @media (min-width: 992px) {
+    padding-bottom: 64px;
+  }
+  @media (min-width: 1200px) {
+    padding-bottom: 72px;
+  }
+  @media (min-width: 1700px) {
+    padding-bottom: 80px;
+  }
   .cs_shape_wrap .container {
     position: relative;
-    z-index: 2;
+    z-index: 10;
   }
   .cs_random_features {
     display: grid;
@@ -1660,11 +1887,11 @@
   }
   .cs_random_features_col .cs_feature.cs_style_1 {
     flex: 1;
-    min-height: 0;
+    min-height: min-content; /* do not shrink card — prevents flex from clipping bottom (was min-height: 0) */
     display: flex;
     flex-direction: column;
     position: relative;
-    z-index: 2;
+    z-index: 10;
     padding: 40px 32px;
     @media (max-width: 1700px) {
       padding: 32px 26px;
@@ -1936,6 +2163,17 @@
   }
 }
 
+/* Doctor & Hospital Services: page top offset so breadcrumb/hero sit below fixed navbar */
+.cs_doctors_page_wrap {
+  padding-top: 100px;
+  @media (max-width: 991px) {
+    padding-top: 90px;
+  }
+  @media (max-width: 575px) {
+    padding-top: 80px;
+  }
+}
+
 /* Doctor & Hospital Services: hero section and buttons – shadow as outline */
 .cs_doctors_hero_section {
   padding: 2.5rem 2rem;
@@ -1945,6 +2183,20 @@
     0 4px 20px rgba(0, 0, 0, 0.06);
   @media (max-width: 575px) {
     padding: 1.75rem 1.25rem;
+  }
+  .cs_section_heading .cs_section_title {
+    @media (max-width: 1199px) {
+      font-size: 2.5rem;
+      line-height: 1.2;
+    }
+    @media (max-width: 991px) {
+      font-size: 2rem;
+    }
+    @media (max-width: 575px) {
+      font-size: 1.5rem;
+    }
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .cs_btn.cs_style_1 {
     box-shadow:
@@ -1968,22 +2220,125 @@
   }
 }
 
-/* Doctor & Hospital Services: blog section – content top, grid of cards below */
+/* Doctor & Hospital Services: blog section – two columns: left content, right latest blogs preview */
 .cs_doctors_blog_section_wrap {
   display: flex;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
 }
-.cs_doctors_blog_section_wrap.cs_edu_hub_blog_section {
-  padding: 0;
+.cs_doctors_blog_row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  width: 100%;
+  @media (max-width: 991px) {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 }
 .cs_doctors_blog_section_wrap .cs_edu_hub_blog_content {
+  flex: 1 1 400px;
   min-width: 0;
   padding: 2rem 2rem 1rem;
   @media (max-width: 575px) {
     padding: 1.5rem 1.5rem 1rem;
   }
+}
+.cs_doctors_blog_latest_wrap {
+  flex: 1 1 420px;
+  min-width: 0;
+  padding: 2rem 2rem 2rem 0;
+  @media (max-width: 991px) {
+    padding: 0 2rem 2rem;
+    flex-basis: 100%;
+  }
+  @media (max-width: 575px) {
+    padding: 0 1.5rem 1.5rem;
+  }
+}
+.cs_doctors_blog_latest_list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 1.5rem;
+  width: 100%;
+  /* Keep cards in a single horizontal row; stack only on very small screens */
+  @media (max-width: 575px) {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+.cs_doctors_blog_preview_card.cs_blog_card {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+.cs_doctors_blog_section_wrap .ant-card {
+  border-radius: 12px;
+  overflow: hidden;
+}
+/* Ensure cards in the latest list stay side-by-side (flex children) */
+.cs_doctors_blog_latest_list .ant-card {
+  flex: 1;
+  min-width: 0;
+}
+.cs_doctors_blog_section_wrap .ant-card-body {
+  padding: 12px 16px;
+}
+.cs_doctors_blog_preview_card .cs_blog_card_cover {
+  display: block;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+}
+.cs_doctors_blog_preview_cover {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  @media (max-width: 767px) {
+    height: 180px;
+  }
+  @media (max-width: 575px) {
+    height: 160px;
+  }
+}
+.cs_doctors_blog_preview_meta {
+  font-size: 12px;
+  margin-bottom: 6px;
+}
+.cs_doctors_blog_preview_title {
+  font-size: 1rem;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+.cs_doctors_blog_preview_title a {
+  color: inherit;
+  text-decoration: none;
+}
+.cs_doctors_blog_preview_title a:hover {
+  color: color_variable.$primary;
+}
+.cs_doctors_blog_preview_read_more {
+  font-size: 14px;
+  font-weight: 500;
+  color: color_variable.$primary;
+  text-decoration: none;
+}
+.cs_doctors_blog_preview_read_more:hover {
+  text-decoration: underline;
+  color: color_variable.$primary;
+}
+.cs_doctors_blog_latest_empty {
+  font-size: 0.95rem;
+  padding: 1rem 0;
+  text-align: center;
+  color: color_variable.$text-primary;
 }
 .cs_doctors_blog_grid_wrap {
   padding: 1rem 2rem 2rem;
@@ -2127,17 +2482,13 @@
   grid-template-columns: 2fr 3fr;
   gap: 0 40px;
   align-items: stretch;
-  height: 520px;
-  min-height: 520px;
   @media (max-width: 991px) {
-    height: auto;
-    min-height: 0;
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
     gap: 1.5rem 0;
   }
 }
-/* Left nav: exact FAQ row style from Contact & Testimonials (card shape, border, radius, padding, font); no arrow */
+/* Left nav: exact FAQ row style from Contact & Testimonials (card shape, border, padding); no arrow */
 .cs_doctors_qa_nav {
   display: flex;
   flex-direction: column;
@@ -2147,8 +2498,11 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     gap: 0.5rem;
-    padding-bottom: 0.25rem;
+    padding-bottom: 0.5rem;
     scrollbar-width: thin;
+    margin: 0 -0.5rem 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
 }
 .cs_doctors_qa_nav_item {
@@ -2209,16 +2563,19 @@
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background: transparent;
   @media (max-width: 991px) {
     height: auto;
     min-height: 0;
+    justify-content: flex-start;
   }
 }
 /* Right side: static display area; only one panel visible; no accordion/collapse */
 .cs_doctors_qa_panel {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   flex: 1;
   min-height: 0;
   height: 100%;
@@ -2241,13 +2598,15 @@
 .cs_doctors_qa_panels_wrap {
   position: relative;
   flex: 1;
-  min-height: 0;
+  min-height: 280px;
+  min-width: 0;
   height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   @media (max-width: 991px) {
     height: auto;
-    min-height: 400px;
+    min-height: 200px;
   }
 }
 .cs_doctors_qa_panel_title {
@@ -2275,7 +2634,6 @@
   width: 100%;
 }
 .cs_doctors_qa_panel_body {
-  flex: 1;
   min-height: 0;
   overflow-y: auto;
   display: flex;
@@ -2285,26 +2643,39 @@
   box-sizing: border-box;
 }
 /* Panel-specific grids: full width, cards fill the right column */
+/* Panel 1: When Doctors Reach Out – outer checklist width 100%, two columns 1fr each */
 .cs_doctors_qa_panel_body .cs_doctors_reach_card {
   width: 100%;
+  max-width: none;
   box-sizing: border-box;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
   @media (max-width: 767px) {
-    flex-direction: column;
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
   }
 }
 .cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_divider {
+  display: none !important; /* remove from grid so only 2 cols layout */
   @media (max-width: 767px) {
-    display: none;
+    display: none !important;
   }
 }
 .cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_col {
-  flex: 1 1 0;
   min-width: 0;
-  width: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_left {
+  grid-column: 1;
+}
+.cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_right {
+  grid-column: 2;
+  @media (max-width: 767px) {
+    grid-column: 1;
+  }
 }
 .cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_point_card {
   width: 100%;
@@ -2315,12 +2686,14 @@
 .cs_doctors_qa_panel_body .cs_process_works_row,
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row {
   width: 100%;
+  max-width: none;
 }
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_random_features,
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_random_features,
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features {
   align-items: stretch;
   width: 100%;
+  max-width: none;
   box-sizing: border-box;
 }
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_random_features_col,
@@ -2328,6 +2701,7 @@
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features_col {
   display: flex;
   min-width: 0;
+  width: 100%;
 }
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_random_features_col .cs_how_helps_card,
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_random_features_col .cs_how_helps_card,
@@ -2336,11 +2710,13 @@
   width: 100%;
   min-width: 0;
 }
+/* Panel 2: How This Helps – 3 cards, repeat(3, 1fr), full width */
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_random_features {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px 14px;
   min-width: 0;
+  width: 100%;
   @media (max-width: 1199px) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2348,25 +2724,39 @@
     grid-template-columns: 1fr;
   }
 }
+/* Panel 3: How the Process Works – 4 cards, repeat(2, 1fr), two rows, full width */
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_random_features {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px 14px;
   min-width: 0;
+  width: 100%;
   @media (max-width: 575px) {
     grid-template-columns: 1fr;
   }
 }
+/* Panel 4: Who We Work With – 5 cards, repeat(5, 1fr) or repeat(3, 1fr) with bottom row centered */
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px 14px;
   min-width: 0;
-  @media (max-width: 991px) {
+  width: 100%;
+  @media (max-width: 1199px) {
     grid-template-columns: repeat(3, 1fr);
   }
   @media (max-width: 575px) {
     grid-template-columns: 1fr;
+  }
+}
+.cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features_col:nth-child(4) {
+  @media (max-width: 1199px) and (min-width: 576px) {
+    grid-column: 2;
+  }
+}
+.cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features_col:nth-child(5) {
+  @media (max-width: 1199px) and (min-width: 576px) {
+    grid-column: 3;
   }
 }
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features_col {
@@ -2396,18 +2786,22 @@
 .cs_doctors_qa_panel_subtitle {
   margin-bottom: 0.75rem;
 }
-/* Panel 1: When Doctors Reach Out – smaller checklist cards */
+/* Panel 1: When Doctors Reach Out – checklist cards, full width, two columns 1fr each */
 .cs_doctors_qa_panel_body .cs_doctors_reach_card {
   border-radius: 12px;
 }
-.cs_doctors_qa_panel_body .cs_doctors_reach_card_col {
+.cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_col {
   padding: 1rem 1.25rem;
   gap: 0.5rem;
 }
-.cs_doctors_qa_panel_body .cs_doctors_reach_point_card {
-  padding: 0.5rem 0.75rem;
+.cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_point_card {
+  padding: 1.25rem 0.75rem;
+  min-height: 0;
   border-radius: 8px;
   gap: 0.5rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 .cs_doctors_qa_panel_body .cs_doctors_reach_point_icon {
   width: 18px;
@@ -2418,7 +2812,7 @@
   font-size: 0.8125rem;
   line-height: 1.4;
 }
-/* Panels 2, 3, 4: How This Helps / Process Works / Who We Work With – smaller icon cards */
+/* Panels 2, 3, 4: How This Helps / Process Works / Who We Work With – full width grids, consistent card padding */
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_random_features,
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_random_features,
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_random_features {
@@ -2427,10 +2821,11 @@
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_how_helps_card,
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_how_helps_card,
 .cs_doctors_qa_panel_body .cs_who_we_work_with_row .cs_how_helps_card {
-  padding: 0.6rem 0.85rem;
+  padding: 1.5rem 0.85rem;
   border-radius: 6px;
   gap: 0.6rem;
   min-width: 0;
+  min-height: 0;
 }
 .cs_doctors_qa_panel_body .cs_how_this_helps_row .cs_how_helps_icon,
 .cs_doctors_qa_panel_body .cs_process_works_row .cs_how_helps_icon,
@@ -2456,12 +2851,13 @@
   font-size: 1rem !important;
 }
 
-/* When embedded in QA panel, Why Doctors Choose: 2–3 column grid, reduced card size */
+/* When embedded in QA panel, Why Doctors Choose: top row 3 cols, bottom row 2 cols (each half full width), full width grid */
 .cs_doctors_qa_panel .cs_why_doctors_choose {
   padding: 0 0 0.5rem;
+  width: 100%;
 }
 .cs_doctors_qa_panel .cs_why_doctors_choose_container {
-  max-width: 100%;
+  max-width: none;
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
@@ -2505,7 +2901,7 @@
 .cs_doctors_qa_panel .cs_why_doctors_choose_card {
   min-width: 0;
   width: 100%;
-  padding: 12px 14px 16px 14px;
+  padding: 1.5rem 1rem;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -3540,6 +3936,33 @@
     flex-direction: column;
     gap: 25px;
   }
+  .cs_grid_item:first-child {
+    padding-top: 2.5rem;
+    @media (min-width: 768px) {
+      padding-top: 3.5rem;
+    }
+    @media (min-width: 992px) {
+      padding-top: 0;
+      height: 350px;
+      min-height: 350px;
+      position: relative;
+      display: block;
+    }
+    @media (max-width: 1700px) {
+      @media (min-width: 992px) {
+        height: 350px;
+      }
+    }
+  }
+  .cs_grid_item:first-child .cs_section_heading {
+    @media (min-width: 992px) {
+      position: absolute;
+      top: 100%;
+      margin-top: -220px;
+      left: 0;
+      width: 100%;
+    }
+  }
   .cs_section_heading.cs_style_1 {
     min-height: 263px;
     @media (max-width: 1700px) {
@@ -3556,6 +3979,46 @@
     @media (min-width: 992px) {
       &:nth-child(6) {
         grid-column: span 2;
+      }
+    }
+
+    /* First row of pics (items 3,4,5): align bottoms so 2nd pic height extends upward */
+    @media (min-width: 992px) {
+      &:nth-child(3),
+      &:nth-child(5) {
+        align-self: end;
+      }
+    }
+
+    /* Third image: shift slightly left */
+    &.cs_gallery_third_img {
+      margin-left: -12px;
+      @media (max-width: 991px) {
+        margin-left: -8px;
+      }
+      @media (max-width: 767px) {
+        margin-left: 0;
+      }
+      /* Shift image content left so person is more visible (image only) */
+      .cs_portfolio_img {
+        background-position: 75% center;
+      }
+    }
+
+    /* Second image: increase height (extend upward), bottom aligned with 1st and 3rd */
+    &.cs_gallery_second_img {
+      align-self: end;
+      .cs_portfolio.cs_style_1 {
+        height: 520px;
+        @media (max-width: 1700px) {
+          height: 450px;
+        }
+        @media (max-width: 991px) {
+          height: 400px;
+        }
+        @media (max-width: 767px) {
+          height: 340px;
+        }
       }
     }
 
@@ -3721,32 +4184,71 @@ input[type='time']::-webkit-calendar-picker-indicator {
 
 /* Home CTA banner: two-column layout – left = title/subtitle, right = image area only */
 .cs_banner_cta.cs_banner.cs_style_1 {
+  margin-top: 0;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   gap: 24px;
-  padding: 48px 60px;
+  padding: 3rem 2.5rem;
+  background-color: #6AABB2;
+  border-radius: 25px;
+  border: 1px solid rgba(color_variable.$primary, 0.2);
+  &::before {
+    display: none;
+  }
   @media (max-width: 991px) {
-    padding: 40px 24px;
+    padding: 2.5rem 1.5rem;
   }
   @media (max-width: 575px) {
-    padding: 32px 20px;
+    padding: 2rem 1.25rem;
+  }
+  .cs_banner_cta_inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    width: 100%;
   }
   .cs_banner_content {
-    flex: 1 1 50%;
-    min-width: 280px;
+    flex: 1 1 auto;
+    min-width: 0;
     position: relative;
     z-index: 1;
+  }
+  .cs_banner_cta_text {
+    flex: 1 1 50%;
+    min-width: 280px;
+  }
+  .cs_banner_cta_buttons {
+    flex-shrink: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    @media (max-width: 767px) {
+      width: 100%;
+      justify-content: flex-start;
+    }
   }
   .cs_banner_title {
     margin-bottom: 16px;
     @media (max-width: 991px) {
       margin-bottom: 12px;
+      font-size: 2rem;
+    }
+    @media (max-width: 575px) {
+      font-size: 1.5rem;
+      line-height: 1.25;
     }
   }
   .cs_banner_subtitle {
     margin-bottom: 0;
+    @media (max-width: 575px) {
+      font-size: 1rem;
+    }
   }
   .cs_banner_img_zone {
     flex: 0 0 auto;
@@ -3821,7 +4323,7 @@ $vm-gray: #3d4f5c;
 
 .cs_vm_watermark {
   position: absolute;
-  top: 0;
+  top: 20%;
   left: 50%;
   transform: translateX(-50%);
   max-width: 200px;
@@ -3912,6 +4414,7 @@ $vm-gray: #3d4f5c;
 
 /* Contact & Testimonials: Welcome banner – constrain logo image so it doesn’t overlap text */
 .cs_banner_welcome.cs_banner.cs_style_1 {
+  margin-top: 2.5rem;
   overflow: hidden;
   .cs_banner_btn {
     margin-top: 1.25rem;
@@ -4025,6 +4528,47 @@ $vm-gray: #3d4f5c;
   }
 }
 
+/* Footer CTA buttons – align to right corner */
+.cs_footer_cta_buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  .cs_footer_cta_btn {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+  @media (max-width: 991px) {
+    align-items: stretch;
+    .cs_footer_cta_btn {
+      max-width: none;
+    }
+  }
+}
+
+/* Footer center column: page names centered */
+.cs_footer_nav_center {
+  display: flex;
+  justify-content: center;
+  .cs_menu_widget {
+    text-align: center;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+  }
+  .cs_menu_widget li {
+    margin-bottom: 8px;
+  }
+  .cs_menu_widget a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .cs_menu_widget a:hover {
+    color: color_variable.$accent;
+  }
+}
+
 /* 5. Doctor details section background (About & Contacts) */
 .cs_doctor_details_bg {
   &::before {
@@ -4107,12 +4651,54 @@ $vm-gray: #3d4f5c;
 }
 
 /* Doctor details: right column matches left (photo) height; button at bottom */
+/* Doctor details row: same grid as For Doctors / For Hospital cards (2 columns, 1.5rem gap) for column alignment */
+.cs_doctor_details_row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4.5rem;
+  align-items: stretch;
+  @media (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
+}
+.cs_doctor_details_photo_col {
+  min-width: 0;
+  padding-left: 1.5rem;
+}
+.cs_doctor_details_photo_col .cs_single_doctor {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  display: block;
+}
+.cs_doctor_details_photo_img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 767px) {
+  .cs_doctor_details_photo_col .cs_single_doctor {
+    min-height: 240px;
+  }
+}
 .cs_doctor_details .cs_doctor_details_col {
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  text-align: left;
+  padding-left: 6.5rem;
 }
 .cs_doctor_details .cs_doctor_details_col .cs_doctor_details_book_btn {
   margin-top: auto;
+}
+
+/* When doctor section and cards share one container: gap between doctor row and cards */
+.cs_doctor_details .container > .cs_our_services_detail_cards {
+  margin-top: 5.5rem;
+  @media (max-width: 767px) {
+    margin-top: 2.5rem;
+  }
 }
 
 /* Doctor details: Book an Appointment button with WhatsApp icon, teal outline */

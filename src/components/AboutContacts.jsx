@@ -41,8 +41,8 @@ const faqData = [
 const galleryData = [
   { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.03.53%20PM.jpeg' },
   { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.03.55%20PM.jpeg' },
-  { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.03.58%20PM.jpeg' },
   { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.04.00%20PM.jpeg' },
+  { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.03.58%20PM.jpeg' },
   { imgUrl: '/images/latest%20activities/WhatsApp%20Image%202026-02-27%20at%204.04.02%20PM.jpeg' },
 ];
 
@@ -56,7 +56,7 @@ export default function AboutContacts() {
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={75} bottomMd={16} bottomLg={14}>
+      <Section topMd={140} topLg={95} topXl={75} bottomMd={0} bottomLg={0} bottomXl={0}>
         <Breadcrumb title="Contact & Testimonials" />
       </Section>
       <Banner
@@ -68,9 +68,9 @@ export default function AboutContacts() {
         ctaLabel="Contact us"
         ctaOnClick={() => setContactModalOpen(true)}
       />
-      <Section topMd={56} topLg={48} topXl={40}>
+      <Section topMd={0} topLg={0} topXl={0}>
         <GallerySection
-          sectionTitle="Our Facilities and <br />Latest Activities"
+          sectionTitle="Our Facilities and Latest <br />Activities"
           sectionTitleUp="HAVE A LOOK AT"
           data={galleryData}
         />

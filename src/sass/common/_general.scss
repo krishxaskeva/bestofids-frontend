@@ -849,9 +849,20 @@ input::-ms-input-placeholder,
     gap: 10px 30px;
   }
 }
+/* When .cs_shape_1_clip is present (FeaturesSection), don't clip — the clip div contains the shape. Otherwise clip the shape. */
 .cs_shape_wrap {
   position: relative;
-  overflow: hidden; /* prevent 1884px decorative shape from extending page and creating white space below footer */
+  overflow: hidden; /* prevent 1884px decorative shape from extending page on other pages */
+  &:has(.cs_shape_1_clip) {
+    overflow: visible; /* Our Values / FeaturesSection: cards must not be clipped */
+  }
+  .cs_shape_1_clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
   .cs_shape_1 {
     width: 1884px;
     height: 1884px;
@@ -2170,7 +2181,7 @@ input::-ms-input-placeholder,
       position: absolute;
       width: 27px;
       height: 22px;
-      background-image: url(../../images/icons/reply.svg);
+      background-image: url("/images/icons/reply.svg");
       left: 0;
       background-size: contain;
       background-position: center;

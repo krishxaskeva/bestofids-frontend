@@ -6,7 +6,9 @@ import Feature from './Feature';
 export default function FeaturesSection({ sectionTitle, data }) {
   return (
     <div className="cs_shape_wrap">
-      <div className="cs_shape_1" />
+      <div className="cs_shape_1_clip" aria-hidden>
+        <div className="cs_shape_1" />
+      </div>
       <div className="container">
         <SectionHeading title={sectionTitle} center />
         <Spacing md="36" lg="28" />

@@ -14,6 +14,8 @@ export default function DoctorDetailsSection({
   contactInfo,
   contactInfoHeading,
   bookAppointmentHref = 'https://wa.me/',
+  embed = false,
+  children,
 }) {
   return (
     <div className="cs_doctor_details">
@@ -25,13 +27,13 @@ export default function DoctorDetailsSection({
       />
       <Spacing md="5" />
       <div className="container">
-        <div className="row align-items-stretch">
-          <div className="col-lg-5">
+        <div className="cs_doctor_details_row">
+          <div className="cs_doctor_details_photo_col">
             <div className="cs_single_doctor overflow-hidden cs_radius_20">
-              <img src={getAssetUrl(imgUrl)} alt="Doctor" className="w-100" />
+              <img src={getAssetUrl(imgUrl)} alt="Doctor" className="cs_doctor_details_photo_img" />
             </div>
           </div>
-          <div className="col-lg-6 offset-lg-1 position-relative cs_doctor_details_col d-flex flex-column">
+          <div className="cs_doctor_details_col position-relative d-flex flex-column">
             <Spacing md="8" />
             <h2 className="cs_fs_48 mb-0 cs_semibold">{name}</h2>
             <Spacing md="12" />
@@ -67,6 +69,7 @@ export default function DoctorDetailsSection({
             )}
           </div>
         </div>
+        {embed && children}
       </div>
     </div>
   );

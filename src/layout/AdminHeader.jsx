@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Layout, Popover, Dropdown, Badge, Avatar, Space } from 'antd';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   BellOutlined,
   LogoutOutlined,
@@ -100,8 +100,8 @@ export default function AdminHeader({ collapsed, onToggle }) {
   };
 
   const userMenuItems = [
-    { key: 'website', icon: <GlobalOutlined />, label: 'Website', onClick: () => navigate('/') },
-    { key: 'profile', icon: <UserOutlined />, label: 'Profile' },
+    { key: 'website', icon: <GlobalOutlined />, label: <a href="/" target="_blank" rel="noopener noreferrer">Website</a> },
+    { key: 'profile', icon: <UserOutlined />, label: <Link to="/admin/profile">Profile</Link> },
     { key: 'logout', icon: <LogoutOutlined />, label: 'Logout', danger: true, onClick: handleLogout },
   ];
 

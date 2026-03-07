@@ -64,7 +64,7 @@
         height: 27px;
         width: 26px;
         display: inline-block;
-        background-image: var(--category-icon-url, url(../../images/icons/category.svg));
+        background-image: var(--category-icon-url, url("/images/icons/category.svg"));
         background-size: contain;
         background-position: center;
         position: absolute;

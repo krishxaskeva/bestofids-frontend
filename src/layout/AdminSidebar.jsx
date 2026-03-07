@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  IdcardOutlined,
 } from '@ant-design/icons';
 import { getAssetUrl } from '../config';
 
@@ -22,6 +23,7 @@ const menuItems = [
   { key: '/admin/education', icon: <BookOutlined />, label: 'Education & Knowledge Hub' },
   { key: '/admin/users', icon: <UserOutlined />, label: 'Users' },
   { key: '/admin/payments', icon: <DollarOutlined />, label: 'Payments' },
+  { key: '/admin/profile', icon: <IdcardOutlined />, label: 'Profile' },
 ];
 
 export default function AdminSidebar({ collapsed }) {
