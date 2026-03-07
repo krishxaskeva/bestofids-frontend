@@ -1,17 +1,33 @@
 @use "default/color_variable";
 @use "sass:color";
 
-/* Layout: min-height 100vh so footer sits at bottom on short pages; main grows to fill, no white below footer */
+/* Layout: flex column. No min-height so page ends exactly where footer ends (no white space below). */
 .cs_layout {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  flex: 1 1 auto;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
+/* main must grow with content (flex: 1 1 auto) so when content is long the footer moves down; when short, main expands to push footer to bottom */
 .cs_layout_main {
-  flex: 1 1 0;
+  flex: 1 1 auto;
+  min-height: 0; /* allow flex to shrink when needed; content height still drives when content is long */
+  display: flex;
+  flex-direction: column;
+}
+/* Content wrapper grows with page content so main height = content height when content is tall */
+.cs_layout_content {
+  flex: 1 1 auto;
   min-height: 0;
   display: flex;
   flex-direction: column;
+}
+/* Footer must not shrink and must stay in flow (no absolute/fixed) so it never overlaps content */
+.cs_layout .cs_footer {
+  flex-shrink: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
 }
 
 /* Nav bar: keep all menu items on the same line (no wrap) + active link underline */
@@ -346,6 +362,7 @@
 
 /* Expanded: "Book an Appointment" as its own button – only this opens WhatsApp */
 .floating-wa__cta-btn {
+  -webkit-appearance: none;
   appearance: none;
   display: inline-flex;
   align-items: center;
@@ -574,8 +591,9 @@
   padding: 2.5rem 1.5rem;
   text-align: center;
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   box-sizing: border-box;
   @media (min-width: 768px) {
     padding: 3rem 2rem;
@@ -583,6 +601,20 @@
   @media (min-width: 992px) {
     padding: 3.5rem 3rem;
   }
+}
+.cs_our_services_intro_white_separator {
+  display: block;
+  width: 100%;
+  height: 0;
+  border-top: 2px solid color_variable.$primary;
+  opacity: 0.6;
+  flex-shrink: 0;
+}
+.cs_our_services_intro_white_separator:first-child {
+  margin-bottom: 1.25rem;
+}
+.cs_our_services_intro_white_separator:last-child {
+  margin-top: 1.25rem;
 }
 .cs_our_services_intro_white_inner {
   width: 100%;
@@ -755,7 +787,7 @@
   padding: 1rem 1.25rem;
   margin: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 1rem;
 }
@@ -857,7 +889,8 @@
 
 /* Same separator below the Our approach tagline – single unbroken line */
 .cs_our_services_approach_separator_bottom {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
 }
 .cs_our_services_approach_line_single {
   display: block;
@@ -865,6 +898,23 @@
   height: 0;
   border-top: 2px solid color_variable.$primary;
   opacity: 0.6;
+}
+
+/* Remove gap between Our approach and Let's get started */
+.cs_our_services_approach_section {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+.cs_our_services_cta_section {
+  margin-top: 0 !important;
+  padding-top: 0 !important;
+}
+/* Remove excessive gap between "Our approach" and "Let's get started" – override banner's large margin-top */
+.cs_our_services_cta_section .cs_banner.cs_style_1 {
+  margin-top: 3.5rem;
+  @media (max-width: 991px) {
+    margin-top: 1rem;
+  }
 }
 
 /* Our Services CTA: content left, buttons right */
@@ -880,6 +930,12 @@
   text-align: left;
   padding: 2rem 2.5rem;
   max-width: 100%;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    padding: 1.5rem 1rem;
+  }
   @media (min-width: 768px) {
     padding: 2.5rem 3rem;
     gap: 2rem;
@@ -906,6 +962,18 @@
   align-items: center;
   justify-content: flex-end;
   gap: 0.75rem;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+  }
+}
+.cs_our_services_cta.cs_our_services_cta_left_right .cs_our_services_cta_buttons .cs_btn {
+  @media (max-width: 767px) {
+    min-height: 44px;
+    width: 100%;
+    justify-content: center;
+  }
 }
 /* Contact us: white border; Schedule consultation: teal border */
 .cs_our_services_cta_buttons .cs_btn_white_border {
@@ -1276,32 +1344,43 @@
   justify-content: center;
   text-align: left;
   overflow: auto;
+  @media (max-width: 767px) {
+    padding: 12px;
+    align-items: center;
+  }
 }
 .cs_contact_modal_container {
   position: relative;
   background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.18), 0 8px 16px rgba(0, 0, 0, 0.1);
-  max-width: 560px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 520px;
   width: 100%;
   max-height: calc(100vh - 2.5rem);
   display: flex;
   flex-direction: column;
-  padding: 0;
+  padding: 24px;
   overflow: hidden;
+  @media (max-width: 767px) {
+    max-width: 100%;
+    max-height: calc(100vh - 24px);
+    border-radius: 16px;
+    padding: 20px;
+  }
 }
 .cs_contact_modal_header {
   position: relative;
   flex-shrink: 0;
-  padding: 1.5rem 3rem 0 1.75rem;
-  padding-bottom: 0.5rem;
+  padding: 0.5rem 2.75rem 0.75rem 0;
 }
 .cs_contact_modal_close {
   position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  width: 40px;
-  height: 40px;
+  top: 0.25rem;
+  right: 0;
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
   border: none;
   background: transparent;
   color: color_variable.$accent;
@@ -1309,7 +1388,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 22px;
   border-radius: 50%;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
@@ -1318,31 +1397,95 @@
   color: color_variable.$accent;
 }
 .cs_contact_modal_title {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
   margin: 0 0 0.35rem;
-  padding-right: 2.75rem;
+  padding-right: 0;
   color: color_variable.$accent;
-  line-height: 1.2;
+  line-height: 1.3;
 }
 .cs_contact_modal_desc {
-  font-size: 0.9375rem;
+  font-size: 0.8125rem;
   line-height: 1.45;
-  margin: 0 0 0;
-  opacity: 0.9;
+  margin: 0;
   color: color_variable.$primary;
+  opacity: 0.75;
+}
+.cs_contact_modal_header_divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 0 0 1rem;
+  flex-shrink: 0;
 }
 .cs_contact_modal_container .cs_contact_form {
   margin: 0;
   box-shadow: none;
   flex: 1 1 auto;
   min-height: 0;
-  padding: 1.25rem 1.75rem 1.5rem;
-  border-radius: 0 0 20px 20px;
+  padding: 0;
+  border-radius: 0;
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin-bottom: 0;
+  row-gap: 0;
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_fields > [class*='col-'] {
+  margin-bottom: 0.75rem;
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_fields > .col-sm-6 {
+  flex: 0 0 calc(50% - 8px);
+  max-width: calc(50% - 8px);
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_fields > .col-12:not(.col-sm-6) {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+@media (max-width: 575.98px) {
+  .cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_fields > .col-sm-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_input_label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9375rem;
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_form_field {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.9375rem;
+}
+.cs_contact_modal_container .cs_contact_form_inquiry .cs_contact_form_inquiry_textarea {
+  min-height: 120px;
+  resize: vertical;
+  padding: 10px 14px;
+}
+.cs_contact_modal_submit_divider {
+  height: 1px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 0.75rem 0 0.75rem;
+  flex-shrink: 0;
+}
+.cs_contact_modal_container .cs_contact_form_submit_wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0;
+}
+.cs_contact_modal_container .cs_contact_form_submit_wrap .cs_btn.cs_style_1 {
+  width: fit-content;
 }
 .cs_contact_modal_container .cs_contact_form_modal .cs_form_field {
   width: 100%;
   box-sizing: border-box;
+}
+.cs_contact_modal_container .cs_contact_form_modal {
+  padding-top: 1rem;
 }
 .cs_contact_modal_container .cs_contact_form_modal .cs_contact_form_textarea {
   min-height: 140px;
@@ -1477,8 +1620,28 @@
     opacity: 1;
   }
 }
-/* Our Values section: all 4 cards in one row, same line, uniform height */
+/* Our Values section: all 4 cards in one row, same line, uniform height; stack above following sections */
+.cs_our_values_wrapper {
+  position: relative;
+  z-index: 10;
+}
+/* Section that follows Our Values (Why Choose / etc.) stays behind the cards */
+.cs_our_values_wrapper + section {
+  position: relative;
+  z-index: 1;
+}
+/* Our Values section: contain the decorative shape so it does not bleed into Vision & Mission or Why Choose. */
 .cs_our_values_section {
+  /* Contain .cs_shape_1 within section boundary so teal gradient scrolls with page and stays in section */
+  .cs_shape_wrap {
+    overflow: hidden;
+  }
+  /* Bottom padding so tallest card including shadow is fully contained */
+  padding-bottom: 32px;
+  .cs_shape_wrap .container {
+    position: relative;
+    z-index: 2;
+  }
   .cs_random_features {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1500,6 +1663,8 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
     padding: 40px 32px;
     @media (max-width: 1700px) {
       padding: 32px 26px;
@@ -2014,6 +2179,7 @@
     font-size: 0.9rem;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    min-height: 44px;
   }
   &:last-child {
     margin-bottom: 0;
@@ -2089,6 +2255,8 @@
   color: color_variable.$primary;
   line-height: 1.14em;
   margin: 0 0 0.5rem;
+  text-align: center;
+  width: 100%;
   @media (max-width: 1700px) {
     font-size: 56px;
   }
@@ -2103,6 +2271,8 @@
   margin: 0 0 1.25rem;
   color: color_variable.$primary;
   opacity: 0.95;
+  text-align: center;
+  width: 100%;
 }
 .cs_doctors_qa_panel_body {
   flex: 1;
@@ -2110,7 +2280,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   width: 100%;
   box-sizing: border-box;
 }
@@ -2121,6 +2291,15 @@
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
+.cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_divider {
+  @media (max-width: 767px) {
+    display: none;
+  }
 }
 .cs_doctors_qa_panel_body .cs_doctors_reach_card .cs_doctors_reach_card_col {
   flex: 1 1 0;
@@ -2556,6 +2735,56 @@
   margin-top: 0.5rem;
 }
 
+/* Blog listing: scrollable tab bar on mobile, full-width tab bar */
+.cs_blog_tabs.ant-tabs {
+  width: 100%;
+  .ant-tabs-ink-bar {
+    background: color_variable.$primary;
+  }
+  .ant-tabs-tab {
+    color: rgba(0, 0, 0, 0.65);
+    &:hover {
+      color: color_variable.$primary;
+    }
+    .ant-tabs-tab-btn {
+      &:focus,
+      &:focus-visible {
+        color: color_variable.$primary;
+      }
+    }
+  }
+  .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: color_variable.$primary;
+  }
+  .ant-tabs-nav::before {
+    border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+  .ant-tabs-nav {
+    margin-bottom: 16px;
+  }
+  @media (max-width: 767px) {
+    .ant-tabs-nav {
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .ant-tabs-nav-list {
+      flex-wrap: nowrap;
+    }
+    .ant-tabs-tab {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+    }
+    .ant-tabs-tab-btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+  }
+}
+
 /* ID Education Hub: authenticated tabbed view */
 .cs_edu_hub_tabs_wrap {
   width: 100%;
@@ -2583,6 +2812,28 @@
   }
   .ant-tabs-nav::before {
     border-bottom-color: rgba(0, 0, 0, 0.06);
+  }
+  @media (max-width: 767px) {
+    .ant-tabs-nav {
+      overflow-x: auto;
+      overflow-y: hidden;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      margin-bottom: 0;
+    }
+    .ant-tabs-nav-list {
+      flex-wrap: nowrap;
+    }
+    .ant-tabs-tab {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+    }
+    .ant-tabs-tab-btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
   }
 }
 .cs_edu_hub_tabs_list {
@@ -2874,6 +3125,7 @@
   color: #4a5568;
   margin: 0;
   display: -webkit-box;
+  line-clamp: 3;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -3060,7 +3312,6 @@
   width: 100%;
   height: auto;
   display: block;
-  vertical-align: top;
 }
 .cs_edu_detail_embed_wrap {
   position: relative;
@@ -4358,6 +4609,14 @@ $vm-gray: #3d4f5c;
   .course-purchase-modal .ant-modal-content {
     padding: 16px;
   }
+}
+
+/* Patient Care & Knowledge: card grid spacing and skeleton alignment */
+.cs_patient_care_cards_row {
+  margin-top: 0.5rem;
+}
+.cs_patient_care_cards_row > [class*='col-'] {
+  margin-bottom: 0.5rem;
 }
 
 /* Patient Care & Knowledge: modal body scrollable with space for long content */
