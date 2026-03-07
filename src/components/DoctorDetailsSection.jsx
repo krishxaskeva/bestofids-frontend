@@ -23,16 +23,16 @@ export default function DoctorDetailsSection({
           backgroundImage: `url(${getAssetUrl(bgUrl)})`,
         }}
       />
-      <Spacing md="85" />
+      <Spacing md="5" />
       <div className="container">
-        <div className="row align-items-center">
+        <div className="row align-items-stretch">
           <div className="col-lg-5">
             <div className="cs_single_doctor overflow-hidden cs_radius_20">
               <img src={getAssetUrl(imgUrl)} alt="Doctor" className="w-100" />
             </div>
           </div>
-          <div className="col-lg-6 offset-lg-1 position-relative cs_doctor_details_col">
-            <Spacing md="55" />
+          <div className="col-lg-6 offset-lg-1 position-relative cs_doctor_details_col d-flex flex-column">
+            <Spacing md="8" />
             <h2 className="cs_fs_48 mb-0 cs_semibold">{name}</h2>
             <Spacing md="12" />
             <h3 className="cs_semibold cs_fs_24 mb-0">{designation}</h3>

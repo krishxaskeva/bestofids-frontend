@@ -1,6 +1,6 @@
 import React from 'react';
-import { Table, Button, Space, Input, Select, Tag, Image, Skeleton } from 'antd';
-import { EditOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Input, Select, Tag, Image, Skeleton, Dropdown } from 'antd';
+import { EditOutlined, DeleteOutlined, EyeOutlined, EllipsisOutlined } from '@ant-design/icons';
 
 const categoryColorMap = {
   'Health Tips': 'green',
@@ -18,8 +18,6 @@ export default function PatientCareTable({
   onPreview,
   searchValue,
   onSearchChange,
-  statusFilter,
-  onStatusFilterChange,
   categoryFilter,
   onCategoryFilterChange,
   categories = [],
@@ -27,10 +25,22 @@ export default function PatientCareTable({
 
   const columns = [
     {
+      title: 'Thumbnail',
+      dataIndex: 'thumbnailUrl',
+      key: 'thumbnail',
+      width: 90,
+      render: (url) =>
+        url ? (
+          <Image src={url} alt="" width={48} height={48} style={{ objectFit: 'cover', borderRadius: 4 }} />
+        ) : (
+          <span style={{ color: '#999' }}>—</span>
+        ),
+    },
+    {
       title: 'Title',
       dataIndex: 'title',
       key: 'title',
-      minWidth: 180,
+      width: 220,
       ellipsis: true,
       render: (text) => text || '—',
     },
@@ -44,18 +54,6 @@ export default function PatientCareTable({
           <Tag color={categoryColorMap[cat] || 'default'}>{cat}</Tag>
         ) : (
           '—'
-        ),
-    },
-    {
-      title: 'Thumbnail',
-      dataIndex: 'thumbnailUrl',
-      key: 'thumbnail',
-      width: 90,
-      render: (url) =>
-        url ? (
-          <Image src={url} alt="" width={48} height={48} style={{ objectFit: 'cover', borderRadius: 4 }} />
-        ) : (
-          <span style={{ color: '#999' }}>—</span>
         ),
     },
     {
@@ -76,37 +74,25 @@ export default function PatientCareTable({
     {
       title: 'Actions',
       key: 'actions',
-      width: 160,
+      width: 80,
       fixed: 'right',
-      render: (_, record) => (
-        <Space wrap>
-          <Button
-            type="link"
-            size="small"
-            icon={<EyeOutlined />}
-            onClick={() => onPreview(record)}
-          >
-            View
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => onEdit(record)}
-          >
-            Edit
-          </Button>
-          <Button
-            type="link"
-            size="small"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => onDelete(record)}
-          >
-            Delete
-          </Button>
-        </Space>
-      ),
+      render: (_, record) => {
+        const menuItems = [
+          { key: 'view', icon: <EyeOutlined />, label: 'View', onClick: () => onPreview(record) },
+          { key: 'edit', icon: <EditOutlined />, label: 'Edit', onClick: () => onEdit(record) },
+          { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true, onClick: () => onDelete(record) },
+        ];
+        return (
+          <Dropdown menu={{ items: menuItems }} trigger={['click']} placement="bottomRight">
+            <Button
+              type="text"
+              size="small"
+              icon={<EllipsisOutlined style={{ fontSize: 18, transform: 'rotate(90deg)' }} />}
+              aria-label="Actions"
+            />
+          </Dropdown>
+        );
+      },
     },
   ];
 
@@ -121,16 +107,6 @@ export default function PatientCareTable({
           allowClear
           style={{ width: 220 }}
         />
-        <Select
-          placeholder="Status"
-          allowClear
-          style={{ width: 130 }}
-          value={statusFilter}
-          onChange={onStatusFilterChange}
-        >
-          <Select.Option value="published">Published</Select.Option>
-          <Select.Option value="draft">Draft</Select.Option>
-        </Select>
         <Select
           placeholder="Category"
           allowClear

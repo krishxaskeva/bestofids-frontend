@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Input, Select, Tag, Drawer, Descriptions, message, Skeleton, List } from 'antd';
+import { Card, Table, Button, Input, Select, Tag, Drawer, Descriptions, Skeleton, List } from 'antd';
+import toast from '../../utils/adminToast';
 import { SearchOutlined, EyeOutlined, BookOutlined, FileTextOutlined } from '@ant-design/icons';
 import { getUsers, getUserEnrollments, getUserPurchasedBlogs } from '../../services/apiService';
 import dayjs from 'dayjs';
@@ -8,7 +9,6 @@ export default function UsersPage() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchText, setSearchText] = useState('');
-  const [roleFilter, setRoleFilter] = useState(undefined);
   const [roleTypeFilter, setRoleTypeFilter] = useState(undefined);
   const [statusFilter, setStatusFilter] = useState(undefined);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -27,7 +27,7 @@ export default function UsersPage() {
   useEffect(() => {
     getUsers()
       .then(setData)
-      .catch(() => message.error('Failed to load users'))
+      .catch(() => toast.error('Failed to load users'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -54,15 +54,14 @@ export default function UsersPage() {
       !searchText ||
       (row.name && row.name.toLowerCase().includes(searchText.toLowerCase())) ||
       (row.email && row.email.toLowerCase().includes(searchText.toLowerCase()));
-    const matchRole = roleFilter == null || row.role === roleFilter;
     const matchRoleType = roleTypeFilter == null || row.roleType === roleTypeFilter;
     const matchStatus = statusFilter == null || (row.status || 'active') === statusFilter;
-    return matchSearch && matchRole && matchRoleType && matchStatus;
+    return matchSearch && matchRoleType && matchStatus;
   }).map((row) => ({ ...row, joinedDate: row.createdAt, status: row.status || 'active' }));
 
   const columns = [
-    { title: 'Name', dataIndex: 'name', key: 'name', sorter: (a, b) => (a.name || '').localeCompare(b.name || '') },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
+    { title: 'Name', dataIndex: 'name', key: 'name', width: 180, ellipsis: true, sorter: (a, b) => (a.name || '').localeCompare(b.name || '') },
+    { title: 'Email', dataIndex: 'email', key: 'email', width: 220, ellipsis: true },
     {
       title: 'Role',
       key: 'role',
@@ -86,7 +85,7 @@ export default function UsersPage() {
     {
       title: 'Actions',
       key: 'actions',
-      width: 100,
+      width: 120,
       render: (_, record) => (
         <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => { setSelectedUser(record); setDrawerOpen(true); }}>View</Button>
       ),
@@ -94,11 +93,11 @@ export default function UsersPage() {
   ];
 
   return (
-    <div>
-      <h2 style={{ marginBottom: 24, fontWeight: 600 }}>Users</h2>
+    <div className="admin-module-page">
+      <h2 className="admin-page-title">Users</h2>
       <Card>
-        <Space wrap style={{ marginBottom: 16 }}>
-          <Input
+        <div className="admin-toolbar">
+        <Input
             placeholder="Search by name or email"
             prefix={<SearchOutlined />}
             value={searchText}
@@ -106,16 +105,6 @@ export default function UsersPage() {
             style={{ width: 220 }}
             allowClear
           />
-          <Select
-            placeholder="Role"
-            allowClear
-            style={{ width: 120 }}
-            value={roleFilter}
-            onChange={setRoleFilter}
-          >
-            <Select.Option value="user">User</Select.Option>
-            <Select.Option value="admin">Admin</Select.Option>
-          </Select>
           <Select
             placeholder="Role type"
             allowClear
@@ -138,7 +127,8 @@ export default function UsersPage() {
             <Select.Option value="active">Active</Select.Option>
             <Select.Option value="blocked">Blocked</Select.Option>
           </Select>
-        </Space>
+        </div>
+        <div className="admin-data-table">
         {loading ? (
           <Skeleton active paragraph={{ rows: 8 }} />
         ) : (
@@ -149,6 +139,7 @@ export default function UsersPage() {
           pagination={{ pageSize: 10, showSizeChanger: true }}
         />
         )}
+        </div>
       </Card>
       <Drawer
         title="User profile"

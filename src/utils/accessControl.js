@@ -18,7 +18,7 @@ export function checkAccessAndProceed(isLoggedIn, onSubscribe, redirectToLogin) 
 }
 
 /**
- * @param {{ role?: string } | null} user - Current user from AuthContext
+ * @param {{ role?: string } | null} user - Current user from useAuth()
  * @returns {boolean}
  */
 export function isAdmin(user) {
@@ -26,7 +26,7 @@ export function isAdmin(user) {
 }
 
 /**
- * @param {{ role?: string } | null} user - Current user from AuthContext
+ * @param {{ role?: string } | null} user - Current user from useAuth()
  * @returns {boolean}
  */
 export function isLoggedIn(user) {

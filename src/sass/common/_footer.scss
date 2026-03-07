@@ -289,8 +289,19 @@
 }
 .cs_footer.cs_style_1 {
   position: relative;
+  flex-shrink: 0; /* keep footer in flow; never shrink in flex layout */
   margin-top: 120px;
+  margin-bottom: 0;
+  padding-bottom: 0;
   overflow: hidden; /* prevent .cs_footer_logo_wrap from creating white space below footer */
+  /* Prevent margin collapse so no space appears below the footer */
+  &::after {
+    content: '';
+    display: block;
+    height: 0;
+    overflow: hidden;
+    clear: both;
+  }
   @media (max-width: 991px) {
     margin-top: 80px;
   }
@@ -367,6 +378,22 @@
   }
   .cs_footer_main {
     padding: 28px 0;
+  }
+  @media (max-width: 991px) {
+    .cs_footer_main .row {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .cs_footer_main .cs_footer_item {
+      width: 100%;
+      max-width: 100%;
+    }
+    .cs_footer_main .cs_newsletter .cs_newsletter_form,
+    .cs_footer_main .cs_newsletter .cs_form_field {
+      width: 100%;
+      max-width: 100%;
+    }
   }
   .cs_newsletter.cs_style_1 {
     .cs_newsletter_title {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Button, Space, Modal, Drawer, Form, Input, Select, InputNumber, message, Skeleton, Progress, Alert } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Modal, Drawer, Form, Input, Select, InputNumber, Skeleton, Progress, Alert, Dropdown } from 'antd';
+import toast from '../../utils/adminToast';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { getEducationList, createEducation, updateEducation, deleteEducation } from '../../services/educationService';
 import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
 import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
@@ -68,9 +69,9 @@ export default function PodcastsTab() {
         deleteEducation(id)
           .then(() => {
             setData((prev) => prev.filter((r) => r.id !== id));
-            message.success('Deleted.');
+            toast.success('Deleted.');
           })
-          .catch((e) => message.error(e.message)),
+          .catch((e) => toast.error(e.message)),
     });
   };
 
@@ -119,14 +120,14 @@ export default function PodcastsTab() {
     isEdit: !!editingId,
     editId: editingId,
     onSuccess: () => {
-      message.success(editingId ? 'Updated.' : 'Created.');
+      toast.success(editingId ? 'Updated.' : 'Created.');
       setDrawerOpen(false);
       setMediaFiles(initialMediaFiles());
       form.resetFields();
       resetUploadState();
       load();
     },
-    onError: (msg) => message.error(msg),
+    onError: (msg) => toast.error(msg),
   });
 
   const handleCancel = () => {
@@ -137,19 +138,33 @@ export default function PodcastsTab() {
   };
 
   const columns = [
-    { title: 'Title', dataIndex: 'title', key: 'title' },
-    { title: 'Type', dataIndex: 'mediaType', key: 'mediaType', width: 80 },
-    { title: 'Platform', dataIndex: 'podcastPlatform', key: 'podcastPlatform', width: 110 },
-    { title: 'Ep #', dataIndex: 'episodeNumber', key: 'episodeNumber', width: 60 },
+    { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true, width: 200 },
+    { title: 'Type', dataIndex: 'mediaType', key: 'mediaType', width: 90 },
+    { title: 'Platform', dataIndex: 'podcastPlatform', key: 'podcastPlatform', width: 130 },
+    { title: 'Episode', dataIndex: 'episodeNumber', key: 'episodeNumber', width: 90 },
     {
       title: 'Actions',
       key: 'actions',
-      width: 120,
+      width: 80,
+      align: 'center',
       render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-        </Space>
+        <Dropdown
+          menu={{
+            items: [
+              { key: 'edit', icon: <EditOutlined />, label: 'Edit', onClick: () => handleEdit(record) },
+              { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true, onClick: () => handleDelete(record.id) },
+            ],
+          }}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <Button
+            type="text"
+            size="small"
+            icon={<EllipsisOutlined style={{ fontSize: 18, transform: 'rotate(90deg)' }} />}
+            aria-label="Actions"
+          />
+        </Dropdown>
       ),
     },
   ];

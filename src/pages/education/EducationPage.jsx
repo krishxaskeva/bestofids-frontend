@@ -17,8 +17,8 @@ const tabs = [
 
 export default function EducationPage() {
   return (
-    <div>
-      <h2 style={{ marginBottom: 24, fontWeight: 600 }}>Education & Knowledge Hub</h2>
+    <div className="admin-module-page">
+      <h2 className="admin-page-title">Education & Knowledge Hub</h2>
       <Card>
         <Tabs
           defaultActiveKey="courses"

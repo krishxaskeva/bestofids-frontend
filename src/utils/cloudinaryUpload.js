@@ -1,29 +1,30 @@
 /**
  * Client-side upload to Cloudinary using unsigned upload preset.
- * Requires REACT_APP_CLOUDINARY_CLOUD_NAME and REACT_APP_CLOUDINARY_UPLOAD_PRESET.
- * Cloud name can also be derived from REACT_APP_ASSETS_BASE when it is a Cloudinary URL.
+ * Requires VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET.
+ * Cloud name can also be derived from VITE_ASSETS_BASE when it is a Cloudinary URL.
  * @param {File} file - File from input
  * @param {'image'|'video'|'raw'} resourceType - Cloudinary resource type (image, video, or raw for PDF/audio)
  * @returns {Promise<string>} secure_url from Cloudinary response
  */
 function getCloudName() {
-  const fromEnv = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+  const fromEnv = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   if (fromEnv && fromEnv.trim()) return fromEnv.trim();
-  const assetsBase = process.env.REACT_APP_ASSETS_BASE || '';
+  const assetsBase = import.meta.env.VITE_ASSETS_BASE || '';
   const match = assetsBase.match(/^https?:\/\/res\.cloudinary\.com\/([^/]+)/);
   return match ? match[1] : '';
 }
 
 export async function uploadToCloudinary(file, resourceType = 'image') {
   const cloudName = getCloudName();
-  const uploadPreset = (process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || '').trim();
+  const uploadPreset = (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '').trim();
   if (!cloudName || !uploadPreset) {
-    const missing = [!cloudName && 'REACT_APP_CLOUDINARY_CLOUD_NAME (or set REACT_APP_ASSETS_BASE to a Cloudinary URL)', !uploadPreset && 'REACT_APP_CLOUDINARY_UPLOAD_PRESET'].filter(Boolean);
+    const missing = [!cloudName && 'VITE_CLOUDINARY_CLOUD_NAME (or set VITE_ASSETS_BASE to a Cloudinary URL)', !uploadPreset && 'VITE_CLOUDINARY_UPLOAD_PRESET'].filter(Boolean);
     throw new Error(
       `Cloudinary is not configured. Set ${missing.join(' and ')}. ` +
       'For upload preset: Cloudinary Dashboard → Settings → Upload → Add upload preset → set to Unsigned, then add its name to .env.'
     );
   }
+  console.log('Uploading file to Cloudinary', { resourceType, name: file?.name });
   const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
   const formData = new FormData();
   formData.append('file', file);
@@ -34,12 +35,15 @@ export async function uploadToCloudinary(file, resourceType = 'image') {
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
+    console.error('Cloudinary upload failed:', err.error?.message || res.status);
     throw new Error(err.error?.message || `Upload failed: ${res.status}`);
   }
   const data = await res.json();
   if (!data.secure_url) {
+    console.error('Cloudinary upload failed: no URL in response');
     throw new Error('Upload did not return a URL');
   }
+  console.log('Upload success:', data.secure_url);
   return data.secure_url;
 }
 
@@ -52,9 +56,9 @@ export async function uploadToCloudinary(file, resourceType = 'image') {
  */
 export function uploadToCloudinaryWithProgress(file, resourceType = 'image', onProgress) {
   const cloudName = getCloudName();
-  const uploadPreset = (process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET || '').trim();
+  const uploadPreset = (import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '').trim();
   if (!cloudName || !uploadPreset) {
-    const missing = [!cloudName && 'REACT_APP_CLOUDINARY_CLOUD_NAME', !uploadPreset && 'REACT_APP_CLOUDINARY_UPLOAD_PRESET'].filter(Boolean);
+    const missing = [!cloudName && 'VITE_CLOUDINARY_CLOUD_NAME', !uploadPreset && 'VITE_CLOUDINARY_UPLOAD_PRESET'].filter(Boolean);
     return Promise.reject(new Error(`Cloudinary not configured. Set ${missing.join(' and ')}.`));
   }
   const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
@@ -76,21 +80,27 @@ export function uploadToCloudinaryWithProgress(file, resourceType = 'image', onP
           const data = JSON.parse(xhr.responseText);
           if (data.secure_url) {
             if (typeof onProgress === 'function') onProgress(100);
+            console.log('Cloudinary upload success:', data.secure_url);
             resolve(data.secure_url);
           } else reject(new Error('Upload did not return a URL'));
         } catch (err) {
+          console.error('Cloudinary upload error: invalid response');
           reject(new Error('Invalid response'));
         }
       } else {
         try {
           const err = JSON.parse(xhr.responseText);
+          console.error('Cloudinary upload failed:', err.error?.message || xhr.status);
           reject(new Error(err.error?.message || `Upload failed: ${xhr.status}`));
         } catch {
           reject(new Error(`Upload failed: ${xhr.status}`));
         }
       }
     });
-    xhr.addEventListener('error', () => reject(new Error('Network error')));
+    xhr.addEventListener('error', () => {
+      console.error('Cloudinary upload error: network error');
+      reject(new Error('Network error'));
+    });
     xhr.addEventListener('abort', () => reject(new Error('Upload cancelled')));
     xhr.open('POST', url);
     xhr.send(formData);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Space, Select, DatePicker, Drawer, Descriptions, Skeleton } from 'antd';
+import { Card, Table, Button, Select, DatePicker, Drawer, Descriptions, Skeleton } from 'antd';
+import toast from '../../utils/adminToast';
 import { EyeOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getPayments } from '../../services/apiService';
@@ -19,7 +20,10 @@ export default function PaymentsPage() {
     setLoading(true);
     getPayments()
       .then(setData)
-      .catch(() => setData([]))
+      .catch(() => {
+        toast.error('Failed to load payments');
+        setData([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -42,10 +46,10 @@ export default function PaymentsPage() {
   }));
 
   const columns = [
-    { title: 'Type', dataIndex: 'typeDisplay', key: 'typeDisplay', width: 120 },
-    { title: 'Transaction ID', dataIndex: 'id', key: 'id', width: 110, render: (id) => (id ? String(id).slice(-12) : '—') },
-    { title: 'User', dataIndex: 'user', key: 'user', ellipsis: true },
-    { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 90, render: (v) => (v != null ? `₹${v}` : '—') },
+    { title: 'Type', dataIndex: 'typeDisplay', key: 'typeDisplay', width: 130 },
+    { title: 'Transaction ID', dataIndex: 'id', key: 'id', width: 120, render: (id) => (id ? String(id).slice(-12) : '—') },
+    { title: 'User', dataIndex: 'user', key: 'user', width: 180, ellipsis: true },
+    { title: 'Amount', dataIndex: 'amount', key: 'amount', width: 100, render: (v) => (v != null ? `₹${v}` : '—') },
     {
       title: 'Status',
       dataIndex: 'statusDisplay',
@@ -56,17 +60,18 @@ export default function PaymentsPage() {
         return <span style={{ color: colors[status] || '#000' }}>{status}</span>;
       },
     },
-    { title: 'Date', dataIndex: 'dateFormatted', key: 'date', width: 110 },
+    { title: 'Date', dataIndex: 'dateFormatted', key: 'date', width: 120 },
     {
       title: 'Blog / Reference',
       key: 'blogOrRef',
+      width: 160,
       ellipsis: true,
       render: (_, record) => record.type === 'blog_purchase' ? (record.blogTitle || '—') : (record.referenceId || '—'),
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 80,
+      width: 90,
       render: (_, record) => (
         <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => { setSelectedPayment(record); setDrawerOpen(true); }} />
       ),
@@ -74,10 +79,10 @@ export default function PaymentsPage() {
   ];
 
   return (
-    <div>
-      <h2 style={{ marginBottom: 24, fontWeight: 600 }}>Payments</h2>
+    <div className="admin-module-page">
+      <h2 className="admin-page-title">Payments</h2>
       <Card>
-        <Space wrap style={{ marginBottom: 16 }}>
+        <div className="admin-toolbar">
           <RangePicker value={dateRange} onChange={setDateRange} />
           <Select
             placeholder="Type"
@@ -101,7 +106,8 @@ export default function PaymentsPage() {
             <Select.Option value="failed">Failed</Select.Option>
             <Select.Option value="refunded">Refunded</Select.Option>
           </Select>
-        </Space>
+        </div>
+        <div className="admin-data-table">
         {loading ? (
           <Skeleton active paragraph={{ rows: 8 }} />
         ) : (
@@ -112,6 +118,7 @@ export default function PaymentsPage() {
             pagination={{ pageSize: 10, showSizeChanger: true }}
           />
         )}
+        </div>
       </Card>
       <Drawer
         title="Payment details"

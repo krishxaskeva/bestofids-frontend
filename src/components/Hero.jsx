@@ -5,7 +5,7 @@ import { getAssetUrl } from '../config';
 
 function assetUrl(url, cacheBust = false) {
   const base = getAssetUrl(url);
-  if (cacheBust && process.env.NODE_ENV === 'development' && base) {
+  if (cacheBust && import.meta.env.DEV && base) {
     return `${base}${base.includes('?') ? '&' : '?'}v=1`;
   }
   return base;

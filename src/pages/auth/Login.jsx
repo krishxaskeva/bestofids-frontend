@@ -22,14 +22,17 @@ export default function Login() {
     setError('');
     setLoading(true);
     const { email, password } = values;
+    console.log('Login form submit, email:', email);
     login(email, password)
       .then(() => {
         const from = location.state?.from?.pathname || '/';
         const redirectParam = new URLSearchParams(location.search).get('redirect');
         const target = redirectParam && redirectParam.startsWith('/') ? redirectParam : from;
+        console.log('User logged in, redirecting to:', target);
         navigate(target, { replace: true });
       })
       .catch((err) => {
+        console.error('Component error (Login):', err);
         setError(err.message || 'Invalid email or password. Please try again.');
       })
       .finally(() => setLoading(false));

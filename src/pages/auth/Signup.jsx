@@ -61,12 +61,15 @@ export default function Signup() {
     setLoading(true);
     const name = values.fullName || values.name || values.email?.split('@')[0];
     const roleType = values.roleType?.toLowerCase?.()?.replace(/\s+/g, '_') || values.roleType;
+    console.log('Signup form submit, email:', values.email);
     signup(name, values.email, values.password, roleType, values.phone)
       .then(() => {
         setSuccess(true);
+        console.log('Signup success, redirecting to login');
         setTimeout(() => navigate('/login', { replace: true }), 2000);
       })
       .catch((err) => {
+        console.error('Component error (Signup):', err);
         setError(err.message || 'Sign up failed. Please try again.');
       })
       .finally(() => setLoading(false));

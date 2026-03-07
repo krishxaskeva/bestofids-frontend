@@ -34,7 +34,7 @@ const EDUCATION_ITEMS = [
   'Ongoing updates through newsletters and educational content',
 ];
 
-function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMoreHref, headerImage, onInquiryClick, inquiryType }) {
+function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMoreHref, headerImage, onInquiryClick, inquiryType, showLearnMore = true }) {
   const isInquiry = Boolean(onInquiryClick && inquiryType);
   return (
     <div className={`cs_our_services_detail_card ${headerImage ? 'cs_our_services_detail_card_has_header_img' : ''}`}>
@@ -71,12 +71,14 @@ function ServiceCard({ title, subtitle, items, buttonText, buttonHref, learnMore
               </i>
             </Link>
           )}
-          <Link to={learnMoreHref} className="cs_our_services_detail_learn_more">
-            Learn more
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          {showLearnMore && (
+            <Link to={learnMoreHref} className="cs_our_services_detail_learn_more">
+              Learn more
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          )}
         </div>
       </div>
     </div>
@@ -134,6 +136,7 @@ export default function OurServicesDetail() {
                   buttonHref="/id-education-knowledge-hub"
                   learnMoreHref="/id-education-knowledge-hub"
                   headerImage={getAssetUrl('/images/certification-continuing-education.png')}
+                  showLearnMore={false}
                 />
               </div>
             </div>
@@ -142,7 +145,7 @@ export default function OurServicesDetail() {
       </Section>
 
       {/* Our approach – SectionHeading + separator lines from sides into text */}
-      <Section topMd={24} topLg={20} topXl={16} bottomMd={16} bottomLg={14} bottomXl={12}>
+      <Section className="cs_our_services_approach_section" topMd={24} topLg={20} topXl={16} bottomMd={0} bottomLg={0} bottomXl={0}>
         <div className="container">
           <div className="cs_our_services_approach_separator">
             <span className="cs_our_services_approach_line" aria-hidden />
@@ -162,7 +165,7 @@ export default function OurServicesDetail() {
       </Section>
 
       {/* Let's get started – CTA banner pattern like Doctors page */}
-      <Section topMd={16} topLg={14} topXl={12} bottomMd={24} bottomLg={20} bottomXl={16}>
+      <Section className="cs_our_services_cta_section" topMd={0} topLg={0} topXl={0} bottomMd={24} bottomLg={20} bottomXl={16}>
         <div className="container">
           <div className="cs_banner cs_style_1 cs_bg_filed cs_banner_cta cs_our_services_cta cs_our_services_cta_left_right" style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}>
             <div className="cs_banner_content">

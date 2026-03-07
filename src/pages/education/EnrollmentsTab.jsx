@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Table, message } from 'antd';
+import { Table } from 'antd';
+import toast from '../../utils/adminToast';
 import { getEnrollmentsAll } from '../../services/educationService';
 import dayjs from 'dayjs';
 
 const columns = [
-  { title: 'User', key: 'user', render: (_, r) => (r.userName || r.userEmail) ? `${r.userName || ''} (${r.userEmail || ''})` : '—' },
-  { title: 'Education', dataIndex: 'educationTitle', key: 'educationTitle', ellipsis: true },
+  { title: 'User', key: 'user', width: 240, ellipsis: true, render: (_, r) => (r.userName || r.userEmail) ? `${r.userName || ''} (${r.userEmail || ''})` : '—' },
+  { title: 'Education', dataIndex: 'educationTitle', key: 'educationTitle', ellipsis: true, width: 260 },
   { title: 'Enrolled', dataIndex: 'enrollDate', key: 'enrollDate', width: 120, render: (v) => v ? dayjs(v).format('MMM D, YYYY') : '—' },
 ];
 
@@ -17,7 +18,7 @@ export default function EnrollmentsTab() {
     setLoading(true);
     getEnrollmentsAll()
       .then(setData)
-      .catch(() => message.error('Failed to load enrollments'))
+      .catch(() => toast.error('Failed to load enrollments'))
       .finally(() => setLoading(false));
   };
 

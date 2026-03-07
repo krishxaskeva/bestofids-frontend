@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Button, Space, Modal, Drawer, Form, Input, message, Skeleton, Row, Col, Progress, Alert } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Button, Space, Modal, Drawer, Form, Input, Skeleton, Row, Col, Progress, Alert, Dropdown } from 'antd';
+import toast from '../../utils/adminToast';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { getEducationList, createEducation, updateEducation, deleteEducation } from '../../services/educationService';
 import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
 import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
@@ -22,7 +23,7 @@ export default function CoursesTab() {
     setLoading(true);
     getEducationList({ category: CATEGORY })
       .then(setData)
-      .catch(() => message.error('Failed to load'))
+      .catch(() => toast.error('Failed to load'))
       .finally(() => setLoading(false));
   };
   useEffect(() => { load(); }, []);
@@ -56,9 +57,9 @@ export default function CoursesTab() {
         deleteEducation(id)
           .then(() => {
             setData((prev) => prev.filter((r) => r.id !== id));
-            message.success('Deleted.');
+            toast.success('Deleted.');
           })
-          .catch((err) => message.error(err.message)),
+          .catch((err) => toast.error(err.message)),
     });
   };
 
@@ -103,14 +104,14 @@ export default function CoursesTab() {
     isEdit: !!editingId,
     editId: editingId,
     onSuccess: () => {
-      message.success(editingId ? 'Updated.' : 'Created.');
+      toast.success(editingId ? 'Updated.' : 'Created.');
       setDrawerOpen(false);
       setMediaFiles(initialMediaFiles());
       form.resetFields();
       resetUploadState();
       load();
     },
-    onError: (msg) => message.error(msg),
+    onError: (msg) => toast.error(msg),
   });
 
   const handleCancel = () => {
@@ -121,18 +122,32 @@ export default function CoursesTab() {
   };
 
   const columns = [
-    { title: 'Title', dataIndex: 'title', key: 'title' },
+    { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true, width: 220 },
     { title: 'Duration', dataIndex: 'duration', key: 'duration', width: 120 },
-    { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true },
+    { title: 'Description', dataIndex: 'description', key: 'description', ellipsis: true, width: 200 },
     {
       title: 'Actions',
       key: 'actions',
-      width: 120,
+      width: 80,
+      align: 'center',
       render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-        </Space>
+        <Dropdown
+          menu={{
+            items: [
+              { key: 'edit', icon: <EditOutlined />, label: 'Edit', onClick: () => handleEdit(record) },
+              { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true, onClick: () => handleDelete(record.id) },
+            ],
+          }}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <Button
+            type="text"
+            size="small"
+            icon={<EllipsisOutlined style={{ fontSize: 18, transform: 'rotate(90deg)' }} />}
+            aria-label="Actions"
+          />
+        </Dropdown>
       ),
     },
   ];

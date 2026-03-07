@@ -47,6 +47,7 @@ apiClient.interceptors.request.use((req) => {
 apiClient.interceptors.response.use(
   (res) => res,
   (err) => {
+    console.error('API Error:', err.response?.data || err.message);
     if (err.response?.status === 401) {
       const hadAuthHeader = !!err.config?.headers?.Authorization;
       if (hadAuthHeader) {

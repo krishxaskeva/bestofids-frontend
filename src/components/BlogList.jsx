@@ -9,27 +9,13 @@ import Spacing from './Spacing';
 import { pageTitle } from '../utils/PageTitle';
 import { useAuth } from '../store/hooks';
 import { getBlogs, createBlogOrder, verifyBlogPayment } from '../services/blogService';
+import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpayCheckout';
 import { getPurchasedBlogs } from '../services/userService';
 import { config, getAssetUrl } from '../config';
 import LoginModal from './auth/LoginModal';
 import dayjs from 'dayjs';
 
 const SITE_TEAL = '#117574';
-
-function loadRazorpayScript() {
-  return new Promise((resolve, reject) => {
-    if (window.Razorpay) {
-      resolve();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Could not load payment script. Check your connection or try again.'));
-    document.body.appendChild(script);
-  });
-}
 
 export default function BlogList() {
   pageTitle('Blog');
@@ -86,28 +72,18 @@ export default function BlogList() {
         message.error('Payment is not configured.');
         return;
       }
-      if (typeof window.Razorpay !== 'function') {
-        setPayingBlogId(null);
-        message.error('Payment script did not load. Please refresh and try again.');
-        return;
-      }
-      const options = {
+      openRazorpayCheckout({
         key,
         amount,
         currency,
-        order_id: orderId,
-        name: 'Best of IDs',
+        orderId,
         description: blog.title || 'Blog',
-        handler(response) {
-          handlePaymentSuccess(blog.id, response);
+        onSuccess: (response) => handlePaymentSuccess(blog.id, response),
+        onFailure: () => {
+          setPayingBlogId(null);
+          message.error('Payment failed or was cancelled.');
         },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', () => {
-        setPayingBlogId(null);
-        message.error('Payment failed or was cancelled.');
       });
-      rzp.open();
     } catch (err) {
       setPayingBlogId(null);
       message.error(err.message || 'Could not start payment.');
@@ -294,7 +270,7 @@ export default function BlogList() {
           </div>
         ) : (
           <>
-            <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} />
+            <Tabs activeKey={activeTab} onChange={setActiveTab} items={tabItems} className="cs_blog_tabs" />
             <Spacing md="32" lg="28" />
             {activeTab === 'all' && blogs.length === 0 && (
               <p className="text-center cs_heading_color">No blog posts yet. Check back soon.</p>

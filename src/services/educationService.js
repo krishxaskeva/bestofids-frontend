@@ -1,60 +1,110 @@
 import apiClient from '../api/client';
 
 export async function getEducationList(params = {}) {
-  const { data } = await apiClient.get('/education', { params });
-  if (data.success && Array.isArray(data.data)) return data.data;
-  return [];
+  try {
+    const { data } = await apiClient.get('/education', { params });
+    if (data.success && Array.isArray(data.data)) return data.data;
+    return [];
+  } catch (err) {
+    console.error('API Error (getEducationList):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function getEducationById(id) {
-  const { data } = await apiClient.get(`/education/${id}`);
-  if (data.success && data.data) return data.data;
-  throw new Error(data.message || 'Content not found');
+  try {
+    const { data } = await apiClient.get(`/education/${id}`);
+    if (data.success && data.data) return data.data;
+    throw new Error(data.message || 'Content not found');
+  } catch (err) {
+    console.error('API Error (getEducationById):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function enroll(educationId) {
-  const { data } = await apiClient.post('/education/enroll', { educationId });
-  if (data.success) return data;
-  throw new Error(data.message || 'Enroll failed');
+  try {
+    const { data } = await apiClient.post('/education/enroll', { educationId });
+    if (data.success) return data;
+    throw new Error(data.message || 'Enroll failed');
+  } catch (err) {
+    console.error('API Error (enroll):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function getMyEnrollments() {
-  const { data } = await apiClient.get('/education/my/enrollments');
-  if (data.success && Array.isArray(data.data)) return data.data;
-  return [];
+  try {
+    const { data } = await apiClient.get('/education/my/enrollments');
+    if (data.success && Array.isArray(data.data)) return data.data;
+    return [];
+  } catch (err) {
+    console.error('API Error (getMyEnrollments):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function checkEnrolled(educationId) {
-  const { data } = await apiClient.get(`/education/${educationId}/check-enrolled`);
-  return data.success && data.enrolled === true;
+  try {
+    const { data } = await apiClient.get(`/education/${educationId}/check-enrolled`);
+    return data.success && data.enrolled === true;
+  } catch (err) {
+    console.error('API Error (checkEnrolled):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function updateAccess(educationId, progress) {
-  const { data } = await apiClient.patch(`/education/${educationId}/access`, progress != null ? { progress } : {});
-  if (data.success) return data.data;
-  throw new Error(data.message || 'Update failed');
+  try {
+    const { data } = await apiClient.patch(`/education/${educationId}/access`, progress != null ? { progress } : {});
+    if (data.success) return data.data;
+    throw new Error(data.message || 'Update failed');
+  } catch (err) {
+    console.error('API Error (updateAccess):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function createEducation(payload) {
-  const { data } = await apiClient.post('/education', payload);
-  if (data.success && data.data) return data.data;
-  throw new Error(data.message || 'Create failed');
+  try {
+    const { data } = await apiClient.post('/education', payload);
+    if (data.success && data.data) return data.data;
+    throw new Error(data.message || 'Create failed');
+  } catch (err) {
+    console.error('API Error (createEducation):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function updateEducation(id, payload) {
-  const { data } = await apiClient.put(`/education/${id}`, payload);
-  if (data.success && data.data) return data.data;
-  throw new Error(data.message || 'Update failed');
+  try {
+    const { data } = await apiClient.put(`/education/${id}`, payload);
+    if (data.success && data.data) return data.data;
+    throw new Error(data.message || 'Update failed');
+  } catch (err) {
+    console.error('API Error (updateEducation):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function deleteEducation(id) {
-  const { data } = await apiClient.delete(`/education/${id}`);
-  if (data.success) return true;
-  throw new Error(data.message || 'Delete failed');
+  try {
+    const { data } = await apiClient.delete(`/education/${id}`);
+    if (data.success) return true;
+    throw new Error(data.message || 'Delete failed');
+  } catch (err) {
+    console.error('API Error (deleteEducation):', err.response?.data || err.message);
+    throw err;
+  }
 }
 
 export async function getEnrollmentsAll() {
-  const { data } = await apiClient.get('/education/enrollments/all');
-  if (data.success && Array.isArray(data.data)) return data.data;
-  return [];
+  try {
+    const { data } = await apiClient.get('/education/enrollments/all');
+    if (data.success && Array.isArray(data.data)) return data.data;
+    return [];
+  } catch (err) {
+    console.error('API Error (getEnrollmentsAll):', err.response?.data || err.message);
+    throw err;
+  }
 }

@@ -40,16 +40,18 @@ export default function OurServices() {
           </div>
         </div>
       </Section>
-      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16} className="cs_our_services_white_section">
+      <Section topMd={24} topLg={20} topXl={16} bottomMd={12} bottomLg={10} bottomXl={8} className="cs_our_services_white_section">
         <div className="cs_our_services_intro_white">
+          <span className="cs_our_services_intro_white_separator" aria-hidden />
           <div className="cs_our_services_intro_white_inner">
             <p className="cs_our_services_intro_white_text m-0">
               {whiteText}
             </p>
           </div>
+          <span className="cs_our_services_intro_white_separator" aria-hidden />
         </div>
       </Section>
-      <Section topMd={24} topLg={20} topXl={16} bottomMd={24} bottomLg={20} bottomXl={16}>
+      <Section topMd={12} topLg={10} topXl={8} bottomMd={24} bottomLg={20} bottomXl={16}>
         <DoctorDetailsSection
           bgUrl="/images/doctors/doctor_details_bg.svg"
           imgUrl="/images/doctors/dr_patient_care.png"

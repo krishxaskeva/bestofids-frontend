@@ -8,6 +8,7 @@ import Sidebar from './Sidebar';
 import { pageTitle } from '../utils/PageTitle';
 import { useAuth } from '../store/hooks';
 import { getBlogById, checkBlogPurchase, createBlogOrder, verifyBlogPayment, getBlogs } from '../services/blogService';
+import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpayCheckout';
 import { Button, message } from 'antd';
 import dayjs from 'dayjs';
 import htmlReactParser from 'html-react-parser';
@@ -25,21 +26,6 @@ export default function BlogDetails() {
   const [purchased, setPurchased] = useState(false);
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [relatedBlogs, setRelatedBlogs] = useState([]);
-
-  function loadRazorpayScript() {
-    return new Promise((resolve) => {
-      if (window.Razorpay) {
-        resolve();
-        return;
-      }
-      const script = document.createElement('script');
-      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-      script.async = true;
-      script.onload = () => resolve();
-      script.onerror = () => resolve();
-      document.body.appendChild(script);
-    });
-  }
 
   useEffect(() => {
     if (!blogId) {
@@ -94,25 +80,21 @@ export default function BlogDetails() {
       const key = keyId || config.razorpayKey;
       if (!key) {
         message.error('Payment is not configured.');
+        setPaymentLoading(false);
         return;
       }
-      const options = {
+      openRazorpayCheckout({
         key,
         amount,
         currency,
-        order_id: orderId,
-        name: 'Best of IDs',
+        orderId,
         description: blog.title || 'Blog',
-        handler(response) {
-          handlePaymentSuccess(response);
+        onSuccess: (response) => handlePaymentSuccess(response),
+        onFailure: () => {
+          setPaymentLoading(false);
+          message.error('Payment failed or was cancelled.');
         },
-      };
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', () => {
-        setPaymentLoading(false);
-        message.error('Payment failed or was cancelled.');
       });
-      rzp.open();
     } catch (err) {
       message.error(err.message || 'Could not start payment.');
       setPaymentLoading(false);

@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { Drawer, Form, Button, message } from 'antd';
+import { Drawer, Form, Button } from 'antd';
+import toast from '../../utils/adminToast';
 import PatientCareForm from '../../components/patientCare/PatientCareForm';
 
 const getBase64 = (file) =>
@@ -54,14 +55,16 @@ export default function EditPatientCare({ post, open, onClose, onSuccess }) {
       };
       Promise.resolve(onSuccess(post.id, payload))
         .then(() => {
-          message.success('Post updated.');
+          toast.success('Post updated.');
           onClose();
         })
         .catch((err) => {
-          message.error(err?.message || 'Update failed');
+          toast.error(err?.message || 'Update failed');
         })
         .finally(() => setSubmitting(false));
-    }).catch(() => {});
+    }).catch(() => {
+      toast.warning('Please fix the form errors.');
+    });
   }, [form, thumbnailDataUrl, post, onSuccess, onClose]);
 
   const handleClose = useCallback(() => {

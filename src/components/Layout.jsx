@@ -14,7 +14,9 @@ export default function Layout() {
         variant={isHome ? 'cs_white_color' : 'cs_heading_color'}
       />
       <main className="cs_layout_main">
-        <Outlet />
+        <div className="cs_layout_content">
+          <Outlet />
+        </div>
       </main>
       <FloatingWhatsApp />
       <Footer />

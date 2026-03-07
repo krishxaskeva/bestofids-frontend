@@ -21,11 +21,14 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
     const { email, password } = values;
+    console.log('Admin login form submit, email:', email);
     adminLogin(email, password)
       .then(() => {
+        console.log('Admin logged in, redirecting to /admin');
         navigate('/admin', { replace: true });
       })
       .catch((err) => {
+        console.error('Component error (AdminLogin):', err);
         const isNetworkError = err.message === 'Network Error' || err.code === 'ERR_NETWORK' || !err.response;
         setError(
           isNetworkError

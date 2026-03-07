@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Table, Button, Space, Modal, Drawer, Form, Input, Select, InputNumber, message, Skeleton, Tag, Progress, Alert } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Table, Button, Space, Modal, Drawer, Form, Input, Select, InputNumber, Skeleton, Tag, Progress, Alert, Dropdown } from 'antd';
+import toast from '../../utils/adminToast';
+import { PlusOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import {
   getBlogsAdmin,
@@ -34,10 +35,12 @@ export default function BlogPage() {
 
   const loadBlogs = () => {
     setLoading(true);
+    console.log('Fetching blogs...');
     getBlogsAdmin()
       .then(setData)
-      .catch(() => {
-        message.error('Failed to load blogs');
+      .catch((err) => {
+        console.error('Component error (BlogPage loadBlogs):', err);
+        toast.error('Failed to load blogs');
         setData([]);
       })
       .finally(() => setLoading(false));
@@ -70,17 +73,17 @@ export default function BlogPage() {
     setDrawerOpen(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = (record) => {
     Modal.confirm({
       title: 'Delete blog post?',
       okType: 'danger',
       onOk: () => {
-        deleteBlogApi(id)
+        deleteBlogApi(record.id)
           .then(() => {
-            setData((prev) => prev.filter((r) => r.id !== id));
-            message.success('Post deleted.');
+            setData((prev) => prev.filter((r) => r.id !== record.id));
+            toast.success(record.title ? `"${record.title}" deleted.` : 'Post deleted.');
           })
-          .catch((err) => message.error(err.message || 'Delete failed'));
+          .catch((err) => toast.error(err.message || 'Delete failed'));
       },
     });
   };
@@ -115,14 +118,14 @@ export default function BlogPage() {
     isEdit: !!editingId,
     editId: editingId,
     onSuccess: () => {
-      message.success(editingId ? 'Post updated.' : 'Post created.');
+      toast.success(editingId ? 'Post updated.' : 'Post created.');
       setDrawerOpen(false);
       setMediaFiles(initialMediaFiles());
       form.resetFields();
       resetUploadState();
       loadBlogs();
     },
-    onError: (msg) => message.error(msg),
+    onError: (msg) => toast.error(msg),
   });
 
   const handleCancel = () => {
@@ -133,8 +136,8 @@ export default function BlogPage() {
   };
 
   const columns = [
-    { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true },
-    { title: 'Price', dataIndex: 'price', key: 'price', width: 80, render: (v) => (v != null ? `₹${v}` : '—') },
+    { title: 'Title', dataIndex: 'title', key: 'title', ellipsis: true, width: 220 },
+    { title: 'Price', dataIndex: 'price', key: 'price', width: 90, render: (v) => (v != null ? `₹${v}` : '—') },
     {
       title: 'Tags',
       dataIndex: 'tags',
@@ -146,18 +149,32 @@ export default function BlogPage() {
       title: 'Created',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 110,
+      width: 120,
       render: (v) => (v ? dayjs(v).format('MMM D, YYYY') : '—'),
     },
     {
       title: 'Actions',
       key: 'actions',
-      width: 120,
+      width: 80,
+      align: 'center',
       render: (_, record) => (
-        <Space>
-          <Button type="link" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record)} />
-          <Button type="link" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)} />
-        </Space>
+        <Dropdown
+          menu={{
+            items: [
+              { key: 'edit', icon: <EditOutlined />, label: 'Edit', onClick: () => handleEdit(record) },
+              { key: 'delete', icon: <DeleteOutlined />, label: 'Delete', danger: true, onClick: () => handleDelete(record) },
+            ],
+          }}
+          trigger={['click']}
+          placement="bottomRight"
+        >
+          <Button
+            type="text"
+            size="small"
+            icon={<EllipsisOutlined style={{ fontSize: 18, transform: 'rotate(90deg)' }} />}
+            aria-label="Actions"
+          />
+        </Dropdown>
       ),
     },
   ];
@@ -181,14 +198,15 @@ export default function BlogPage() {
   );
 
   return (
-    <div>
-      <h2 style={{ marginBottom: 24, fontWeight: 600 }}>Blog</h2>
+    <div className="admin-module-page">
+      <h2 className="admin-page-title">Blog</h2>
       <Card>
-        <Space style={{ marginBottom: 16 }}>
+        <div className="admin-toolbar">
           <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
             Create blog
           </Button>
-        </Space>
+        </div>
+        <div className="admin-data-table">
         {loading ? (
           <Skeleton active paragraph={{ rows: 8 }} />
         ) : (
@@ -199,6 +217,7 @@ export default function BlogPage() {
             pagination={{ pageSize: 10 }}
           />
         )}
+        </div>
       </Card>
       <Drawer
         title={editingId ? 'Edit blog post' : 'Create blog post'}

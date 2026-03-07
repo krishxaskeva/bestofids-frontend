@@ -27,9 +27,13 @@
     border: none;
     background-color: transparent;
     display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 0;
     cursor: pointer;
     transition: all 0.4s ease;
+    min-width: 44px;
+    min-height: 44px;
     &:hover {
       color: color_variable.$accent;
     }
@@ -569,7 +573,19 @@
     padding-right: 50px;
   }
   .cs_toolbox .cs_toolbox_btn {
-    max-width: 26px;
+    max-width: none;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .cs_main_header_left {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .cs_main_header_center {
+    flex: 0 0 auto;
+  }
+  .cs_main_header_right {
+    flex: 0 0 auto;
   }
   .cs_nav .cs_nav_list .cs_mega_wrapper {
     width: 100% !important;
@@ -658,9 +674,12 @@
       }
 
       a {
-        display: block;
+        display: flex;
+        align-items: center;
         padding: 12px 15px;
         line-height: 16px;
+        min-height: 44px;
+        box-sizing: border-box;
       }
       > li {
         > a {
@@ -675,9 +694,13 @@
     }
   }
 
-  /*Mobile Menu Button*/
+  /*Mobile Menu Button – 44px touch target */
   .cs_menu_toggle {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     width: 30px;
     height: 27px;
     cursor: pointer;

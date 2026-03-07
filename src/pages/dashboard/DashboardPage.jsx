@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Row, Col, Table, Statistic, Skeleton } from 'antd';
+import toast from '../../utils/adminToast';
 import {
   UserOutlined,
   BookOutlined,
@@ -20,12 +21,21 @@ export default function DashboardPage() {
 
   useEffect(() => {
     Promise.all([
-      getStats().catch(() => null),
+      getStats().catch((e) => { toast.error('Failed to load stats'); return null; }),
       getUsers().then((u) => u.slice(0, 5)).catch(() => []),
       getPayments().then((p) => p.slice(0, 5)).catch(() => []),
     ]).then(([s, u, p]) => {
       setStats(s || {});
-      setRecentUsers(u.map((x, i) => ({ id: x.id || i, name: x.name, email: x.email, date: x.createdAt })));
+      setRecentUsers(u.map((x, i) => ({
+        id: x.id || i,
+        name: x.name,
+        email: x.email,
+        role: x.role,
+        roleType: x.roleType,
+        phone: x.phone,
+        status: x.status || 'active',
+        createdAt: x.createdAt,
+      })));
       setRecentPayments(p.map((x, _i) => ({
         id: x.id,
         type: x.type,
@@ -38,17 +48,23 @@ export default function DashboardPage() {
   }, []);
 
   const kpiData = stats ? [
+    { title: 'Total Revenue', value: stats.totalRevenue ?? 0, icon: DollarOutlined, prefix: '₹' },
     { title: 'Total Users', value: stats.totalUsers ?? 0, icon: UserOutlined },
     { title: 'Total Blogs Sold', value: stats.totalBlogsSold ?? 0, icon: ShoppingOutlined },
     { title: 'Total Enrollments', value: stats.totalEnrollments ?? 0, icon: BookOutlined },
     { title: 'Patient Care Posts', value: stats.totalPatientCare ?? 0, icon: HeartOutlined },
-    { title: 'Total Revenue', value: stats.totalRevenue ?? 0, icon: DollarOutlined, prefix: '₹' },
   ] : [];
 
+  const ROLE_TYPE_LABELS = { student: 'Student', doctor: 'Doctor', patient: 'Patient', health_professional: 'Health Professional' };
+
   const userColumns = [
-    { title: 'Name', dataIndex: 'name', key: 'name' },
-    { title: 'Email', dataIndex: 'email', key: 'email' },
-    { title: 'Joined', dataIndex: 'date', key: 'date', width: 120 },
+    { title: 'Name', dataIndex: 'name', key: 'name', ellipsis: true },
+    { title: 'Email', dataIndex: 'email', key: 'email', ellipsis: true },
+    { title: 'Role', dataIndex: 'role', key: 'role', width: 90, render: (v) => (v === 'admin' ? 'Admin' : 'User') },
+    { title: 'Role Type', dataIndex: 'roleType', key: 'roleType', width: 130, render: (v) => (v ? ROLE_TYPE_LABELS[v] || v : '—') },
+    { title: 'Phone', dataIndex: 'phone', key: 'phone', width: 120, render: (v) => v || '—' },
+    { title: 'Status', dataIndex: 'status', key: 'status', width: 90, render: (v) => (v === 'active' ? 'Active' : v || '—') },
+    { title: 'Joined', dataIndex: 'createdAt', key: 'createdAt', width: 120, render: (d) => (d ? new Date(d).toLocaleDateString() : '—') },
   ];
 
   const paymentColumns = [
@@ -61,38 +77,29 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div>
+    <div className="admin-module-page">
       <h2 className="admin-page-title">Dashboard</h2>
-      <Row gutter={[16, 16]}>
+      <div className="admin-dashboard-stats">
         {loading ? (
           [1, 2, 3, 4, 5].map((i) => (
-            <Col xs={24} sm={12} lg={8} key={i}>
-              <Card bordered={false} className="admin-kpi-card">
-                <Skeleton active paragraph={{ rows: 1 }} />
-              </Card>
-            </Col>
+            <Card bordered={false} className="admin-kpi-card" key={i}>
+              <Skeleton active paragraph={{ rows: 1 }} />
+            </Card>
           ))
         ) : (
           kpiData.map((item) => (
-            <Col xs={24} sm={12} lg={8} key={item.title}>
-              <Card bordered={false} className="admin-kpi-card">
-                <Statistic
-                  title={item.title}
-                  value={item.value}
-                  prefix={item.prefix || (item.icon && React.createElement(item.icon, { style: { color: BRAND_PRIMARY } }))}
-                />
-              </Card>
-            </Col>
+            <Card bordered={false} className="admin-kpi-card" key={item.title}>
+              <Statistic
+                title={item.title}
+                value={item.value}
+                prefix={item.prefix || (item.icon && React.createElement(item.icon, { style: { color: BRAND_PRIMARY } }))}
+              />
+            </Card>
           ))
         )}
-      </Row>
+      </div>
       <Row gutter={[16, 16]} style={{ marginTop: 24 }}>
-        <Col xs={24} lg={14}>
-          <Card title="Revenue" bordered={false}>
-            {loading ? <Skeleton active paragraph={{ rows: 1 }} /> : <Statistic title="Total Revenue" value={stats?.totalRevenue ?? 0} prefix="₹" />}
-          </Card>
-        </Col>
-        <Col xs={24} lg={10}>
+        <Col xs={24} lg={24}>
           <Card title="Recent Users" bordered={false}>
             {loading ? (
               <Skeleton active paragraph={{ rows: 5 }} />

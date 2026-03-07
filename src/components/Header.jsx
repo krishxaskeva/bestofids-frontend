@@ -81,6 +81,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         Home
                       </NavLink>
@@ -91,6 +92,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         Appointments & Our Services
                       </NavLink>
@@ -101,6 +103,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         Patient Care & Knowledge
                       </NavLink>
@@ -111,6 +114,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         Doctor & Hospital Services
                       </NavLink>
@@ -121,6 +125,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         ID Education & Knowledge Hub
                       </NavLink>
@@ -131,6 +136,7 @@ export default function Header({ logoSrc, variant }) {
                         className={({ isActive }) =>
                           isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
                         }
+                        onClick={() => setMobileToggle(false)}
                       >
                         Contact & Testimonials
                       </NavLink>

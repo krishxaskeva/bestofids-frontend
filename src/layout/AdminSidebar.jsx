@@ -11,6 +11,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from '@ant-design/icons';
+import { getAssetUrl } from '../config';
 
 const { Sider } = Layout;
 
@@ -45,11 +46,12 @@ export default function AdminSidebar({ collapsed }) {
         zIndex: 1000,
       }}
     >
-      <div
-        className={`admin-sidebar-brand ${collapsed ? 'collapsed' : ''}`}
-        style={{ justifyContent: collapsed ? 'center' : 'flex-start' }}
-      >
-        {collapsed ? 'AD' : 'Admin Panel'}
+      <div className={`admin-sidebar-brand ${collapsed ? 'collapsed' : ''}`}>
+        <img
+          src={getAssetUrl('/images/best-of-ids-logo.png')}
+          alt="Best of IDs"
+          className="admin-sidebar-brand-logo"
+        />
       </div>
       <Menu
         theme="dark"

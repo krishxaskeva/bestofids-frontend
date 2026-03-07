@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Drawer, Form, Button, message } from 'antd';
+import { Drawer, Form, Button } from 'antd';
+import toast from '../../utils/adminToast';
 import PatientCareForm from '../../components/patientCare/PatientCareForm';
 
 const getBase64 = (file) =>
@@ -41,14 +42,16 @@ export default function CreatePatientCare({ open, onClose, onSuccess }) {
           form.resetFields();
           setThumbnailFileList([]);
           setThumbnailDataUrl('');
-          message.success('Post published.');
+          toast.success('Post published.');
           onClose();
         })
         .catch((err) => {
-          message.error(err?.message || 'Failed to create');
+          toast.error(err?.message || 'Failed to create');
         })
         .finally(() => setSubmitting(false));
-    }).catch(() => {});
+    }).catch(() => {
+      toast.warning('Please fix the form errors.');
+    });
   }, [form, thumbnailDataUrl, onSuccess, onClose]);
 
   const handleClose = useCallback(() => {

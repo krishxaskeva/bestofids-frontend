@@ -2,11 +2,35 @@ import React, { useState, useEffect } from 'react';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
 import SectionHeading from './SectionHeading';
+import Spacing from './Spacing';
 import { pageTitle } from '../utils/PageTitle';
-import { Modal } from 'antd';
+import { Modal, Skeleton } from 'antd';
 import dayjs from 'dayjs';
 import { getPatientCarePosts } from '../services/patientCareService';
 import { getAssetUrl } from '../config';
+
+function CardSkeleton() {
+  return (
+    <div
+      className="cs_white_bg cs_radius_30 overflow-hidden h-100 d-flex flex-column"
+      style={{ boxShadow: '0 4px 20px rgba(0,0,0,.08)' }}
+    >
+      <div style={{ width: '100%', height: 200, flexShrink: 0 }}>
+        <Skeleton.Node active style={{ width: '100%', height: 200 }}>
+          <div style={{ width: '100%', height: 200 }} />
+        </Skeleton.Node>
+      </div>
+      <div className="p-4 d-flex flex-column flex-grow-1">
+        <div className="mb-2 d-flex align-items-center gap-2">
+          <Skeleton.Button active size="small" style={{ width: 80 }} />
+          <Skeleton.Input active size="small" style={{ width: 90 }} />
+        </div>
+        <Skeleton title={{ width: '85%' }} paragraph={{ rows: 2 }} active />
+        <Skeleton.Button active style={{ width: 100, marginTop: 8 }} />
+      </div>
+    </div>
+  );
+}
 
 export default function PatientsForum() {
   pageTitle('Patient Care & Knowledge');
@@ -17,19 +41,7 @@ export default function PatientsForum() {
 
   useEffect(() => {
     getPatientCarePosts()
-      .then((data) => {
-        // Clone "Vaccination Announcement" post 2 more times for display (show 3 total on page)
-        const vaccinationTitle = /vaccination\s*announcement/i;
-        const expanded = [];
-        data.forEach((post) => {
-          expanded.push(post);
-          if (post.title && vaccinationTitle.test(post.title.trim())) {
-            expanded.push({ ...post, _displayKey: `${post.id}-clone-1` });
-            expanded.push({ ...post, _displayKey: `${post.id}-clone-2` });
-          }
-        });
-        setPosts(expanded);
-      })
+      .then((data) => setPosts(Array.isArray(data) ? data : []))
       .catch(() => setPosts([]))
       .finally(() => setLoading(false));
   }, []);
@@ -42,12 +54,19 @@ export default function PatientsForum() {
       <Section topMd={0} topLg={0} topXl={0} bottomMd={48} bottomLg={40} bottomXl={32}>
         <div className="container">
           <SectionHeading title="Patient care updates" center />
+          <Spacing md="24" lg="20" xl="20" />
           {loading ? (
-            <p className="text-center cs_heading_color opacity-75 mb-0">Loading...</p>
+            <div className="row g-4 cs_patient_care_cards_row">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="col-12 col-sm-6 col-lg-4">
+                  <CardSkeleton />
+                </div>
+              ))}
+            </div>
           ) : posts.length > 0 ? (
-            <div className="row g-4">
+            <div className="row g-4 cs_patient_care_cards_row">
               {posts.map((post) => (
-                <div key={post._displayKey || post.id} className="col-12 col-sm-6 col-lg-4">
+                <div key={post.id} className="col-12 col-sm-6 col-lg-4">
                   <article
                     role="button"
                     tabIndex={0}

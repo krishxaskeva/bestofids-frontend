@@ -19,6 +19,7 @@ export const fetchMe = createAsyncThunk(
       return normalizeUser(user);
     } catch (err) {
       clearStoredAuth();
+      console.error('API Error (fetchMe):', err.response?.data || err.message);
       return rejectWithValue(err.message);
     }
   }
@@ -31,6 +32,7 @@ export const loginUser = createAsyncThunk(
       const { user } = await authService.login(email, password);
       return normalizeUser(user);
     } catch (err) {
+      console.error('API Error (signupUser):', err.response?.data || err.message);
       return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
@@ -43,6 +45,7 @@ export const loginAdmin = createAsyncThunk(
       const { user } = await authService.adminLogin(email, password);
       return normalizeUser(user);
     } catch (err) {
+      console.error('API Error (loginAdmin):', err.response?.data || err.message);
       return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
@@ -55,6 +58,7 @@ export const signupUser = createAsyncThunk(
       const { user } = await authService.signup(name, email, password, roleType, phone);
       return normalizeUser(user);
     } catch (err) {
+      console.error('API Error (signupUser):', err.response?.data || err.message);
       return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
