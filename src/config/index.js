@@ -21,9 +21,10 @@ export const ASSETS_BASE =
  * Use for all /images/... and other public assets.
  */
 export function getAssetUrl(pathOrUrl) {
+  console.log(pathOrUrl,"-----------");
   if (!pathOrUrl || typeof pathOrUrl !== 'string') return pathOrUrl;
   if (pathOrUrl.startsWith('http')) return pathOrUrl;
-  const p = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  const p = pathOrUrl.startsWith('/') ? pathOrUrl : `${pathOrUrl}`;
   if (ASSETS_BASE) return ASSETS_BASE + p;
   return publicUrl + p;
 }
