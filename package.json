@@ -5,6 +5,7 @@
   "dependencies": {
     "@ant-design/charts": "^2.6.7",
     "@iconify/react": "^4.1.1",
+    "@reduxjs/toolkit": "^2.11.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -19,6 +20,7 @@
     "react-modal-image": "^2.6.0",
     "react-parallax": "^3.5.1",
     "react-quill": "^2.0.0",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^6.20.0",
     "react-scripts": "5.0.1",
     "react-slick": "^0.29.0",
@@ -39,7 +41,13 @@
       "react-app/jest"
     ],
     "rules": {
-      "no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
+      "no-unused-vars": [
+        "warn",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_"
+        }
+      ]
     }
   },
   "browserslist": {

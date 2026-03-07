@@ -12,7 +12,7 @@ import {
   updatePatientCarePost,
   deletePatientCarePost,
 } from '../../services/patientCareService';
-import { CATEGORIES } from '../../contexts/PatientCareContext';
+import { CATEGORIES } from '../../store/slices/patientCareSlice';
 
 export default function PatientCareList() {
   const [posts, setPosts] = useState([]);

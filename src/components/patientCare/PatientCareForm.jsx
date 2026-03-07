@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Input, Select, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import QuillWithTooltips from '../QuillWithTooltips';
-import { usePatientCare } from '../../contexts/PatientCareContext';
+import { usePatientCare } from '../../store/hooks';
 
 const { TextArea } = Input;
 

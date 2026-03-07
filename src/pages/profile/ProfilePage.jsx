@@ -5,7 +5,7 @@ import Breadcrumb from '../../components/Breadcrumb';
 import SectionHeading from '../../components/SectionHeading';
 import Spacing from '../../components/Spacing';
 import { pageTitle } from '../../utils/PageTitle';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import { getProfile, getUserEnrollments, getPurchasedBlogs } from '../../services/userService';
 import { Card, Spin, Descriptions, Empty, Row, Col, Button } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';

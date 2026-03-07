@@ -5,7 +5,7 @@ import { message } from 'antd';
 import Section from '../../components/Section';
 import Breadcrumb from '../../components/Breadcrumb';
 import { getAssetUrl } from '../../config';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import {
   getEducationById,
   enroll,

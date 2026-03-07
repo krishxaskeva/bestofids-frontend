@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Icon } from '@iconify/react';
 import { message, Modal } from 'antd';
 import { getEducationList, getMyEnrollments, enroll, updateAccess } from '../../services/educationService';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import { CourseCard, WebinarCard, InfographicCard, PodcastCard } from './ContentCard';
 
 const CATEGORY_MAP = {

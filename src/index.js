@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { PatientCareProvider } from './contexts/PatientCareContext';
+import { Provider } from 'react-redux';
+import { store } from './store';
+import AuthInit from './components/AuthInit';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'slick-carousel/slick/slick.css';
 import './sass/index.scss';
@@ -11,12 +12,12 @@ import './sass/index.scss';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <AuthProvider>
-        <PatientCareProvider>
+    <Provider store={store}>
+      <BrowserRouter>
+        <AuthInit>
           <App />
-        </PatientCareProvider>
-      </AuthProvider>
-    </BrowserRouter>
+        </AuthInit>
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
 );

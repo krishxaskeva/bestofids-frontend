@@ -9,7 +9,7 @@ import {
   MenuUnfoldOutlined,
   GlobalOutlined,
 } from '@ant-design/icons';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { config } from '../config';
 
 const { Header } = Layout;

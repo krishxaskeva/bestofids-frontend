@@ -28,7 +28,7 @@ import BlogPage from './pages/blog/BlogPage';
 import PatientCareList from './pages/patientCare/PatientCareList';
 import ProfilePage from './pages/profile/ProfilePage';
 import MyLearningPage from './pages/myLearning/MyLearningPage';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth } from './store/hooks';
 import { getAssetUrl } from './config';
 
 function AdminRoute({ children }) {

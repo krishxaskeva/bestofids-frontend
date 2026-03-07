@@ -6,7 +6,7 @@ import Spacing from './Spacing';
 import Post from './ui/Post';
 import Sidebar from './Sidebar';
 import { pageTitle } from '../utils/PageTitle';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { getBlogById, checkBlogPurchase, createBlogOrder, verifyBlogPayment, getBlogs } from '../services/blogService';
 import { Button, message } from 'antd';
 import dayjs from 'dayjs';

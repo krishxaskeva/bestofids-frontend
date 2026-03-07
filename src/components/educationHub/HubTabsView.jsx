@@ -4,7 +4,7 @@ import { BookOutlined, VideoCameraOutlined, PictureOutlined, SoundOutlined } fro
 import Section from '../Section';
 import Breadcrumb from '../Breadcrumb';
 import Spacing from '../Spacing';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import DescriptionBanner from './DescriptionBanner';
 import TabContent from './TabContent';
 

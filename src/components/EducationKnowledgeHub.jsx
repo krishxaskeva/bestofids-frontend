@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { pageTitle } from '../utils/PageTitle';
 import MarketingView from './educationHub/MarketingView';
 import HubTabsView from './educationHub/HubTabsView';

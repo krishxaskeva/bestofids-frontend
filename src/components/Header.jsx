@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Icon } from '@iconify/react';
 import { Popover, Drawer } from 'antd';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import SocialWidget from './SocialWidget';
 import Newsletter from './Newsletter';
 import IconBox from './ui/IconBox';

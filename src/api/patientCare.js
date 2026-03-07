@@ -1,13 +1,13 @@
 /**
  * Patient Care API – data for the Patient Care & Knowledge website section.
- * In this app, data is read from PatientCareContext (and persisted in localStorage).
- * For a backend, replace this with a fetch to GET /api/patient-care.
+ * Reads from the same localStorage as Redux patientCare slice (published posts only).
+ * For backend-only flow, use services/patientCareService.getPatientCarePosts() instead.
  */
-import { getPatientCarePosts } from '../contexts/PatientCareContext';
+import { getPatientCarePostsFromStorage } from '../store/slices/patientCareSlice';
 
-/** Returns published posts with showInWebsite true (same as GET /api/patient-care would return). */
+/** Returns published posts with showInWebsite true. */
 export function getPatientCare() {
-  return getPatientCarePosts();
+  return getPatientCarePostsFromStorage();
 }
 
 export default getPatientCare;

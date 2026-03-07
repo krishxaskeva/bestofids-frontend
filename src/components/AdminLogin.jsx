@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { pageTitle } from '../utils/PageTitle';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { getAssetUrl } from '../config';
 
 const ADMIN_EMAIL = 'admin@gmail.com';

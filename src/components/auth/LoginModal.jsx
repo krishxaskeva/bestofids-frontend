@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Modal, Form, Input, Button, Alert } from 'antd';
 import { MailOutlined, LockOutlined } from '@ant-design/icons';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import { getAssetUrl } from '../../config';
 import '../auth/auth.scss';
 

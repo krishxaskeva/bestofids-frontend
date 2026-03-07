@@ -7,7 +7,7 @@ import Breadcrumb from './Breadcrumb';
 import SectionHeading from './SectionHeading';
 import Spacing from './Spacing';
 import { pageTitle } from '../utils/PageTitle';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { getBlogs, createBlogOrder, verifyBlogPayment } from '../services/blogService';
 import { getPurchasedBlogs } from '../services/userService';
 import { config, getAssetUrl } from '../config';

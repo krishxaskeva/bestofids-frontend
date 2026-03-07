@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Breadcrumb from './Breadcrumb';
 import Section from './Section';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../store/hooks';
 import { pageTitle } from '../utils/PageTitle';
 import { Icon } from '@iconify/react';
 

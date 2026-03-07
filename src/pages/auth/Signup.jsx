@@ -4,7 +4,7 @@ import { Form, Input, Button, Alert, Select } from 'antd';
 import { UserOutlined, MailOutlined, PhoneOutlined, LockOutlined } from '@ant-design/icons';
 import AuthLayout from '../../components/auth/AuthLayout';
 import AuthFormCard from '../../components/auth/AuthFormCard';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../store/hooks';
 import { pageTitle } from '../../utils/PageTitle';
 import { getAssetUrl } from '../../config';
 import '../../components/auth/auth.scss';
