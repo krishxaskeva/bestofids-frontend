@@ -12,7 +12,7 @@ const _assetsBaseRaw = import.meta.env.VITE_ASSETS_BASE || '';
 export const ASSETS_BASE =
   _assetsBaseRaw &&
   !_assetsBaseRaw.includes('YOUR_CLOUD') &&
-  _assetsBaseRaw.startsWith('http')
+  _assetsBaseRaw.startsWith('https')
     ? _assetsBaseRaw.replace(/\/$/, '')
     : '';
 
