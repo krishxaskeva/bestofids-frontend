@@ -32,7 +32,7 @@ export default function OurServices() {
         >
           <div className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_left">
             <img
-              src="/images/our_services/services_banner_right.png"
+              src={getAssetUrl('/images/our_services/services_banner_right.png')}
               alt="Evidence-based care and clinical excellence"
               className="cs_our_services_teal_intro_img"
             />
@@ -51,7 +51,7 @@ export default function OurServices() {
           </div>
           <div className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_right">
             <img
-              src="/images/our_services/services_banner_care.png"
+              src={getAssetUrl('/images/our_services/services_banner_care.png')}
               alt="Healthcare professionals providing attentive patient care"
               className="cs_our_services_teal_intro_img"
             />

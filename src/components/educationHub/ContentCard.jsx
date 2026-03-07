@@ -27,7 +27,9 @@ const PODCAST_PLATFORM_LABELS = {
 };
 
 function Thumbnail({ src, alt, locked, className = '' }) {
-  const url = src || getAssetUrl('/images/best-of-ids-logo.png');
+  const url = src
+    ? (src.startsWith('http') ? src : getAssetUrl(src))
+    : getAssetUrl('/images/best-of-ids-logo.png');
   return (
     <div className={`cs_edu_hub_card_thumb_wrap ${className}`}>
       <img src={url} alt={alt || ''} className="cs_edu_hub_card_thumb_img" />

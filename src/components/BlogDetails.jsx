@@ -182,7 +182,7 @@ export default function BlogDetails() {
         {blog.coverImage && (
           <>
             <img
-              src={blog.coverImage}
+              src={blog.coverImage.startsWith('http') ? blog.coverImage : getAssetUrl(blog.coverImage)}
               alt={blog.title}
               className="w-100 cs_radius_20"
             />

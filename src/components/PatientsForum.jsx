@@ -78,7 +78,7 @@ export default function PatientsForum() {
                     {post.thumbnailUrl && (
                       <div className="overflow-hidden" style={{ height: 200 }}>
                         <img
-                          src={post.thumbnailUrl}
+                          src={post.thumbnailUrl.startsWith('http') ? post.thumbnailUrl : getAssetUrl(post.thumbnailUrl)}
                           alt=""
                           className="w-100 h-100"
                           style={{ objectFit: 'cover' }}
@@ -166,7 +166,7 @@ export default function PatientsForum() {
             </div>
             {detailPost.thumbnailUrl && (
               <img
-                src={detailPost.thumbnailUrl}
+                src={detailPost.thumbnailUrl.startsWith('http') ? detailPost.thumbnailUrl : getAssetUrl(detailPost.thumbnailUrl)}
                 alt=""
                 className="w-100 mb-3"
                 style={{ maxHeight: 280, objectFit: 'cover', borderRadius: 8 }}
