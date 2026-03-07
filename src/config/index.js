@@ -19,7 +19,7 @@ export function  getAssetUrl(pathOrUrl) {
   // if (pathOrUrl.startsWith('http')) return pathOrUrl;
   // const p = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
   if (ASSETS_BASE) return ASSETS_BASE + pathOrUrl;
-  return "hey";
+  return publicUrl + pathOrUrl;
 }
 
 /** API base URL for backend. */
