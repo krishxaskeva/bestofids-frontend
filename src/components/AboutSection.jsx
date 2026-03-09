@@ -1,6 +1,6 @@
-import React from 'react';
-import Spacing from './Spacing';
-import { getAssetUrl } from '../config';
+import React from "react";
+import Spacing from "./Spacing";
+import { getAssetUrl } from "../config";
 
 export default function AboutSection({
   imgUrl,
@@ -13,22 +13,10 @@ export default function AboutSection({
   return (
     <section className="cs_about cs_style_1">
       <div className="container">
-        <div className="row align-items-lg-start align-items-center flex-lg-row flex-column-reverse cs_gap_y_40">
+        <div className="row align-items-center flex-lg-row flex-column-reverse cs_gap_y_40">
           <div className="col-lg-7 cs_about_img_col">
             <div className="cs_about_img">
               <img src={getAssetUrl(imgUrl)} alt="About" />
-              <div className="cs_about_mini_img">
-                <img
-                  src={getAssetUrl(spiningImgUrl)}
-                  alt="Mini"
-                  className="cs_rotate_animation"
-                />
-                <img
-                  src={getAssetUrl('/images/icons/tick.svg')}
-                  alt="Right"
-                  className="cs_right_icon"
-                />
-              </div>
             </div>
           </div>
           <div className="col-lg-5">

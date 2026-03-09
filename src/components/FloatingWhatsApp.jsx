@@ -31,9 +31,7 @@ function getStoredPosition() {
 }
 
 function savePosition(edge, top) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ edge, top }));
-  } catch (_) {}
+  // Positioning is now fixed to bottom-right as per user request
 }
 
 function snapToNearestVerticalEdge(centerX) {
@@ -224,16 +222,10 @@ export default function FloatingWhatsApp() {
   }, [expanded, isDragging]);
 
   const style = mounted
-    ? isDragging
-      ? { left: pixelPos.x, top: pixelPos.y, width: CIRCLE_SIZE, height: CIRCLE_SIZE, right: 'auto' }
-      : expanded
-        ? position.edge === 'right'
-          ? { right: 16, left: 'auto', top: pixelPos.y }
-          : { left: 16, right: 'auto', top: pixelPos.y }
-        : position.edge === 'right'
-          ? { right: 0, left: 'auto', top: pixelPos.y, width: DOCK_SIZE, height: DOCK_SIZE }
-          : { left: 0, right: 'auto', top: pixelPos.y, width: DOCK_SIZE, height: DOCK_SIZE }
-    : { right: 0, left: 'auto', top: '30%', width: DOCK_SIZE, height: DOCK_SIZE };
+    ? expanded
+      ? { right: 30, bottom: 30, width: 'auto', height: 'auto' }
+      : { right: 30, bottom: 30, width: DOCK_SIZE, height: DOCK_SIZE }
+    : { right: 30, bottom: 30, width: DOCK_SIZE, height: DOCK_SIZE };
 
   return (
     <>
@@ -253,10 +245,10 @@ export default function FloatingWhatsApp() {
         <div className="floating-wa__drop">
           <span className="floating-wa__circle" aria-hidden>
             <span className="floating-wa__icon-wrap floating-wa__icon-wrap--collapsed" aria-hidden>
-              <Icon icon="fa6-brands:whatsapp" className="floating-wa__icon floating-wa__icon--collapsed" aria-hidden />
+              <img src="/images/whatsapp.png" alt="WhatsApp" className="floating-wa__custom-icon" />
             </span>
             <span className="floating-wa__icon-wrap floating-wa__icon-wrap--expanded" aria-hidden>
-              <Icon icon="fa6-brands:whatsapp" className="floating-wa__icon" aria-hidden />
+              <img src="/images/whatsapp.png" alt="WhatsApp" className="floating-wa__custom-icon" />
             </span>
           </span>
           <button

@@ -52,7 +52,7 @@ function App() {
   }, [pathname]);
 
   useEffect(() => {
-    const url = getAssetUrl('/images/icons/category.svg');
+    const url =import.meta.env.VITE_ASSETS_BASE+ '/images/icons/category.svg';
     document.documentElement.style.setProperty('--category-icon-url', url ? `url(${url})` : '');
   }, []);
 

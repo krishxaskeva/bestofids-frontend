@@ -95,18 +95,20 @@ export default function Home() {
 
   return (
     <>
-      <Hero
-        slides={slides}
-        title={heroTitle}
-        subTitle={heroSubTitle}
-        bgUrl="/images/home_1/hero_bg.png"
-        imgUrls={['/images/home_1/hero_img.png']}
-        videoBtnText="See how we work"
-        videoUrl="https://www.youtube.com/embed/VcaAVWtP48A"
-        infoCardTagline=""
-        infoList={[]}
-        quickLinks={[]}
-      />
+      <Section topMd={140} topLg={95} topXl={100}>
+        <Hero
+          slides={slides}
+          title={heroTitle}
+          subTitle={heroSubTitle}
+          bgUrl="/images/home_1/hero_bg.png"
+          imgUrls={['/images/home_1/hero_img.png']}
+          videoBtnText="See how we work"
+          videoUrl="https://www.youtube.com/embed/VcaAVWtP48A"
+          infoCardTagline=""
+          infoList={[]}
+          quickLinks={[]}
+        />
+      </Section>
       <ImpactStatsSection />
       {/* Start Services & Appointments Section */}
       <Section topMd={16} topLg={14} topXl={8}>
@@ -117,7 +119,6 @@ export default function Home() {
       <Section topMd={28} topLg={24} topXl={20}>
         <AboutSection
           imgUrl="/images/home_1/about.png"
-          spiningImgUrl="/images/home_1/about_mini.svg"
           title="ABOUT US"
           content={aboutContent}
         />

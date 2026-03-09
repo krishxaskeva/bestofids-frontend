@@ -19,7 +19,7 @@ export default function Breadcrumb({ title }) {
 
   return (
     <div className="container">
-      <div className="cs_breadcrumb_row">
+      <div style={{ marginTop: "40px", marginBottom: "20px" }} className="cs_breadcrumb_row">
         <button
           type="button"
           onClick={handleBack}

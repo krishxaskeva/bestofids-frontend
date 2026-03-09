@@ -11,7 +11,7 @@ export default function Layout() {
     <div className="cs_layout">
       <Header
         logoSrc="/images/best-of-ids-logo.png"
-        variant={isHome ? 'cs_white_color' : 'cs_heading_color'}
+        variant="cs_heading_color"
       />
       <main className="cs_layout_main">
         <div className="cs_layout_content">

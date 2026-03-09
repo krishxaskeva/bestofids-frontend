@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Link, NavLink, useLocation } from 'react-router-dom';
-import { Icon } from '@iconify/react';
-import { Popover, Drawer } from 'antd';
-import { useAuth } from '../store/hooks';
-import SocialWidget from './SocialWidget';
-import Newsletter from './Newsletter';
-import IconBox from './ui/IconBox';
-import Spacing from './Spacing';
-import { getAssetUrl } from '../config';
+import React, { useEffect, useState, useRef } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { Icon } from "@iconify/react";
+import { Popover, Drawer } from "antd";
+import { useAuth } from "../store/hooks";
+import SocialWidget from "./SocialWidget";
+import Newsletter from "./Newsletter";
+import IconBox from "./ui/IconBox";
+import Spacing from "./Spacing";
+import { getAssetUrl } from "../config";
 
-const NAV_OUR_SERVICES = 'Services & Appointments';
+const NAV_OUR_SERVICES = "Services & Appointments";
 
 export default function Header({ logoSrc, variant }) {
   const { isSuperAdmin, isLoggedIn, logout } = useAuth();
@@ -29,16 +29,16 @@ export default function Header({ logoSrc, variant }) {
         setIsSticky(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
   useEffect(() => {
     const updateIndicator = () => {
       const wrap = navListRef.current;
-      const activeLink = wrap?.querySelector('.cs_nav_link_active');
+      const activeLink = wrap?.querySelector(".cs_nav_link_active");
       if (activeLink && wrap) {
         const linkRect = activeLink.getBoundingClientRect();
         const wrapRect = wrap.getBoundingClientRect();
@@ -57,8 +57,8 @@ export default function Header({ logoSrc, variant }) {
     <>
       <header
         className={`cs_site_header cs_style1 cs_sticky_header ${
-          mobileToggle ? 'cs_mobile_toggle_active' : ''
-        } ${variant} ${isSticky ? 'cs_active_sticky' : ''}`}
+          mobileToggle ? "cs_mobile_toggle_active" : ""
+        } ${variant} ${isSticky ? "cs_sticky_active" : ""}`}
       >
         <div className="cs_main_header">
           <div className="container">
@@ -73,91 +73,103 @@ export default function Header({ logoSrc, variant }) {
                   <div className="cs_nav_list_wrap" ref={navListRef}>
                     <ul
                       className={`${
-                        mobileToggle ? 'cs_nav_list cs_active' : 'cs_nav_list'
+                        mobileToggle ? "cs_nav_list cs_active" : "cs_nav_list"
                       }`}
                     >
                       <li>
-                      <NavLink
-                        to="/"
-                        end
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        Home
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/our-services"
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        {NAV_OUR_SERVICES}
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/patient-care-appointments"
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        Patient Care & Knowledge
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/doctor-hospital-services"
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        Doctor & Hospital Services
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/id-education-knowledge-hub"
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        ID Education & Knowledge Hub
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/contact-testimonials"
-                        className={({ isActive }) =>
-                          isActive ? 'cs_nav_link cs_nav_link_active' : 'cs_nav_link'
-                        }
-                        onClick={() => setMobileToggle(false)}
-                      >
-                        Contact & Testimonials
-                      </NavLink>
-                    </li>
-                  </ul>
-                  <span
-                    className="cs_nav_indicator"
-                    style={{
-                      left: indicator.left,
-                      width: indicator.width,
-                    }}
-                    aria-hidden
-                  />
+                        <NavLink
+                          to="/"
+                          end
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          Home
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/our-services"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          {NAV_OUR_SERVICES}
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/patient-care-appointments"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          Patient Care & Knowledge
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/doctor-hospital-services"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          Doctor & Hospital Services
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/id-education-knowledge-hub"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          ID Education & Knowledge Hub
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/contact-testimonials"
+                          className={({ isActive }) =>
+                            isActive
+                              ? "cs_nav_link cs_nav_link_active"
+                              : "cs_nav_link"
+                          }
+                          onClick={() => setMobileToggle(false)}
+                        >
+                          Contact & Testimonials
+                        </NavLink>
+                      </li>
+                    </ul>
+                    <span
+                      className="cs_nav_indicator"
+                      style={{
+                        left: indicator.left,
+                        width: indicator.width,
+                      }}
+                      aria-hidden
+                    />
                   </div>
                   <span
                     className={
                       mobileToggle
-                        ? 'cs_menu_toggle cs_toggle_active'
-                        : 'cs_menu_toggle'
+                        ? "cs_menu_toggle cs_toggle_active"
+                        : "cs_menu_toggle"
                     }
                     onClick={() => setMobileToggle(!mobileToggle)}
                   >
@@ -169,7 +181,11 @@ export default function Header({ logoSrc, variant }) {
                 <div className="cs_toolbox">
                   <Popover
                     content={
-                      <div className="cs_avatar_dropdown" role="menu" style={{ minWidth: 200 }}>
+                      <div
+                        className="cs_avatar_dropdown"
+                        role="menu"
+                        style={{ minWidth: 200 }}
+                      >
                         {isSuperAdmin && (
                           <>
                             <Link
@@ -319,7 +335,9 @@ export default function Header({ logoSrc, variant }) {
         width={620}
         styles={{ body: { padding: 0 } }}
         rootClassName="cs_header_sidenav_drawer"
-        closeIcon={<img src={getAssetUrl('/images/icons/close.svg')} alt="Close" />}
+        closeIcon={
+          <img src={getAssetUrl("/images/icons/close.svg")} alt="Close" />
+        }
       >
         <div className="cs_sidenav_in">
           <div className="cs_logo_box" style={{ marginBottom: 24 }}>
@@ -333,20 +351,20 @@ export default function Header({ logoSrc, variant }) {
           <Spacing md="35" lg="50" xl="35" />
           <IconBox
             title="Phone"
-            subTitle="123-456-7890"
-            iconSrc={getAssetUrl('/images/contact/icon_1.svg')}
+            subTitle="+91 9884642428"
+            iconSrc={getAssetUrl("/images/contact/icon_1.svg")}
           />
           <Spacing md="30" lg="30" xl="30" />
           <IconBox
             title="Email"
-            subTitle="hellocallcenter@gmail.com"
-            iconSrc={getAssetUrl('/images/contact/icon_2.svg')}
+            subTitle="bestof.ids30@gmail.com"
+            iconSrc={getAssetUrl("/images/contact/icon_2.svg")}
           />
           <Spacing md="30" lg="30" xl="30" />
           <IconBox
             title="Location"
-            subTitle="123 Anywhere St., Any City, 12345"
-            iconSrc={getAssetUrl('/images/contact/icon_3.svg')}
+            subTitle="Chennai"
+            iconSrc={getAssetUrl("/images/contact/icon_3.svg")}
           />
           <Spacing md="60" lg="60" xl="60" />
           <Newsletter />

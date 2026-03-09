@@ -174,9 +174,9 @@ export default function OurServicesDetail({ cardsOnly = false, skipCards = false
             <p className="cs_heading_color text-center m-0 cs_our_services_detail_approach_tagline">
               Evidence-based · Collaborative · Prevention-focused · Patient-centered
             </p>
-            <div className="cs_our_services_approach_separator_bottom">
+            {/* <div className="cs_our_services_approach_separator_bottom">
               <span className="cs_our_services_approach_line_single" aria-hidden />
-            </div>
+            </div> */}
           </div>
         </Section>
         <Section className="cs_our_services_cta_section" topMd={0} topLg={0} topXl={0} bottomMd={2} bottomLg={2} bottomXl={1}>

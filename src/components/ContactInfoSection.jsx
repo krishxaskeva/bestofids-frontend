@@ -1,12 +1,24 @@
-import React from 'react';
-import { Icon } from '@iconify/react';
-import Spacing from './Spacing';
+import React from "react";
+import { Icon } from "@iconify/react";
+import Spacing from "./Spacing";
 
 const socialLinks = [
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/bestofids', icon: 'fa6-brands:linkedin-in' },
-  { name: 'Instagram', url: 'https://www.instagram.com/bestofids?igsh=Y3lhZG10a25hN2cz', icon: 'fa6-brands:instagram' },
-  { name: 'X', url: 'https://x.com/bestof_ids', icon: 'fa6-brands:x-twitter' },
-  { name: 'Facebook', url: 'https://www.facebook.com/share/1DfwtSsjpA/', icon: 'fa6-brands:facebook-f' },
+  {
+    name: "LinkedIn",
+    url: "https://www.linkedin.com/in/bestofids",
+    icon: "fa6-brands:linkedin-in",
+  },
+  {
+    name: "Instagram",
+    url: "https://www.instagram.com/bestofids?igsh=Y3lhZG10a25hN2cz",
+    icon: "fa6-brands:instagram",
+  },
+  { name: "X", url: "https://x.com/bestof_ids", icon: "fa6-brands:x-twitter" },
+  {
+    name: "Facebook",
+    url: "https://www.facebook.com/share/1DfwtSsjpA/",
+    icon: "fa6-brands:facebook-f",
+  },
 ];
 
 export default function ContactInfoSection({ sectionTitle }) {
@@ -22,7 +34,7 @@ export default function ContactInfoSection({ sectionTitle }) {
             </div>
             <div className="cs_find_us_card_body">
               <span className="cs_find_us_card_label">Phone</span>
-              <span className="cs_find_us_card_value">123-456-7890</span>
+              <span className="cs_find_us_card_value">98846 42428</span>
             </div>
           </div>
           <div className="cs_find_us_card">
@@ -31,7 +43,9 @@ export default function ContactInfoSection({ sectionTitle }) {
             </div>
             <div className="cs_find_us_card_body">
               <span className="cs_find_us_card_label">Email</span>
-              <span className="cs_find_us_card_value">hellocallcenter@gmail.com</span>
+              <span className="cs_find_us_card_value">
+                bestof.ids30@gmail.com
+              </span>
             </div>
           </div>
           <div className="cs_find_us_card">
@@ -40,7 +54,7 @@ export default function ContactInfoSection({ sectionTitle }) {
             </div>
             <div className="cs_find_us_card_body">
               <span className="cs_find_us_card_label">Location</span>
-              <span className="cs_find_us_card_value">123 Anywhere St., Any City, 12345</span>
+              <span className="cs_find_us_card_value">Chennai</span>
             </div>
           </div>
         </div>

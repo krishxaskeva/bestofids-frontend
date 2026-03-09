@@ -46,13 +46,17 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 24px 28px;
   align-items: stretch;
+  @media (max-width: 1600px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
   @media (max-width: 1399px) {
     grid-template-columns: repeat(3, 1fr);
   }
-  @media (max-width: 991px) {
+  @media (max-width: 1199px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
   }
-  @media (max-width: 575px) {
+  @media (max-width: 767px) {
     grid-template-columns: 1fr;
     gap: 1rem;
   }

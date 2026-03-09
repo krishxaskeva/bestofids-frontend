@@ -34,8 +34,8 @@
 }
 
 /* Nav bar: keep menu items in one row; allow link text to wrap to two lines before switching to hamburger. */
-/* Breakpoint 901px: horizontal nav with two-line labels; below 901px show 3-line hamburger menu (see _header.scss). */
-@media (min-width: 901px) {
+/* Breakpoint 1201px: horizontal nav with two-line labels; below 1201px show 3-line hamburger menu (see _header.scss). */
+@media (min-width: 1201px) {
   /* Prevent any horizontal overflow from nav; center the nav link group */
   .cs_site_header.cs_style1 .cs_main_header_in {
     overflow-x: hidden;
@@ -81,6 +81,10 @@
     line-height: 1.25;
     display: block;
     font-weight: 600;
+    font-size: 14px; /* Slightly smaller font for mid-size desktop */
+    @media (min-width: 1401px) {
+      font-size: 16px;
+    }
   }
   /* Home stays on one line */
   .cs_site_header .cs_nav .cs_nav_list > li:first-child > .cs_nav_link {
@@ -185,26 +189,24 @@
   padding: 0;
   margin: 0;
   overflow: visible;
+  bottom: 30px;
+  right: 30px;
   transition:
-    top 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-    left 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
-    right 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
     width 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     opacity 0.2s ease;
-  &.floating-wa--dragging {
-    cursor: grabbing;
-    transition: none;
-    .floating-wa__drop {
-      transform: scale(1.05);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-    }
+  
+  @media (max-width: 767px) {
+    bottom: 20px;
+    right: 20px;
   }
+
   &.floating-wa--expanded {
     cursor: default;
     width: 260px;
     min-width: 240px;
-    max-width: calc(100vw - 32px);
+    max-width: calc(100vw - 40px);
     height: auto;
     min-height: 48px;
   }
@@ -230,7 +232,6 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  padding: 0 14px 0 14px;
   box-sizing: border-box;
   border: none;
   border-radius: inherit;
@@ -259,46 +260,46 @@
 
 /* Floating state: icon only – same style as page (teal outline, white bg, like Book an Appointment button) */
 .floating-wa:not(.floating-wa--expanded):not(.floating-wa--dragging) .floating-wa__drop {
-  background: #fff;
-  border: 2px solid color_variable.$accent;
+  background: transparent;
   border-radius: 50%;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
   transition-delay: 0.15s;
 }
 
 .floating-wa:not(.floating-wa--expanded):not(.floating-wa--dragging):hover .floating-wa__drop {
-  background-color: color_variable.$accent;
-}
-
-.floating-wa:not(.floating-wa--expanded):not(.floating-wa--dragging):hover .floating-wa__icon--collapsed {
-  color: #fff !important;
+  transform: scale(1.1);
 }
 
 /* Dragging: same icon-only style */
-.floating-wa--dragging .floating-wa__drop {
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid color_variable.$accent;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+.floating-wa__custom-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+  
+  .floating-wa:not(.floating-wa--expanded) & {
+    width: 100px;
+    height: 50px;
+    cursor: pointer;
+  }
 }
 
 .floating-wa--expanded .floating-wa__drop {
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  min-height: 0;
-  padding: 12px 16px;
-  gap: 8px;
+  width: auto;
+  min-width: 280px;
+  max-width: calc(100vw - 40px);
+  padding: 8px 12px;
+  gap: 12px;
   background: #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   border: 1px solid color_variable.$accent;
   color: color_variable.$accent;
   transition-delay: 0s;
   overflow: hidden;
   cursor: default;
   box-sizing: border-box;
-  border-radius: 15px;
-  justify-content: flex-start;
+  border-radius: 999px;
+  justify-content: center;
 
   .floating-wa__icon-wrap--expanded {
     pointer-events: none;
@@ -373,15 +374,6 @@
   overflow: visible;
   position: relative;
   z-index: 1;
-}
-
-.floating-wa__icon--collapsed {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
-  margin: 0;
-  display: block;
-  color: color_variable.$accent !important;
 }
 
 /* Iconify icon alignment inside the circle */
@@ -530,41 +522,43 @@
   max-width: 100%;
   box-sizing: border-box;
   background-color: color_variable.$primary;
-  padding: 2.5rem 1.5rem;
-  text-align: center;
+  padding: 3rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 1px;
-  /* When used with background image (Let's get started same image): overlay so text stays readable */
-  &.cs_bg_filed {
-    background-size: 45% auto;
-    background-position: center;
-    background-repeat: no-repeat;
+  overflow: hidden;
+}
+.cs_our_services_teal_row {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  @media (max-width: 991px) {
+    flex-direction: column;
+    gap: 2rem;
   }
-  &.cs_bg_filed::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-color: rgba(color_variable.$primary, 0.82);
-    pointer-events: none;
+}
+.cs_our_services_teal_col_left {
+  flex: 1;
+  max-width: 50%;
+  @media (max-width: 991px) {
+    max-width: 100%;
+    order: 2;
   }
-  & > * {
-    position: relative;
-    z-index: 1;
-  }
-  @media (min-width: 768px) {
-    padding: 3rem 2rem;
-  }
-  @media (min-width: 992px) {
-    flex-direction: row;
-    justify-content: center;
-    align-items: stretch;
+}
+.cs_our_services_teal_col_right {
+  flex: 1;
+  @media (max-width: 991px) {
+    order: 1;
     text-align: center;
-    padding: 0;
-    min-height: 320px;
   }
+}
+.cs_our_services_teal_img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
 }
 .cs_our_services_teal_intro_img_wrap {
   width: 100%;
@@ -641,54 +635,36 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  width: 100%;
-  text-align: center;
-  @media (min-width: 768px) {
-    font-size: 1.2rem;
-  }
-  @media (min-width: 992px) {
+  margin-bottom: 0.75rem;
+  @media (max-width: 991px) {
     text-align: center;
   }
 }
 .cs_our_services_teal_intro_title {
   color: #fff;
-  font-size: 1.5rem;
+  font-size: 32px;
   font-weight: 700;
-  line-height: 1.3;
-  width: 100%;
-  text-align: center;
-  @media (min-width: 768px) {
-    font-size: 2rem;
-  }
-  @media (min-width: 992px) {
-    font-size: 2.25rem;
+  line-height: 1.25;
+  margin-bottom: 1.25rem;
+  @media (max-width: 991px) {
     text-align: center;
   }
 }
 .cs_our_services_teal_intro_subtitle {
   color: #fff;
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   line-height: 1.5;
-  width: 100%;
-  text-align: center;
-  @media (min-width: 768px) {
-    font-size: 1.15rem;
-  }
-  @media (min-width: 992px) {
+  margin-bottom: 1rem;
+  opacity: 0.95;
+  @media (max-width: 991px) {
     text-align: center;
   }
 }
 .cs_our_services_teal_intro_tagline {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 0.95rem;
-  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1rem;
   font-weight: 500;
-  width: 100%;
-  text-align: center;
-  @media (min-width: 768px) {
-    font-size: 1rem;
-  }
-  @media (min-width: 992px) {
+  @media (max-width: 991px) {
     text-align: center;
   }
 }
@@ -796,7 +772,7 @@
     padding: 0 1rem;
   }
   .cs_our_services_intro_white_line {
-    white-space: nowrap;
+    white-space: normal;
   }
 }
 @media (min-width: 1400px) {
@@ -1109,7 +1085,7 @@
 /* Space below "Our approach" pushes "Let's get started" lower towards footer (no margin-top on banner) */
 .cs_our_services_approach_section {
   margin-bottom: 0 !important;
-  padding-bottom: 5rem;
+  padding-bottom: 2rem;
   @media (max-width: 991px) {
     padding-bottom: 2rem;
   }
@@ -1854,18 +1830,18 @@
     overflow: hidden;
   }
   /* Bottom padding: room for card shadow + clear gap before next section */
-  padding-bottom: 48px;
+  padding-bottom: 30px;
   @media (min-width: 576px) {
-    padding-bottom: 56px;
+    padding-bottom: 30px;
   }
   @media (min-width: 992px) {
-    padding-bottom: 64px;
+    padding-bottom: 30px;
   }
   @media (min-width: 1200px) {
-    padding-bottom: 72px;
+    padding-bottom: 30px;
   }
   @media (min-width: 1700px) {
-    padding-bottom: 80px;
+    padding-bottom: 30px;
   }
   .cs_shape_wrap .container {
     position: relative;
@@ -2149,12 +2125,13 @@
     }
   }
   &:hover {
-    color: color_variable.$primary;
+    color: white;
     &::before,
     &::after {
-      background: #fff;
+      background: #117574;
       background-image: none;
       opacity: 1;
+      transition: all 0.5s;
     }
     img {
       &:first-child,
@@ -2260,6 +2237,26 @@
   @media (max-width: 575px) {
     padding: 0 1.5rem 1.5rem;
   }
+}
+.cs_doctors_blog_placeholder_img_wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  padding: 20px;
+  background-color: rgba(color_variable.$primary, 0.02);
+  border-radius: 20px;
+  border: 1px dashed rgba(color_variable.$primary, 0.1);
+  min-height: 300px;
+}
+.cs_doctors_blog_placeholder_img {
+  width: 100%;
+  object-fit: cover;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border-radius: 15px;
 }
 .cs_doctors_blog_latest_list {
   display: flex;
@@ -4689,7 +4686,7 @@ $vm-gray: #3d4f5c;
   flex-direction: column;
   min-width: 0;
   text-align: left;
-  padding-left: 6.5rem;
+  padding-left: 4.5rem;
 }
 .cs_doctor_details .cs_doctor_details_col .cs_doctor_details_book_btn {
   margin-top: auto;

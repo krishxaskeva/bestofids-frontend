@@ -26,30 +26,29 @@
   align-items: center;
   position: relative;
   z-index: 1;
-  @media (max-width: 1400px) {
+  @media (max-width: 1600px) {
     padding: 80px 100px;
   }
-  @media (max-width: 1199px) {
-    padding: 70px;
+  @media (max-width: 1400px) {
+    padding: 60px 80px;
   }
-  @media (max-width: 575px) {
-    padding: 50px 25px;
-    br {
-      display: none;
-    }
+  @media (max-width: 1199px) {
+    padding: 50px 60px;
   }
   @media (max-width: 991px) {
+    padding: 40px 30px;
     flex-direction: column;
     align-items: flex-start;
-    .cs_newsletter_title {
-      br {
-        display: none;
-      }
-    }
+  }
+  @media (max-width: 575px) {
+    padding: 30px 20px;
   }
   .cs_newsletter_title {
     font-size: 42px;
     line-height: 1.23em;
+    @media (max-width: 1199px) { font-size: 36px; }
+    @media (max-width: 991px) { font-size: 32px; }
+    @media (max-width: 575px) { font-size: 28px; }
   }
   p {
     color: color_variable.$primary;
@@ -290,7 +289,7 @@
 .cs_footer.cs_style_1 {
   position: relative;
   flex-shrink: 0; /* keep footer in flow; never shrink in flex layout */
-  margin-top: 120px;
+  margin-top: 20px;
   margin-bottom: 0;
   padding-bottom: 0;
   overflow: hidden; /* prevent .cs_footer_logo_wrap from creating white space below footer */
@@ -369,9 +368,9 @@
     font-weight: 400;
     color: #fff;
     margin: 5px 0 0;
-    @media (max-width: 991px) {
-      font-size: 32px;
-    }
+    @media (max-width: 1199px) { font-size: 32px; }
+    @media (max-width: 991px) { font-size: 28px; }
+    @media (max-width: 575px) { font-size: 24px; }
   }
   .cs_text_widget + .cs_contact_widget {
     margin-top: 20px;
