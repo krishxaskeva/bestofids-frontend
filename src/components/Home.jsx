@@ -95,7 +95,7 @@ export default function Home() {
 
   return (
     <>
-      <Section topMd={140} topLg={95} topXl={100}>
+      <Section topMd={100} topLg={95} topXl={100}>
         <Hero
           slides={slides}
           title={heroTitle}
