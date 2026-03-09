@@ -2308,6 +2308,29 @@
   border: 1px dashed rgba(color_variable.$primary, 0.1);
   min-height: 300px;
 }
+/* Placeholder when no blogs: horizontal teal-bordered box with icon + "No blog added yet" */
+.cs_doctors_blog_no_posts_placeholder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 360px;
+  padding: 16px 20px;
+  background-color: #fff;
+  border: 1px solid rgba(color_variable.$primary, 0.25);
+  border-radius: 12px;
+  color: color_variable.$primary;
+}
+.cs_doctors_blog_no_posts_icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: rgba(color_variable.$primary, 0.6);
+}
+.cs_doctors_blog_no_posts_text {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: color_variable.$text-secondary;
+}
 .cs_doctors_blog_placeholder_img {
   width: 100%;
   object-fit: cover;

@@ -4,7 +4,6 @@ import Breadcrumb from "./Breadcrumb";
 import DoctorDetailsSection from "./DoctorDetailsSection";
 import OurServicesDetail from "./OurServicesDetail";
 import { pageTitle } from "../utils/PageTitle";
-import { getAssetUrl } from "../config";
 
 const DEFAULT_INTRO_TITLE =
   "When Fever and Infections Are\nUnclear, Experience Matters";
@@ -49,7 +48,7 @@ export default function OurServices() {
             <div className="cs_our_services_teal_row">
               <div className="cs_our_services_teal_col_left">
                 <img
-                  src={"/images/doctor-2.jpeg"}
+                  src="/images/our-services-banner.png"
                   alt="Services & Appointments"
                   className="cs_our_services_teal_img cs_radius_25"
                 />

@@ -52,6 +52,7 @@ export default function Doctors() {
   const [latestBlogs, setLatestBlogs] = useState([]);
 
   useEffect(() => {
+    const BLOG_SLOTS = 3;
     getBlogs()
       .then((data) => {
         const sorted = Array.isArray(data)
@@ -61,7 +62,13 @@ export default function Doctors() {
               return db - da;
             })
           : [];
-        setLatestBlogs(sorted.slice(0, 2));
+        // Show 3 slots: repeat the same blog(s) if we have fewer than 3
+        const source = sorted.slice(0, BLOG_SLOTS);
+        const filled =
+          source.length > 0
+            ? Array.from({ length: BLOG_SLOTS }, (_, i) => source[i % source.length])
+            : [];
+        setLatestBlogs(filled);
       })
       .catch(() => setLatestBlogs([]));
   }, []);
@@ -183,7 +190,7 @@ export default function Doctors() {
               <div className="cs_doctors_blog_latest_wrap">
                 {latestBlogs.length > 0 ? (
                   <div className="cs_doctors_blog_latest_list">
-                    {latestBlogs.map((blog) => {
+                    {latestBlogs.map((blog, index) => {
                       const coverUrl =
                         blog.coverImage ||
                         getAssetUrl("/images/blog/post_2.jpeg");
@@ -193,7 +200,7 @@ export default function Doctors() {
                       const href = `/blog/${blog.id}`;
                       return (
                         <Card
-                          key={blog.id}
+                          key={`${blog.id}-${index}`}
                           className="cs_blog_card cs_doctors_blog_preview_card"
                           hoverable
                           cover={
@@ -229,11 +236,18 @@ export default function Doctors() {
                   </div>
                 ) : (
                   <div className="cs_doctors_blog_placeholder_img_wrap">
-                    <img
-                      src={getAssetUrl("/images/doctor.jpeg")}
-                      alt="Doctor"
-                      className="cs_doctors_blog_placeholder_img cs_radius_25"
-                    />
+                    <div className="cs_doctors_blog_no_posts_placeholder">
+                      <span className="cs_doctors_blog_no_posts_icon" aria-hidden>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M14 2v6h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M16 13H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M16 17H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          <path d="M10 9H8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                      <span className="cs_doctors_blog_no_posts_text">No blog added yet</span>
+                    </div>
                   </div>
                 )}
               </div>
