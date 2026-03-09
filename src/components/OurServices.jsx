@@ -30,13 +30,18 @@ export default function OurServices() {
           className="cs_our_services_teal_intro cs_bg_filed"
           style={{ backgroundImage: `url(${getAssetUrl('/images/home_1/our_service_bg.png')})` }}
         >
-          <div className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_left">
-            <img
-              src={getAssetUrl('/images/our_services/services_banner_right.png')}
-              alt="Evidence-based care and clinical excellence"
-              className="cs_our_services_teal_intro_img"
-            />
-          </div>
+          <div
+            className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_left"
+            style={{
+              backgroundImage: `url(${getAssetUrl('/images/our_services/services_banner_left.png')})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              minHeight: 200,
+            }}
+            role="img"
+            aria-label="Healthcare professionals providing patient care"
+          />
           <div className="cs_our_services_teal_intro_inner">
             <p className="cs_our_services_teal_intro_label m-0">{introLabel}</p>
             <h2 className="cs_our_services_teal_intro_title m-0">
@@ -49,13 +54,18 @@ export default function OurServices() {
               {introTagline}
             </p>
           </div>
-          <div className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_right">
-            <img
-              src={getAssetUrl('/images/our_services/services_banner_care.png')}
-              alt="Healthcare professionals providing attentive patient care"
-              className="cs_our_services_teal_intro_img"
-            />
-          </div>
+          <div
+            className="cs_our_services_teal_intro_img_wrap cs_our_services_teal_intro_img_wrap_right"
+            style={{
+              backgroundImage: `url(${getAssetUrl('/images/our_services/services_banner_right.png')})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              minHeight: 200,
+            }}
+            role="img"
+            aria-label="Medical science and evidence-based care"
+          />
         </div>
       </Section>
       <Section topMd={12} topLg={10} topXl={8} bottomMd={12} bottomLg={10} bottomXl={8} className="cs_our_services_white_section">

@@ -128,9 +128,9 @@ export default function Home() {
         topMd={30}
         topLg={28}
         topXl={24}
-        bottomMd={16}
-        bottomLg={14}
-        bottomXl={12}
+        bottomMd={0}
+        bottomLg={0}
+        bottomXl={0}
         className="cs_our_values_wrapper"
       >
         <div className="cs_our_values_section">
@@ -139,7 +139,7 @@ export default function Home() {
       </Section>
       {/* End Feature Section */}
       {/* Start Why Choose Best of IDs Section */}
-      <Section topMd={20} topLg={18} topXl={16}>
+      <Section topMd={8} topLg={6} topXl={5}>
         <AwardSection
           sectionTitle="Why Choose Best of IDs?"
           sectionTitleDown="Expert Infectious Disease Care You Can Trust"

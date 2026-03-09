@@ -8,18 +8,25 @@
 export const publicUrl = import.meta.env.BASE_URL || '';
 
 /** Base URL for static assets when served from Cloudinary. If set to a valid URL, getAssetUrl() returns full Cloudinary URLs. Placeholders like YOUR_CLOUD are ignored so assets load from public folder. */
-const _assetsBaseRaw = import.meta.env.VITE_ASSETS_BASE;
-export const ASSETS_BASE = _assetsBaseRaw;
+const _assetsBaseRaw = import.meta.env.VITE_ASSETS_BASE || '';
+export const ASSETS_BASE =
+  _assetsBaseRaw &&
+  typeof _assetsBaseRaw === 'string' &&
+  !_assetsBaseRaw.includes('YOUR_CLOUD') &&
+  _assetsBaseRaw.startsWith('http')
+    ? _assetsBaseRaw.replace(/\/$/, '')
+    : '';
+
 /**
  * Resolve a public asset path. When VITE_ASSETS_BASE is set to a valid Cloudinary URL, returns that base + path; otherwise returns local path (publicUrl + path) so images/icons load from the public folder.
  * Use for all /images/... and other public assets.
  */
-export function  getAssetUrl(pathOrUrl) {
-  // if (!pathOrUrl || typeof pathOrUrl !== 'string') return pathOrUrl;
-  // if (pathOrUrl.startsWith('http')) return pathOrUrl;
-  // const p = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  if (ASSETS_BASE) return ASSETS_BASE + pathOrUrl;
-  return publicUrl + pathOrUrl;
+export function getAssetUrl(pathOrUrl) {
+  if (!pathOrUrl || typeof pathOrUrl !== 'string') return pathOrUrl;
+  if (pathOrUrl.startsWith('http')) return pathOrUrl;
+  const p = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
+  if (ASSETS_BASE) return ASSETS_BASE + p;
+  return publicUrl + p;
 }
 
 /** API base URL for backend. */

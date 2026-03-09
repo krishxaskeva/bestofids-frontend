@@ -573,6 +573,8 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  position: relative;
+  z-index: 2;
   @media (min-width: 992px) {
     width: 28%;
     max-width: 360px;
