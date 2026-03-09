@@ -103,11 +103,11 @@ export default function Doctors() {
                 <span>Request an ID Opinion</span>
                 <i>
                   <img
-                    src="/images/icons/arrow_white.svg"
+                    src={getAssetUrl("/images/icons/arrow_white.svg")}
                     alt=""
                   />
                   <img
-                    src="/images/icons/arrow_white.svg"
+                    src={getAssetUrl("/images/icons/arrow_white.svg")}
                     alt=""
                   />
                 </i>
@@ -119,11 +119,11 @@ export default function Doctors() {
                 <span>Contact Us</span>
                 <i>
                   <img
-                    src="/images/icons/arrow_white.svg"
+                    src={getAssetUrl("/images/icons/arrow_white.svg")}
                     alt=""
                   />
                   <img
-                    src="/images/icons/arrow_white.svg"
+                    src={getAssetUrl("/images/icons/arrow_white.svg")}
                     alt=""
                   />
                 </i>
@@ -184,13 +184,13 @@ export default function Doctors() {
                 {latestBlogs.length > 0 ? (
                   <div className="cs_doctors_blog_latest_list">
                     {latestBlogs.map((blog) => {
+                      const coverUrl =
+                        blog.coverImage ||
+                        getAssetUrl("/images/blog/post_2.jpeg");
                       const dateStr = blog.createdAt
                         ? dayjs(blog.createdAt).format("MMM D, YYYY")
                         : "";
                       const href = `/blog/${blog.id}`;
-                      const imageSrc = blog.coverImage
-                        ? blog.coverImage
-                        : "/images/doctor-2.jpeg";
                       return (
                         <Card
                           key={blog.id}
@@ -200,7 +200,11 @@ export default function Doctors() {
                             <Link to={href} className="cs_blog_card_cover">
                               <img
                                 alt={blog.title}
-                                src={imageSrc}
+                                src={
+                                  coverUrl.startsWith("http")
+                                    ? coverUrl
+                                    : getAssetUrl(coverUrl)
+                                }
                                 className="cs_doctors_blog_preview_cover"
                               />
                             </Link>
@@ -225,11 +229,11 @@ export default function Doctors() {
                   </div>
                 ) : (
                   <div className="cs_doctors_blog_placeholder_img_wrap">
-                      <img
-                        src="/images/doctor.jpeg"
-                        alt="Doctor"
-                        className="cs_doctors_blog_placeholder_img cs_radius_25"
-                      />
+                    <img
+                      src={getAssetUrl("/images/doctor.jpeg")}
+                      alt="Doctor"
+                      className="cs_doctors_blog_placeholder_img cs_radius_25"
+                    />
                   </div>
                 )}
               </div>
@@ -395,7 +399,7 @@ export default function Doctors() {
                             <div className="cs_random_features_col" key={index}>
                               <div className="cs_feature cs_style_1 cs_how_helps_card cs_shadow_1 cs_radius_25 cs_white_bg">
                                 <span className="cs_how_helps_icon cs_accent_bg cs_center rounded-circle">
-                                  <img src={item.iconSrc} alt="" />
+                                  <img src={getAssetUrl(item.iconSrc)} alt="" />
                                 </span>
                                 <div className="cs_how_helps_content">
                                   <h3 className="cs_how_helps_title cs_semibold m-0">
@@ -476,7 +480,7 @@ export default function Doctors() {
                               <div className="cs_feature cs_style_1 cs_how_helps_card cs_shadow_1 cs_radius_25 cs_white_bg">
                                 <span className="cs_how_helps_icon cs_accent_bg cs_center rounded-circle">
                                   <img
-                                    src="/images/icons/tick.svg"
+                                    src={getAssetUrl("/images/icons/tick.svg")}
                                     alt=""
                                   />
                                 </span>
@@ -548,11 +552,11 @@ export default function Doctors() {
                   <span>Request an ID Opinion</span>
                   <i>
                     <img
-                      src="/images/icons/arrow_white.svg"
+                      src={getAssetUrl("/images/icons/arrow_white.svg")}
                       alt=""
                     />
                     <img
-                      src="/images/icons/arrow_white.svg"
+                      src={getAssetUrl("/images/icons/arrow_white.svg")}
                       alt=""
                     />
                   </i>
@@ -564,11 +568,11 @@ export default function Doctors() {
                   <span>Contact Us</span>
                   <i>
                     <img
-                      src="/images/icons/arrow_white.svg"
+                      src={getAssetUrl("/images/icons/arrow_white.svg")}
                       alt=""
                     />
                     <img
-                      src="/images/icons/arrow_white.svg"
+                      src={getAssetUrl("/images/icons/arrow_white.svg")}
                       alt=""
                     />
                   </i>
