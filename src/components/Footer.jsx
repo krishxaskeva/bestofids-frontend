@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 import ContactInfoWidget from "./ContactInfoWidget";
 import MenuWidget from "./MenuWidget";
 import SocialWidget from "./SocialWidget";
 import TextWidget from "./TextWidget";
+import InquiryModal from "./InquiryModal";
+import ContactModal from "./ContactModal";
 import { getAssetUrl } from "../config";
+
+const INQUIRY_TYPES = {
+  ID_OPINION: "id-opinion",
+  PARTNERSHIP: "partnership",
+};
 
 // Navbar pages only (same as header nav)
 const navMenuData = [
@@ -20,7 +27,6 @@ const navMenuData = [
 ];
 
 const WHATSAPP_NUMBER = "919884642428";
-const CONTACT_URL = "/contact-testimonials";
 
 const DEFAULT_TAGLINE = "Best of IDs – Transforming Infectious Disease Care";
 const DEFAULT_COPYRIGHT = "Copyright © 2026 Best of IDs. All rights reserved.";
@@ -32,6 +38,23 @@ function isCurrentPage(href, pathname) {
 
 export default function Footer() {
   const { pathname } = useLocation();
+  const [inquiryModal, setInquiryModal] = useState({
+    open: false,
+    title: "",
+    type: null,
+  });
+  const [contactModalOpen, setContactModalOpen] = useState(false);
+
+  const openInquiry = (type) => {
+    const title =
+      type === INQUIRY_TYPES.ID_OPINION
+        ? "Request an ID Opinion"
+        : "Partner with Us";
+    setInquiryModal({ open: true, title, type });
+  };
+  const closeInquiry = () =>
+    setInquiryModal({ open: false, title: "", type: null });
+
   const d = {};
   const tagline = d.title || d.description || DEFAULT_TAGLINE;
   const copyrightText = d.content || DEFAULT_COPYRIGHT;
@@ -72,11 +95,10 @@ export default function Footer() {
             </div>
             <div className="col-lg-4">
               <div className="cs_footer_item cs_footer_cta_buttons">
-                <a
-                  href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  type="button"
                   className="cs_btn cs_style_1 cs_footer_cta_btn"
+                  onClick={() => setContactModalOpen(true)}
                 >
                   <span>Book an appointment</span>
                   <i>
@@ -89,10 +111,11 @@ export default function Footer() {
                       alt=""
                     />
                   </i>
-                </a>
-                <a
-                  href={CONTACT_URL}
+                </button>
+                <button
+                  type="button"
                   className="cs_btn cs_style_1 cs_btn_white_bg cs_footer_cta_btn"
+                  onClick={() => openInquiry(INQUIRY_TYPES.ID_OPINION)}
                 >
                   <span>Request an ID opinion</span>
                   <i>
@@ -105,10 +128,11 @@ export default function Footer() {
                       alt=""
                     />
                   </i>
-                </a>
-                <a
-                  href={CONTACT_URL}
+                </button>
+                <button
+                  type="button"
                   className="cs_btn cs_style_1 cs_btn_white_bg cs_footer_cta_btn"
+                  onClick={() => openInquiry(INQUIRY_TYPES.PARTNERSHIP)}
                 >
                   <span>Partner with us</span>
                   <i>
@@ -121,7 +145,7 @@ export default function Footer() {
                       alt=""
                     />
                   </i>
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -135,6 +159,18 @@ export default function Footer() {
           </div>
         </div>
       </div>
+      <InquiryModal
+        isOpen={inquiryModal.open}
+        onClose={closeInquiry}
+        title={inquiryModal.title}
+        type={inquiryModal.type}
+      />
+      <ContactModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
+        title="Book an appointment"
+        description="Share your details and we'll get back to you to schedule your appointment."
+      />
     </footer>
   );
 }
