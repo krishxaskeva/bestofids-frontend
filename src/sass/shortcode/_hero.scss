@@ -82,6 +82,11 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      @media (max-width: 991px) {
+        height: auto;
+        justify-content: flex-start;
+        gap: 18px;
+      }
     }
   }
 
@@ -244,14 +249,23 @@
     }
 
     @media (max-width: 991px) {
-      max-height: 100%;
-      position: initial;
-      margin-bottom: -100px;
-      margin-top: 20px;
+      position: static;
+      right: auto;
+      bottom: auto;
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      max-height: none;
+      margin: 28px auto 0;
+      display: block;
+      object-position: center bottom;
+      margin-bottom: -18px; /* reduce gap before stats card */
     }
 
     @media (max-width: 575px) {
-      margin-bottom: -55px;
+      max-width: 100%;
+      margin-top: 24px;
+      margin-bottom: -12px;
     }
   }
 
@@ -260,6 +274,12 @@
     position: static;
     z-index: 1;
     overflow: visible;
+    @media (max-width: 991px) {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      width: 100%;
+    }
   }
 
   .cs_hero_img--slide {
@@ -272,6 +292,16 @@
     position: absolute;
     inset: 0;
     z-index: 1;
+    @media (max-width: 991px) {
+      position: static;
+      inset: auto;
+    }
+    @media (max-width: 575px) {
+      /* Full-bleed on small screens (remove container side padding gap) */
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
+    }
   }
 
   .cs_hero_img_hemi {
@@ -297,16 +327,20 @@
     }
 
     @media (max-width: 1199px) {
-      position: initial;
-      height: auto;
-      max-height: none;
+      position: static;
       width: 100%;
       max-width: 600px;
-      border-radius: 0;
-      overflow: visible;
-      margin-bottom: -100px;
-      margin-top: 20px;
-      aspect-ratio: auto;
+      height: auto;
+      max-height: none;
+      aspect-ratio: 1 / 1;
+      border-radius: 999px 0 0 999px; /* keep hemisphere on mobile */
+      overflow: hidden;
+      margin: 18px auto 0;
+    }
+    @media (max-width: 575px) {
+      width: 100vw;
+      max-width: none;
+      margin: 14px 0 0 auto; /* flush to the right edge */
     }
   }
 
