@@ -1792,7 +1792,11 @@
 
 /* Header: make top-left logo a bit bigger on all pages */
 .cs_site_branding img {
-  max-height: 58px;
+  max-height: 68px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  padding: 1px;
   @media (max-width: 991px) {
     max-height: 48px;
   }
@@ -4401,7 +4405,7 @@ $vm-gray: #3d4f5c;
 
 .cs_vm_watermark {
   position: absolute;
-  top: 20%;
+  top: 16%;
   left: 50%;
   transform: translateX(-50%);
   max-width: 200px;
@@ -4967,8 +4971,9 @@ $vm-gray: #3d4f5c;
   .cs_faq_reviews_row {
     gap: 2.5rem;
     @media (min-width: 992px) {
+      display: flex;
       justify-content: space-between;
-      align-items: flex-start !important;
+      align-items: stretch;
       column-gap: 4rem;
       row-gap: 2rem;
     }
@@ -4976,6 +4981,9 @@ $vm-gray: #3d4f5c;
   .cs_faq_col,
   .cs_reviews_col {
     @media (min-width: 992px) {
+      display: flex;
+      flex-direction: column;
+      align-self: stretch;
       & > *:first-child {
         margin-top: 0;
         padding-top: 0;
@@ -4989,6 +4997,7 @@ $vm-gray: #3d4f5c;
       width: 100%;
       margin-right: 0;
       margin-left: 0;
+      justify-content: flex-start;
     }
   }
   .cs_reviews_col {
@@ -4998,6 +5007,7 @@ $vm-gray: #3d4f5c;
       width: 100%;
       margin-left: auto;
       margin-right: 0;
+      justify-content: center; /* vertically center reviews against FAQ height */
     }
   }
 }
@@ -5054,17 +5064,70 @@ $vm-gray: #3d4f5c;
   @media (max-width: 991px) {
     align-items: stretch;
   }
-  .cs_tab_links {
-    border-right: none;
+  .cs_review_list_panel {
+    --cs_review_item_h: 86px; /* fixed row height for smooth non-flicker sliding */
+    --cs_review_gap: 20px;
+    --cs_review_step: calc(var(--cs_review_item_h) + var(--cs_review_gap));
     width: 38%;
     max-width: 300px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 20px;
+    gap: 12px;
+    @media (max-width: 991px) {
+      width: 100%;
+      max-width: none;
+      gap: 10px;
+    }
+  }
+  .cs_review_list_viewport {
+    overflow: hidden;
+    height: calc(var(--cs_review_step) * 4);
+    @media (max-width: 991px) {
+      height: auto;
+      overflow: visible;
+    }
+  }
+  .cs_review_list_arrow {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(255, 255, 255, 0.85);
+    color: color_variable.$accent;
+    border-radius: 12px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    transition: transform 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+    cursor: pointer;
+    .iconify {
+      width: 16px;
+      height: 16px;
+    }
+    &:hover:not(:disabled) {
+      background: #fff;
+      transform: translateY(-1px);
+    }
+    &:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    @media (max-width: 991px) {
+      display: none; /* names already wrap on mobile */
+    }
+  }
+  .cs_tab_links {
+    border-right: none;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
     padding: 0;
     margin: 0;
     list-style: none;
+    will-change: transform;
     @media (max-width: 991px) {
       width: 100%;
       max-width: none;
@@ -5073,13 +5136,17 @@ $vm-gray: #3d4f5c;
       justify-content: center;
       gap: 12px;
       border-top: none;
+      height: auto;
+      overflow: visible;
+      transform: none !important;
+      transition: none;
     }
     li {
+      margin-bottom: var(--cs_review_gap);
+      height: var(--cs_review_item_h);
+      display: flex;
       &::before {
         display: none;
-      }
-      &:not(:last-child) {
-        margin-bottom: 0;
       }
       &:nth-child(even) {
         padding-left: 0;
@@ -5096,6 +5163,9 @@ $vm-gray: #3d4f5c;
       padding: 14px 22px;
       border-radius: 16px;
       transition: box-shadow 0.2s ease, background 0.2s ease;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
       @media (max-width: 991px) {
         padding: 14px 24px;
       }
@@ -5103,8 +5173,16 @@ $vm-gray: #3d4f5c;
         padding: 12px 18px;
         border-radius: 12px;
       }
+      h3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 8px !important;
+      }
       .cs_tab_link_rating {
-        margin-top: 8px;
+        margin-top: auto;
         .cs_rating {
           font-size: 12px;
           width: auto;
@@ -5157,6 +5235,8 @@ $vm-gray: #3d4f5c;
     }
   }
 }
+
+/* Reviews: name list slides via inline transform (no fade) */
 /* Card: static (no movement), larger size, content centered, equal padding */
 .cs_testimonial_review_card {
   background: #fff;

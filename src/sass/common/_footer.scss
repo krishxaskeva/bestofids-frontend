@@ -413,10 +413,6 @@
 .cs_footer_margin_0 + .cs_footer.cs_style_1 {
   margin-top: 0;
 }
-/* When Vision & Mission section (or any section with cs_footer_margin_0) is in the page, remove footer top margin (e.g. Home page) */
-.cs_layout:has(.cs_footer_margin_0) .cs_footer.cs_style_1 {
-  margin-top: 0;
-}
 .cs_footer.cs_style_2 {
   .cs_footer_in {
     display: flex;

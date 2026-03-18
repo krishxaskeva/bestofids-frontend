@@ -12,8 +12,8 @@ function assetUrl(url, cacheBust = false) {
 }
 
 const ROTATION_INTERVAL_MS = 6000;
-const FADE_DURATION_MS = 350;
-const HERO_IMAGE_INTERVAL_MS = 3000;
+const FADE_DURATION_MS = 700;
+const HERO_IMAGE_INTERVAL_MS = 6000;
 
 export default function Hero({
   slides,
@@ -22,6 +22,7 @@ export default function Hero({
   bgUrl,
   imgUrl,
   imgUrls,
+  imgSlides,
   videoBtnText: _videoBtnText,
   videoUrl: _videoUrl,
   infoList,
@@ -33,13 +34,47 @@ export default function Hero({
   const hasSlides = Array.isArray(slides) && slides.length > 0;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const heroImages = Array.isArray(imgUrls) && imgUrls.length > 0 ? imgUrls : (imgUrl ? [imgUrl] : []);
+
+  const legacyHeroImages = Array.isArray(imgUrls) && imgUrls.length > 0 ? imgUrls : (imgUrl ? [imgUrl] : []);
+  const normalizedImgSlides = (Array.isArray(imgSlides) && imgSlides.length > 0)
+    ? imgSlides
+        .filter((s) => s && typeof s.url === 'string' && s.url.trim().length > 0)
+        .map((s) => ({
+          url: s.url,
+          durationMs: Number.isFinite(s.durationMs) ? Math.max(0, s.durationMs) : HERO_IMAGE_INTERVAL_MS,
+          effect: s.effect === 'slide' ? 'slide' : 'fade',
+          variant: typeof s.variant === 'string' ? s.variant : '',
+        }))
+    : legacyHeroImages.map((url) => ({ url, durationMs: HERO_IMAGE_INTERVAL_MS, effect: 'fade', variant: '' }));
+
   const [heroImgIndex, setHeroImgIndex] = useState(0);
   const [heroImgVisible, setHeroImgVisible] = useState(true);
+  const [heroImgNonce, setHeroImgNonce] = useState(0);
+  const [incomingFadeIndex, setIncomingFadeIndex] = useState(null);
+  const [incomingFadeNonce, setIncomingFadeNonce] = useState(0);
   const [failedUrls, setFailedUrls] = useState(() => new Set());
-  const displayImages = heroImages.filter((url) => !failedUrls.has(url));
-  const safeIndex = displayImages.length > 0 ? Math.min(heroImgIndex % displayImages.length, displayImages.length - 1) : 0;
-  const canCycle = displayImages.length > 1;
+  const imgSlidesKey = normalizedImgSlides.map((s) => s.url).join('|');
+  const displaySlides = normalizedImgSlides.filter((s) => !failedUrls.has(s.url));
+  const safeIndex = displaySlides.length > 0 ? Math.min(heroImgIndex % displaySlides.length, displaySlides.length - 1) : 0;
+  const canCycle = displaySlides.length > 1;
+  const activeHeroSlide = displaySlides.length > 0 ? displaySlides[safeIndex] : null;
+  const slideAnimDurationMs = activeHeroSlide?.effect === 'slide'
+    ? Math.max(0, activeHeroSlide?.durationMs ?? 0)
+    : undefined;
+  const incomingSlide = (incomingFadeIndex != null && displaySlides[incomingFadeIndex])
+    ? displaySlides[incomingFadeIndex]
+    : null;
+
+  useEffect(() => {
+    // If images previously 404'd (e.g. when assets base pointed to CDN),
+    // reset failures when the slide list changes so they can load again.
+    setFailedUrls(new Set());
+    setHeroImgIndex(0);
+    setHeroImgVisible(true);
+    setHeroImgNonce((n) => n + 1);
+    setIncomingFadeIndex(null);
+    setIncomingFadeNonce((n) => n + 1);
+  }, [imgSlidesKey]);
 
   useEffect(() => {
     if (!hasSlides) return;
@@ -58,16 +93,78 @@ export default function Hero({
   }, [hasSlides, slides?.length]);
 
   useEffect(() => {
-    if (!canCycle || displayImages.length <= 1) return;
-    const interval = setInterval(() => {
-      setHeroImgVisible(false);
-      setTimeout(() => {
-        setHeroImgIndex((i) => (i + 1) % displayImages.length);
-        setHeroImgVisible(true);
-      }, 400);
-    }, HERO_IMAGE_INTERVAL_MS);
-    return () => clearInterval(interval);
-  }, [canCycle, displayImages.length]);
+    if (!canCycle || displaySlides.length <= 1) return;
+    let hideTimer;
+    let swapTimer;
+    let nextTimer;
+    let preSwapTimer;
+
+    const schedule = () => {
+      const current = displaySlides[Math.min(heroImgIndex % displaySlides.length, displaySlides.length - 1)];
+      const durationMs = Math.max(0, current?.durationMs ?? HERO_IMAGE_INTERVAL_MS);
+      const effect = current?.effect ?? 'fade';
+
+      const startFadeIn = () => {
+        // React/state updates can batch; use double rAF so the browser paints opacity:0 first,
+        // then transitions to opacity:1 smoothly.
+        requestAnimationFrame(() => requestAnimationFrame(() => setHeroImgVisible(true)));
+      };
+
+      if (effect === 'fade') {
+        setIncomingFadeIndex(null);
+        hideTimer = setTimeout(() => {
+          setHeroImgVisible(false);
+        }, Math.max(0, durationMs - FADE_DURATION_MS));
+
+        swapTimer = setTimeout(() => {
+          setHeroImgNonce((n) => n + 1);
+          const nextIndex = (heroImgIndex + 1) % displaySlides.length;
+          const nextSlide = displaySlides[nextIndex];
+          setHeroImgIndex(nextIndex);
+
+          if ((nextSlide?.effect ?? 'fade') === 'fade') {
+            // Start next fade from 0 and immediately fade in (no gap).
+            setHeroImgVisible(false);
+            startFadeIn();
+          } else {
+            setHeroImgVisible(true);
+          }
+        }, durationMs);
+      } else {
+        const nextIndex = (heroImgIndex + 1) % displaySlides.length;
+        const nextSlide = displaySlides[nextIndex];
+
+        // If we're sliding out and next is a fade, start the fade-in during the slide-out
+        // so there's no dead gap after the slide ends.
+        if ((nextSlide?.effect ?? 'fade') === 'fade') {
+          preSwapTimer = setTimeout(() => {
+            setIncomingFadeIndex(nextIndex);
+            setIncomingFadeNonce((n) => n + 1);
+            setHeroImgVisible(false);
+            startFadeIn();
+          }, Math.max(0, durationMs - FADE_DURATION_MS));
+        } else {
+          setIncomingFadeIndex(null);
+        }
+
+        nextTimer = setTimeout(() => {
+          setHeroImgNonce((n) => n + 1);
+          setHeroImgIndex(nextIndex);
+          setIncomingFadeIndex(null);
+          setHeroImgVisible(true);
+        }, durationMs);
+      }
+    };
+
+    schedule();
+
+    return () => {
+      if (hideTimer) clearTimeout(hideTimer);
+      if (swapTimer) clearTimeout(swapTimer);
+      if (nextTimer) clearTimeout(nextTimer);
+      if (preSwapTimer) clearTimeout(preSwapTimer);
+    };
+  }, [canCycle, displaySlides.length, heroImgIndex]);
 
   const activeSlide = hasSlides ? slides[currentIndex] : null;
 
@@ -82,7 +179,6 @@ export default function Hero({
             {hasSlides && activeSlide ? (
               <div className={`cs_hero_slide ${isVisible ? 'cs_hero_slide_visible' : ''}`}>
                 <div className="cs_hero_badge">
-                  <img src={assetUrl('/images/home_1/heartbeat_icon.png')} alt="" className="cs_hero_badge_icon" aria-hidden />
                   <span className="cs_hero_badge_text cs_white_color">{activeSlide.label}</span>
                 </div>
                 <h1 className="cs_hero_title cs_fs_94 cs_white_color">{parse(activeSlide.title)}</h1>
@@ -99,23 +195,76 @@ export default function Hero({
               </>
             )}
           </div>
-          {displayImages.length > 0 && (
-            <div className="cs_hero_img_wrap">
-              {displayImages.map((url, index) => (
-                <img
-                  key={url}
-                  src={assetUrl(url, true)}
-                  alt="Hero"
-                  className="cs_hero_img"
+          {activeHeroSlide && (
+            <div className={`cs_hero_img_wrap ${activeHeroSlide.variant ? `cs_hero_img_wrap--${activeHeroSlide.variant}` : ''}`}>
+              {activeHeroSlide.variant === 'surgery' ? (
+                <div
+                  className={`cs_hero_img_hemi ${activeHeroSlide.effect === 'slide' ? 'cs_hero_img--slide' : ''}`}
                   style={{
-                    opacity: index === safeIndex ? (heroImgVisible ? 1 : 0) : 0,
-                    transition: 'opacity 0.4s ease',
+                    opacity: activeHeroSlide.effect === 'fade' ? (heroImgVisible ? 1 : 0) : 1,
+                    transition: activeHeroSlide.effect === 'fade' ? `opacity ${FADE_DURATION_MS}ms ease-in-out` : 'none',
+                    animationDuration: slideAnimDurationMs ? `${slideAnimDurationMs}ms` : undefined,
                   }}
-                  aria-hidden={index !== safeIndex}
-                  onError={() => setFailedUrls((prev) => new Set(prev).add(url))}
-                  onLoad={() => setFailedUrls((prev) => (prev.has(url) ? new Set([...prev].filter((u) => u !== url)) : prev))}
+                >
+                  <img
+                    key={`${activeHeroSlide.url}-${heroImgNonce}`}
+                    src={assetUrl(activeHeroSlide.url, true)}
+                    alt="Hero"
+                    className="cs_hero_img_hemi_img"
+                    onError={() => setFailedUrls((prev) => new Set(prev).add(activeHeroSlide.url))}
+                    onLoad={() => setFailedUrls((prev) => (prev.has(activeHeroSlide.url) ? new Set([...prev].filter((u) => u !== activeHeroSlide.url)) : prev))}
+                  />
+                </div>
+              ) : (
+                <img
+                  key={`${activeHeroSlide.url}-${heroImgNonce}`}
+                  src={assetUrl(activeHeroSlide.url, true)}
+                  alt="Hero"
+                  className={`cs_hero_img ${activeHeroSlide.effect === 'slide' ? 'cs_hero_img--slide' : ''}`}
+                  style={{
+                    opacity: activeHeroSlide.effect === 'fade' ? (heroImgVisible ? 1 : 0) : 1,
+                    transition: activeHeroSlide.effect === 'fade' ? `opacity ${FADE_DURATION_MS}ms ease-in-out` : 'none',
+                    animationDuration: slideAnimDurationMs ? `${slideAnimDurationMs}ms` : undefined,
+                  }}
+                  onError={() => setFailedUrls((prev) => new Set(prev).add(activeHeroSlide.url))}
+                  onLoad={() => setFailedUrls((prev) => (prev.has(activeHeroSlide.url) ? new Set([...prev].filter((u) => u !== activeHeroSlide.url)) : prev))}
                 />
-              ))}
+              )}
+
+              {/* Incoming fade image (overlaps slide-out) */}
+              {incomingSlide && (
+                incomingSlide.variant === 'surgery' ? (
+                  <div
+                    className="cs_hero_img_hemi"
+                    style={{
+                      opacity: heroImgVisible ? 1 : 0,
+                      transition: `opacity ${FADE_DURATION_MS}ms ease-in-out`,
+                    }}
+                  >
+                    <img
+                      key={`${incomingSlide.url}-${incomingFadeNonce}`}
+                      src={assetUrl(incomingSlide.url, true)}
+                      alt="Hero"
+                      className="cs_hero_img_hemi_img"
+                      onError={() => setFailedUrls((prev) => new Set(prev).add(incomingSlide.url))}
+                      onLoad={() => setFailedUrls((prev) => (prev.has(incomingSlide.url) ? new Set([...prev].filter((u) => u !== incomingSlide.url)) : prev))}
+                    />
+                  </div>
+                ) : (
+                  <img
+                    key={`${incomingSlide.url}-${incomingFadeNonce}`}
+                    src={assetUrl(incomingSlide.url, true)}
+                    alt="Hero"
+                    className="cs_hero_img"
+                    style={{
+                      opacity: heroImgVisible ? 1 : 0,
+                      transition: `opacity ${FADE_DURATION_MS}ms ease-in-out`,
+                    }}
+                    onError={() => setFailedUrls((prev) => new Set(prev).add(incomingSlide.url))}
+                    onLoad={() => setFailedUrls((prev) => (prev.has(incomingSlide.url) ? new Set([...prev].filter((u) => u !== incomingSlide.url)) : prev))}
+                  />
+                )
+              )}
             </div>
           )}
           {(infoCardTagline || (infoList && infoList.length > 0) || (quickLinks && quickLinks.length > 0) || btnText) && (

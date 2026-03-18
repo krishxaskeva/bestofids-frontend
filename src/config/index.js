@@ -4,8 +4,14 @@
  * Do not put secrets here; backend-only keys (JWT_SECRET, SMTP_PASSWORD, etc.) stay in backend .env.
  */
 
-/** Base URL for public folder. In Vite this is import.meta.env.BASE_URL (e.g. '' or '/my-app' when deployed to subpath). */
-export const publicUrl = import.meta.env.BASE_URL || '';
+/** Base URL for public folder. In Vite this is import.meta.env.BASE_URL (e.g. '/' or '/my-app/'). */
+export const publicUrl = (() => {
+  const base = (import.meta.env.BASE_URL || '').trim();
+  // Vite defaults BASE_URL to '/', but we don't want to produce protocol-relative URLs like '//images/...'
+  // when concatenating with absolute public paths.
+  if (!base || base === '/') return '';
+  return base.replace(/\/$/, '');
+})();
 
 /** Base URL for static assets when served from Cloudinary. If set to a valid URL, getAssetUrl() returns full Cloudinary URLs. Placeholders like YOUR_CLOUD are ignored so assets load from public folder. */
 const _assetsBaseRaw = import.meta.env.VITE_ASSETS_BASE || '';
@@ -25,7 +31,9 @@ export function getAssetUrl(pathOrUrl) {
   if (!pathOrUrl || typeof pathOrUrl !== 'string') return pathOrUrl;
   if (pathOrUrl.startsWith('http')) return pathOrUrl;
   const p = pathOrUrl.startsWith('/') ? pathOrUrl : `/${pathOrUrl}`;
-  if (ASSETS_BASE) return ASSETS_BASE + p;
+  // In dev we want local public assets (Vite dev server) even if VITE_ASSETS_BASE is set,
+  // otherwise new/changed files will 404 until they are uploaded to the CDN.
+  if (!import.meta.env.DEV && ASSETS_BASE) return ASSETS_BASE + p;
   return publicUrl + p;
 }
 

@@ -101,7 +101,10 @@ export default function Home() {
           title={heroTitle}
           subTitle={heroSubTitle}
           bgUrl="/images/home_1/hero_bg.png"
-          imgUrls={['/images/home_1/hero_img.png']}
+          imgSlides={[
+            { url: '/images/home_1/hero_img.png', durationMs: 5000, effect: 'fade' },
+            { url: '/images/home_1/hero_img_surgery.png', durationMs: 5000, effect: 'slide', variant: 'surgery' },
+          ]}
           videoBtnText="See how we work"
           videoUrl="https://www.youtube.com/embed/VcaAVWtP48A"
           infoCardTagline=""
@@ -124,31 +127,6 @@ export default function Home() {
         />
       </Section>
       {/* End About Section */}
-      {/* Start Feature Section (Our Values) */}
-      <Section
-        topMd={30}
-        topLg={28}
-        topXl={24}
-        bottomMd={0}
-        bottomLg={0}
-        bottomXl={0}
-        className="cs_our_values_wrapper"
-      >
-        <div className="cs_our_values_section">
-          <FeaturesSection sectionTitle="Our Values" data={featureListData} />
-        </div>
-      </Section>
-      {/* End Feature Section */}
-      {/* Start Why Choose Best of IDs Section */}
-      <Section topMd={8} topLg={6} topXl={5}>
-        <AwardSection
-          sectionTitle="Why Choose Best of IDs?"
-          sectionTitleDown="Expert Infectious Disease Care You Can Trust"
-          sectionSubTitle="Best of IDs combines specialist medical leadership, ethical practice, and accessible care models to deliver reliable infectious disease services for patients, healthcare professionals, and institutions."
-          data={awardData}
-        />
-      </Section>
-      {/* End Why Choose Best of IDs Section */}
       {/* Vision & Mission – editorial diagonal layout, no cards, typography-led */}
       <Section topMd={32} topLg={28} topXl={24} bottomMd={0} bottomLg={0} bottomXl={0} className="cs_footer_margin_0">
         <div className="cs_vision_mission_editorial">
@@ -175,6 +153,31 @@ export default function Home() {
           </div>
         </div>
       </Section>
+      {/* Start Feature Section (Our Values) */}
+      <Section
+        topMd={30}
+        topLg={28}
+        topXl={24}
+        bottomMd={0}
+        bottomLg={0}
+        bottomXl={0}
+        className="cs_our_values_wrapper"
+      >
+        <div className="cs_our_values_section">
+          <FeaturesSection sectionTitle="Our Values" data={featureListData} />
+        </div>
+      </Section>
+      {/* End Feature Section */}
+      {/* Start Why Choose Best of IDs Section */}
+      <Section topMd={8} topLg={6} topXl={5}>
+        <AwardSection
+          sectionTitle="Why Choose Best of IDs?"
+          sectionTitleDown="Expert Infectious Disease Care You Can Trust"
+          sectionSubTitle="Best of IDs combines specialist medical leadership, ethical practice, and accessible care models to deliver reliable infectious disease services for patients, healthcare professionals, and institutions."
+          data={awardData}
+        />
+      </Section>
+      {/* End Why Choose Best of IDs Section */}
     </>
   );
 }
