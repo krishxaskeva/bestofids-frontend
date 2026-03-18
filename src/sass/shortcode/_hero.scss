@@ -334,11 +334,13 @@
     transform: translateX(120%);
     opacity: 0;
   }
-  28% {
+  /* Match fade timing: fully in by ~700ms of a 5s slide (14%) */
+  14% {
     transform: translateX(0%);
     opacity: 1;
   }
-  72% {
+  /* Match fade timing: start sliding out at 5s-700ms (86%) */
+  86% {
     transform: translateX(0%);
     opacity: 1;
   }
