@@ -352,6 +352,37 @@
     display: block;
   }
 
+  /* Tablet/iPad specific tuning */
+  @media (max-width: 1024px) and (min-width: 769px) {
+    height: auto;
+    padding-bottom: 72px;
+
+    .cs_hero_wrap {
+      padding-top: 140px;
+    }
+
+    .cs_hero_subtitle {
+      margin-bottom: 26px;
+    }
+
+    .cs_hero_img {
+      max-width: 480px;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+
+    .cs_hero_img_hemi {
+      max-width: 500px;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+
+    .cs_hero_info_wrap {
+      margin-bottom: -72px;
+      padding: 48px 40px;
+    }
+  }
+
   .cs_hero_patents {
     position: absolute;
     left: 39.3%;
