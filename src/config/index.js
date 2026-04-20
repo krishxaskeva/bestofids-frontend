@@ -39,11 +39,11 @@ export function getAssetUrl(pathOrUrl) {
 
 /** API base URL for backend. */
 export const API_URL = import.meta.env.VITE_API_URL || (
-  import.meta.env.DEV ? '/api' : 'http://localhost:5000/api'
+  import.meta.env.DEV ? '/api' : 'http://localhost:5005/api'
 );
 
 /** Backend origin (no /api). Use for redirects or non-API calls. */
-export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+export const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5005';
 
 /** Razorpay key id (public key for client-side checkout). */
 export const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID || '';

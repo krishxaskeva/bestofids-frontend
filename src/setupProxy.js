@@ -1,5 +1,5 @@
 /**
- * Proxies only /api to the backend (localhost:5000).
+ * Proxies only /api to the backend (localhost:5005).
  * Other requests (static files, HMR, images) are not proxied.
  * Ensure the backend is running: cd backend && npm run dev (or node server.js).
  */
@@ -9,7 +9,7 @@ module.exports = function (app) {
   app.use(
     '/api',
     createProxyMiddleware({
-      target: 'http://localhost:5000',
+      target: 'http://localhost:5005',
       changeOrigin: true,
       timeout: 60000,
       onError: (err, req, res) => {
@@ -17,7 +17,7 @@ module.exports = function (app) {
         res.writeHead(502, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
           success: false,
-          message: 'Backend unreachable. Is the server running on port 5000?',
+          message: 'Backend unreachable. Is the server running on port 5005?',
         }));
       },
     })

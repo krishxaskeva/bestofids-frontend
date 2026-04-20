@@ -22,7 +22,7 @@ Deploy **backend first**, then **frontend**, then connect them with env vars.
    - **Instance type:** Free (or paid if you prefer).
 5. Click **Advanced** → **Add Environment Variable**. Add every variable from your backend `.env` (or from `backend/.env.example`). At minimum:
    - `NODE_ENV` = `production`
-   - `PORT` = `5000` (Render can override this; you can still set it)
+   - `PORT` = `5005` (Render can override this; you can still set it)
    - `MONGO_URI` = your MongoDB Atlas connection string
    - `JWT_SECRET` = a long random string (e.g. 32+ characters)
    - `JWT_EXPIRE` = `30d`
