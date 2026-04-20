@@ -170,6 +170,7 @@ export default function Footer() {
         onClose={() => setContactModalOpen(false)}
         title="Book an appointment"
         description="Share your details and we'll get back to you to schedule your appointment."
+        formType="appointment"
       />
     </footer>
   );

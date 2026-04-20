@@ -1601,6 +1601,30 @@
     padding: 20px;
   }
 }
+
+/* Appointment modal needs a larger layout than generic contact modal */
+.cs_contact_modal_container--appointment {
+  max-width: min(860px, calc(100vw - 40px));
+  max-height: calc(100vh - 40px);
+  padding: 26px 24px 22px;
+
+  @media (max-width: 1199px) {
+    max-width: min(760px, calc(100vw - 32px));
+  }
+
+  @media (max-width: 991px) {
+    max-width: min(680px, calc(100vw - 28px));
+    max-height: calc(100vh - 28px);
+    padding: 22px 20px 18px;
+  }
+
+  @media (max-width: 767px) {
+    max-width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    padding: 18px 16px 14px;
+    border-radius: 14px;
+  }
+}
 .cs_contact_modal_header {
   position: relative;
   flex-shrink: 0;
@@ -1724,6 +1748,11 @@
   min-height: 140px;
   resize: vertical;
 }
+
+.cs_contact_modal_container--appointment .cs_contact_form_modal .cs_contact_form_textarea {
+  min-height: 120px;
+  max-height: 220px;
+}
 .cs_contact_modal_container .cs_contact_form_modal .cs_contact_form_submit_wrap {
   display: flex;
   justify-content: flex-end;
@@ -1741,6 +1770,241 @@
 }
 .cs_contact_modal_container .cs_contact_form_modal .row.g-3 {
   margin-bottom: -0.5rem;
+}
+
+.cs_contact_mobile_steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: rgba(color_variable.$primary, 0.65);
+  margin-bottom: 6px;
+}
+
+.cs_contact_mobile_step.active {
+  color: color_variable.$primary;
+  font-weight: 700;
+}
+
+.cs_contact_mobile_step_sep {
+  opacity: 0.45;
+}
+
+.cs_contact_form_submit_wrap_mobile_steps {
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Unified picker design system (Ant DatePicker/RangePicker) */
+.cs_picker_theme.ant-picker {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 30px;
+  border: 1px solid rgba(color_variable.$accent, 0.5);
+  background: #fff;
+  padding: 0 18px;
+  box-shadow: none;
+  transition: all 0.25s ease;
+}
+
+.cs_picker_theme.ant-picker:hover {
+  border-color: rgba(color_variable.$accent, 0.78);
+}
+
+.cs_picker_theme.ant-picker.ant-picker-focused,
+.cs_picker_theme.ant-picker:focus-within,
+.cs_picker_theme.ant-picker.ant-picker-open {
+  border-color: color_variable.$accent;
+  box-shadow: 0 0 0 3px rgba(color_variable.$accent, 0.14);
+}
+
+.cs_picker_theme.ant-picker .ant-picker-input > input {
+  color: color_variable.$primary;
+  font-weight: 500;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  height: 100%;
+  padding: 0;
+}
+
+.cs_picker_theme.ant-picker .ant-picker-input > input::placeholder {
+  color: rgba(color_variable.$primary, 0.6);
+}
+
+.cs_picker_theme.ant-picker .ant-picker-suffix,
+.cs_picker_theme.ant-picker .ant-picker-clear {
+  color: color_variable.$accent;
+}
+
+.cs_contact_modal_container .cs_form_field_datetime.ant-picker {
+  display: flex;
+  align-items: center;
+}
+
+.cs_contact_modal_container .cs_form_field_datetime.ant-picker .ant-picker-input {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.cs_contact_modal_container .cs_form_field_datetime.ant-picker .ant-picker-suffix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+}
+
+.cs_picker_theme.ant-picker.ant-picker-disabled {
+  background: #f6f8fb;
+  border-color: rgba(color_variable.$primary, 0.2);
+}
+
+.cs_picker_theme.ant-picker.ant-picker-status-error,
+.ant-form-item-has-error .cs_picker_theme.ant-picker {
+  border-color: #d14343 !important;
+  box-shadow: 0 0 0 3px rgba(209, 67, 67, 0.12);
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-panel-container {
+  border: 1px solid rgba(color_variable.$accent, 0.2);
+  border-radius: 14px;
+  box-shadow: 0 14px 36px rgba(16, 24, 40, 0.16);
+  overflow: hidden;
+}
+
+/* Keep picker popup above contact/inquiry modals */
+.cs_picker_dropdown_theme.ant-picker-dropdown {
+  z-index: 1301 !important;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-panel-layout {
+  background: #fff;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(color_variable.$accent, 0.16);
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-header button {
+  color: color_variable.$primary;
+  font-weight: 600;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-content th {
+  color: rgba(color_variable.$primary, 0.7);
+  font-weight: 600;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell .ant-picker-cell-inner {
+  border-radius: 9px;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: color_variable.$accent;
+  border-radius: 9px;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner,
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-start .ant-picker-cell-inner,
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell-in-view.ant-picker-cell-range-end .ant-picker-cell-inner {
+  background: color_variable.$accent;
+  color: #fff;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-cell-in-view .ant-picker-cell-inner:hover,
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner:hover {
+  background: rgba(color_variable.$accent, 0.12);
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-time-panel {
+  border-left: 1px solid rgba(color_variable.$accent, 0.12);
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background: rgba(color_variable.$accent, 0.18);
+  color: color_variable.$primary;
+  font-weight: 700;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-now-btn,
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-ok button {
+  color: color_variable.$accent;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-ok .ant-btn-primary {
+  background: color_variable.$accent;
+  border-color: color_variable.$accent;
+  color: #fff;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-ok .ant-btn-primary:hover {
+  filter: brightness(0.95);
+  color: #fff;
+}
+
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-ok .ant-btn-primary:focus,
+.cs_picker_dropdown_theme.ant-picker-dropdown .ant-picker-ok .ant-btn-primary:active {
+  background: color_variable.$accent;
+  border-color: color_variable.$accent;
+  color: #fff;
+}
+
+@media (max-width: 767px) {
+  .cs_picker_theme.ant-picker {
+    min-height: 52px;
+    border-radius: 16px;
+    padding: 0 14px;
+  }
+
+  .cs_picker_dropdown_theme.ant-picker-dropdown {
+    max-width: calc(100vw - 20px);
+  }
+}
+
+/* Keep legacy react-datepicker look aligned where still used */
+.react-datepicker {
+  border: 1px solid rgba(color_variable.$accent, 0.22) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 14px 36px rgba(16, 24, 40, 0.16) !important;
+  overflow: hidden;
+}
+
+.react-datepicker__header {
+  background: #fff !important;
+  border-bottom: 1px solid rgba(color_variable.$accent, 0.16) !important;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__time-list-item--selected {
+  background-color: color_variable.$accent !important;
+  color: #fff !important;
+}
+
+.react-datepicker__day:hover,
+.react-datepicker__time-list-item:hover {
+  background: rgba(color_variable.$accent, 0.12) !important;
+}
+
+.cs_contact_form_success_box {
+  border: 1px solid rgba(color_variable.$primary, 0.22);
+  background: rgba(color_variable.$primary, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.cs_contact_form_success_title {
+  margin: 0 0 8px;
+  color: color_variable.$primary;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.cs_contact_form_success_text {
+  margin: 0 0 14px;
+  color: color_variable.$primary;
+  line-height: 1.5;
+  opacity: 0.9;
 }
 
 /* Inquiry modal (ID opinion / Partnership) success and error messages */
@@ -1843,11 +2107,11 @@
     opacity: 0;
     pointer-events: none;
     transform: translateZ(0);
-    transition: opacity 0.2s ease-out;
+    transition: opacity 0.7s ease-in-out;
     &.cs_hero_slide_visible {
       opacity: 1;
       pointer-events: auto;
-      transition: opacity 0.2s ease-out;
+      transition: opacity 0.7s ease-in-out;
     }
   }
   /* Keep badge and title at full color (no inherited dim) */

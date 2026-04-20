@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Table, Button, Space, Modal, Drawer, Form, Input, Select, Skeleton, Progress, Alert, Dropdown } from 'antd';
+import { Table, Button, Space, Modal, Drawer, Form, Input, Select, Skeleton, Progress, Alert, Dropdown, DatePicker } from 'antd';
 import toast from '../../utils/adminToast';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { getEducationList, createEducation, updateEducation, deleteEducation } from '../../services/educationService';
 import { LocalFileUploadField } from '../../components/educationHub/LocalFileUploadField';
 import { usePublishWithUpload } from '../../hooks/usePublishWithUpload';
+import dayjs from 'dayjs';
 
 const { TextArea } = Input;
 const CATEGORY = 'webinar';
@@ -31,6 +32,12 @@ function toDateTimeLocal(isoOrDate) {
   const h = String(d.getHours()).padStart(2, '0');
   const min = String(d.getMinutes()).padStart(2, '0');
   return `${y}-${m}-${day}T${h}:${min}`;
+}
+
+function toDayjsDateTime(value) {
+  if (!value) return null;
+  const d = dayjs(value);
+  return d.isValid() ? d : null;
 }
 
 const initialMediaFiles = () => ({ contentLink: null, thumbnail: null });
@@ -68,7 +75,7 @@ export default function WebinarsTab() {
       type: record.type || 'recording',
       platform: record.platform,
       contentLink: record.type === 'live' ? record.contentLink : undefined,
-      scheduledAt: record.scheduledAt ? toDateTimeLocal(record.scheduledAt) : undefined,
+      scheduledAt: record.scheduledAt ? toDayjsDateTime(toDateTimeLocal(record.scheduledAt)) : undefined,
     });
     setDrawerOpen(true);
   };
@@ -114,7 +121,7 @@ export default function WebinarsTab() {
       return {
         ...rest,
         category: CATEGORY,
-        scheduledAt: scheduledAt || undefined,
+        scheduledAt: scheduledAt && dayjs.isDayjs(scheduledAt) ? scheduledAt.format('YYYY-MM-DDTHH:mm') : (scheduledAt || undefined),
         contentLink: isLive
           ? values.contentLink
           : urlMap.contentLink ?? (typeof mediaFiles.contentLink === 'string' ? mediaFiles.contentLink : undefined),
@@ -246,7 +253,13 @@ export default function WebinarsTab() {
             />
           )}
           <Form.Item name="scheduledAt" label="Scheduled date & time" rules={isLive ? [{ required: true, message: 'Required for Live' }] : []}>
-            <Input type="datetime-local" />
+            <DatePicker
+              className="w-100 cs_picker_theme"
+              popupClassName="cs_picker_dropdown_theme"
+              showTime={{ use12Hours: true, format: 'hh:mm A' }}
+              format="DD-MM-YYYY hh:mm A"
+              placeholder="Select date & time"
+            />
           </Form.Item>
           <LocalFileUploadField
             form={form}

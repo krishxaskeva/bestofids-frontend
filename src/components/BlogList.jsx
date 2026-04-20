@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Row, Col, Card, Button, Tabs, Tag, Spin, message } from 'antd';
+import { Row, Col, Card, Button, Tabs, Tag, Spin, message, Modal, Form, Input } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import Section from './Section';
 import Breadcrumb from './Breadcrumb';
@@ -8,14 +8,15 @@ import SectionHeading from './SectionHeading';
 import Spacing from './Spacing';
 import { pageTitle } from '../utils/PageTitle';
 import { useAuth } from '../store/hooks';
-import { getBlogs, createBlogOrder, verifyBlogPayment } from '../services/blogService';
-import { loadRazorpayScript, openRazorpayCheckout } from '../utils/razorpayCheckout';
+import { getBlogs } from '../services/blogService';
 import { getPurchasedBlogs } from '../services/userService';
-import { config, getAssetUrl } from '../config';
+import { getAssetUrl } from '../config';
 import LoginModal from './auth/LoginModal';
 import dayjs from 'dayjs';
+import apiClient from '../api/client';
 
 const SITE_TEAL = '#117574';
+const { TextArea } = Input;
 
 export default function BlogList() {
   pageTitle('Blog');
@@ -26,19 +27,18 @@ export default function BlogList() {
   const [purchasedBlogs, setPurchasedBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
-  const [payingBlogId, setPayingBlogId] = useState(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [purchaseModalOpen, setPurchaseModalOpen] = useState(false);
+  const [selectedPurchaseBlog, setSelectedPurchaseBlog] = useState(null);
+  const [purchaseModalError, setPurchaseModalError] = useState('');
+  const [requestSubmitting, setRequestSubmitting] = useState(false);
+  const [paymentLinkForm] = Form.useForm();
 
   useEffect(() => {
     getBlogs()
       .then(setBlogs)
       .catch(() => setBlogs([]))
       .finally(() => setLoading(false));
-  }, []);
-
-  // Preload Razorpay script so the modal can open right after createOrder (reduces popup-blocking).
-  useEffect(() => {
-    loadRazorpayScript().catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -57,54 +57,47 @@ export default function BlogList() {
     if (p.blogId && p.pdfUrl) pdfUrlByBlogId[p.blogId] = p.pdfUrl;
   });
 
-  const handleBuyClick = async (blog) => {
+  const handleBuyClick = (blog) => {
     if (!isLoggedIn) {
       setLoginModalOpen(true);
       return;
     }
-    setPayingBlogId(blog.id);
-    try {
-      const { orderId, amount, currency, keyId } = await createBlogOrder(blog.id);
-      await loadRazorpayScript();
-      const key = keyId || config.razorpayKey;
-      if (!key) {
-        setPayingBlogId(null);
-        message.error('Payment is not configured.');
-        return;
-      }
-      openRazorpayCheckout({
-        key,
-        amount,
-        currency,
-        orderId,
-        description: blog.title || 'Blog',
-        onSuccess: (response) => handlePaymentSuccess(blog.id, response),
-        onFailure: () => {
-          setPayingBlogId(null);
-          message.error('Payment failed or was cancelled.');
-        },
-      });
-    } catch (err) {
-      setPayingBlogId(null);
-      message.error(err.message || 'Could not start payment.');
-    }
+    setPurchaseModalError('');
+    setSelectedPurchaseBlog(blog);
+    paymentLinkForm.setFieldsValue({
+      name: '',
+      email: '',
+      phone: '',
+      message: '',
+    });
+    setPurchaseModalOpen(true);
   };
 
-  const handlePaymentSuccess = async (blogId, response) => {
+  const handleRequestPaymentLink = async () => {
+    if (!selectedPurchaseBlog) return;
     try {
-      await verifyBlogPayment(blogId, {
-        razorpay_order_id: response.razorpay_order_id,
-        razorpay_payment_id: response.razorpay_payment_id,
-        razorpay_signature: response.razorpay_signature,
+      const values = await paymentLinkForm.validateFields();
+      setRequestSubmitting(true);
+      await apiClient.post('/contact', {
+        name: values.name?.trim(),
+        email: values.email?.trim(),
+        phone: values.phone?.trim() || '',
+        subject: `Payment link request: ${selectedPurchaseBlog.title}`,
+        message: values.message?.trim() || `Please share payment link for blog "${selectedPurchaseBlog.title}".`,
+        blogTitle: selectedPurchaseBlog.title,
+        amount: selectedPurchaseBlog.price,
+        type: 'payment-link',
       });
-      setPayingBlogId(null);
-      message.success('Purchase complete! You can read the blog now.');
-      getPurchasedBlogs()
-        .then((list) => setPurchasedBlogs(Array.isArray(list) ? list : []))
-        .catch(() => {});
+      setPurchaseModalOpen(false);
+      paymentLinkForm.resetFields();
+      setSelectedPurchaseBlog(null);
+      setPurchaseModalError('');
+      message.success('Request submitted. Our team will share the payment link shortly.');
     } catch (err) {
-      setPayingBlogId(null);
-      message.error(err.message || 'Payment verification failed.');
+      if (err?.errorFields) return;
+      setPurchaseModalError(err?.response?.data?.message || err.message || 'Could not submit request.');
+    } finally {
+      setRequestSubmitting(false);
     }
   };
 
@@ -202,7 +195,6 @@ export default function BlogList() {
               <Button
                 type="primary"
                 style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
-                loading={payingBlogId === blog.id}
                 onClick={() => handleBuyClick(blog)}
               >
                 Buy — ₹{blog.price}
@@ -284,6 +276,79 @@ export default function BlogList() {
         onClose={() => setLoginModalOpen(false)}
         onSuccess={() => setLoginModalOpen(false)}
       />
+      <Modal
+        title="Request Payment Link"
+        open={purchaseModalOpen}
+        onCancel={() => {
+          setPurchaseModalOpen(false);
+          setPurchaseModalError('');
+          setSelectedPurchaseBlog(null);
+          paymentLinkForm.resetFields();
+        }}
+        footer={[
+          <Button
+            key="cancel"
+            onClick={() => {
+              setPurchaseModalOpen(false);
+              setPurchaseModalError('');
+              setSelectedPurchaseBlog(null);
+              paymentLinkForm.resetFields();
+            }}
+            disabled={requestSubmitting}
+          >
+            Cancel
+          </Button>,
+          <Button
+            key="request"
+            type="primary"
+            onClick={handleRequestPaymentLink}
+            loading={requestSubmitting}
+            style={{ backgroundColor: SITE_TEAL, borderColor: SITE_TEAL }}
+          >
+            Submit Request
+          </Button>,
+        ]}
+        maskClosable={!requestSubmitting}
+        closable={!requestSubmitting}
+        destroyOnClose
+      >
+        {selectedPurchaseBlog && (
+          <div>
+            <p className="m-0 cs_heading_color">
+              Fill the form below to get a payment link for:
+            </p>
+            <p className="m-0" style={{ fontWeight: 700, marginTop: 4 }}>
+              {selectedPurchaseBlog.title}
+            </p>
+            <p className="m-0 cs_heading_color" style={{ marginTop: 10 }}>
+              Amount: <strong>₹{selectedPurchaseBlog.price}</strong>
+            </p>
+            <Form form={paymentLinkForm} layout="vertical" style={{ marginTop: 14 }}>
+              <Form.Item name="name" label="Name" rules={[{ required: true, message: 'Enter your name' }]}>
+                <Input placeholder="Your name" disabled={requestSubmitting} />
+              </Form.Item>
+              <Form.Item name="email" label="Email" rules={[{ required: true, message: 'Enter your email' }, { type: 'email', message: 'Enter a valid email' }]}>
+                <Input placeholder="your@email.com" disabled={requestSubmitting} />
+              </Form.Item>
+              <Form.Item name="phone" label="Phone">
+                <Input placeholder="Your phone number" disabled={requestSubmitting} />
+              </Form.Item>
+              <Form.Item name="message" label="Message">
+                <TextArea
+                  rows={3}
+                  placeholder={`Please share payment link for "${selectedPurchaseBlog.title}".`}
+                  disabled={requestSubmitting}
+                />
+              </Form.Item>
+            </Form>
+            {purchaseModalError && (
+              <p style={{ color: '#c0392b', marginTop: 12, marginBottom: 0 }}>
+                {purchaseModalError}
+              </p>
+            )}
+          </div>
+        )}
+      </Modal>
     </>
   );
 }

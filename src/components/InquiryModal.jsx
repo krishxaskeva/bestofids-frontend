@@ -6,9 +6,11 @@ import apiClient from '../api/client';
 export default function InquiryModal({ isOpen, onClose, title, type }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [organization, setOrganization] = useState('');
   const [message, setMessage] = useState('');
   const [status, setStatus] = useState(null); // 'success' | 'error' | null
   const [submitting, setSubmitting] = useState(false);
+  const isPartnership = type === 'partnership';
 
   useEffect(() => {
     const handleEscape = (e) => {
@@ -20,6 +22,7 @@ export default function InquiryModal({ isOpen, onClose, title, type }) {
       setStatus(null);
       setName('');
       setEmail('');
+      setOrganization('');
       setMessage('');
     }
     return () => {
@@ -38,6 +41,7 @@ export default function InquiryModal({ isOpen, onClose, title, type }) {
       const res = await apiClient.post('/contact', {
         name: name.trim(),
         email: email.trim(),
+        organization: organization.trim(),
         message: message.trim(),
         type,
       });
@@ -125,6 +129,20 @@ export default function InquiryModal({ isOpen, onClose, title, type }) {
                       disabled={submitting}
                     />
                   </div>
+                  {isPartnership && (
+                    <div className="col-12">
+                      <label className="cs_input_label cs_heading_color" htmlFor="cs_inquiry_organization">Organization</label>
+                      <input
+                        id="cs_inquiry_organization"
+                        type="text"
+                        className="cs_form_field"
+                        placeholder="Organization name (optional)"
+                        value={organization}
+                        onChange={(e) => setOrganization(e.target.value)}
+                        disabled={submitting}
+                      />
+                    </div>
+                  )}
                   <div className="col-12">
                     <label className="cs_input_label cs_heading_color" htmlFor="cs_inquiry_message">Message</label>
                     <textarea

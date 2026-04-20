@@ -83,7 +83,12 @@ export default function PaymentsPage() {
       <h2 className="admin-page-title">Payments</h2>
       <Card>
         <div className="admin-toolbar">
-          <RangePicker value={dateRange} onChange={setDateRange} />
+          <RangePicker
+            value={dateRange}
+            onChange={setDateRange}
+            className="cs_picker_theme"
+            popupClassName="cs_picker_dropdown_theme"
+          />
           <Select
             placeholder="Type"
             allowClear

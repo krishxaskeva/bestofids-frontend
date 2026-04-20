@@ -64,6 +64,7 @@ export default function Hero({
   const incomingSlide = (incomingFadeIndex != null && displaySlides[incomingFadeIndex])
     ? displaySlides[incomingFadeIndex]
     : null;
+  const incomingOverlayVisible = heroImgVisible;
 
   useEffect(() => {
     // If images previously 404'd (e.g. when assets base pointed to CDN),
@@ -168,6 +169,47 @@ export default function Hero({
 
   const activeSlide = hasSlides ? slides[currentIndex] : null;
 
+  const renderHeroVisual = (slide, keySuffix, visible = true) => {
+    if (!slide) return null;
+
+    const isSlideEffect = slide.effect === 'slide';
+    const baseStyle = {
+      opacity: isSlideEffect ? 1 : (visible ? 1 : 0),
+      transition: isSlideEffect ? 'none' : `opacity ${FADE_DURATION_MS}ms ease-in-out`,
+      animationDuration: isSlideEffect && slideAnimDurationMs ? `${slideAnimDurationMs}ms` : undefined,
+    };
+
+    if (slide.variant === 'surgery') {
+      return (
+        <div
+          className={`cs_hero_img_hemi ${isSlideEffect ? 'cs_hero_img--slide' : ''}`}
+          style={baseStyle}
+        >
+          <img
+            key={`${slide.url}-${keySuffix}`}
+            src={assetUrl(slide.url, true)}
+            alt="Hero"
+            className="cs_hero_img_hemi_img"
+            onError={() => setFailedUrls((prev) => new Set(prev).add(slide.url))}
+            onLoad={() => setFailedUrls((prev) => (prev.has(slide.url) ? new Set([...prev].filter((u) => u !== slide.url)) : prev))}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <img
+        key={`${slide.url}-${keySuffix}`}
+        src={assetUrl(slide.url, true)}
+        alt="Hero"
+        className={`cs_hero_img ${isSlideEffect ? 'cs_hero_img--slide' : ''}`}
+        style={baseStyle}
+        onError={() => setFailedUrls((prev) => new Set(prev).add(slide.url))}
+        onLoad={() => setFailedUrls((prev) => (prev.has(slide.url) ? new Set([...prev].filter((u) => u !== slide.url)) : prev))}
+      />
+    );
+  };
+
   return (
     <section className="cs_hero cs_style_1">
       <div
@@ -197,74 +239,13 @@ export default function Hero({
           </div>
           {activeHeroSlide && (
             <div className={`cs_hero_img_wrap ${activeHeroSlide.variant ? `cs_hero_img_wrap--${activeHeroSlide.variant}` : ''}`}>
-              {activeHeroSlide.variant === 'surgery' ? (
-                <div
-                  className={`cs_hero_img_hemi ${activeHeroSlide.effect === 'slide' ? 'cs_hero_img--slide' : ''}`}
-                  style={{
-                    opacity: activeHeroSlide.effect === 'fade' ? (heroImgVisible ? 1 : 0) : 1,
-                    transition: activeHeroSlide.effect === 'fade' ? `opacity ${FADE_DURATION_MS}ms ease-in-out` : 'none',
-                    animationDuration: slideAnimDurationMs ? `${slideAnimDurationMs}ms` : undefined,
-                  }}
-                >
-                  <img
-                    key={`${activeHeroSlide.url}-${heroImgNonce}`}
-                    src={assetUrl(activeHeroSlide.url, true)}
-                    alt="Hero"
-                    className="cs_hero_img_hemi_img"
-                    onError={() => setFailedUrls((prev) => new Set(prev).add(activeHeroSlide.url))}
-                    onLoad={() => setFailedUrls((prev) => (prev.has(activeHeroSlide.url) ? new Set([...prev].filter((u) => u !== activeHeroSlide.url)) : prev))}
-                  />
-                </div>
-              ) : (
-                <img
-                  key={`${activeHeroSlide.url}-${heroImgNonce}`}
-                  src={assetUrl(activeHeroSlide.url, true)}
-                  alt="Hero"
-                  className={`cs_hero_img ${activeHeroSlide.effect === 'slide' ? 'cs_hero_img--slide' : ''}`}
-                  style={{
-                    opacity: activeHeroSlide.effect === 'fade' ? (heroImgVisible ? 1 : 0) : 1,
-                    transition: activeHeroSlide.effect === 'fade' ? `opacity ${FADE_DURATION_MS}ms ease-in-out` : 'none',
-                    animationDuration: slideAnimDurationMs ? `${slideAnimDurationMs}ms` : undefined,
-                  }}
-                  onError={() => setFailedUrls((prev) => new Set(prev).add(activeHeroSlide.url))}
-                  onLoad={() => setFailedUrls((prev) => (prev.has(activeHeroSlide.url) ? new Set([...prev].filter((u) => u !== activeHeroSlide.url)) : prev))}
-                />
-              )}
-
-              {/* Incoming fade image (overlaps slide-out) */}
-              {incomingSlide && (
-                incomingSlide.variant === 'surgery' ? (
-                  <div
-                    className="cs_hero_img_hemi"
-                    style={{
-                      opacity: heroImgVisible ? 1 : 0,
-                      transition: `opacity ${FADE_DURATION_MS}ms ease-in-out`,
-                    }}
-                  >
-                    <img
-                      key={`${incomingSlide.url}-${incomingFadeNonce}`}
-                      src={assetUrl(incomingSlide.url, true)}
-                      alt="Hero"
-                      className="cs_hero_img_hemi_img"
-                      onError={() => setFailedUrls((prev) => new Set(prev).add(incomingSlide.url))}
-                      onLoad={() => setFailedUrls((prev) => (prev.has(incomingSlide.url) ? new Set([...prev].filter((u) => u !== incomingSlide.url)) : prev))}
-                    />
-                  </div>
-                ) : (
-                  <img
-                    key={`${incomingSlide.url}-${incomingFadeNonce}`}
-                    src={assetUrl(incomingSlide.url, true)}
-                    alt="Hero"
-                    className="cs_hero_img"
-                    style={{
-                      opacity: heroImgVisible ? 1 : 0,
-                      transition: `opacity ${FADE_DURATION_MS}ms ease-in-out`,
-                    }}
-                    onError={() => setFailedUrls((prev) => new Set(prev).add(incomingSlide.url))}
-                    onLoad={() => setFailedUrls((prev) => (prev.has(incomingSlide.url) ? new Set([...prev].filter((u) => u !== incomingSlide.url)) : prev))}
-                  />
-                )
-              )}
+              {renderHeroVisual(activeHeroSlide, heroImgNonce, heroImgVisible)}
+            </div>
+          )}
+          {/* Incoming fade image uses its own wrapper so variant-specific layout stays stable */}
+          {incomingSlide && (
+            <div className={`cs_hero_img_wrap cs_hero_img_wrap--incoming ${incomingSlide.variant ? `cs_hero_img_wrap--${incomingSlide.variant}` : ''}`}>
+              {renderHeroVisual(incomingSlide, incomingFadeNonce, incomingOverlayVisible)}
             </div>
           )}
           {(infoCardTagline || (infoList && infoList.length > 0) || (quickLinks && quickLinks.length > 0) || btnText) && (

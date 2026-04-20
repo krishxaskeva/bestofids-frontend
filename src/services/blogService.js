@@ -56,7 +56,7 @@ export async function createBlogOrder(blogId) {
     throw new Error(data.message || 'Failed to create order');
   } catch (err) {
     console.error('API Error (createBlogOrder):', err.response?.data || err.message);
-    throw err;
+    throw new Error(err.response?.data?.message || err.message || 'Could not start payment');
   }
 }
 
@@ -67,7 +67,7 @@ export async function verifyBlogPayment(blogId, payload) {
     throw new Error(data.message || 'Payment verification failed');
   } catch (err) {
     console.error('API Error (verifyBlogPayment):', err.response?.data || err.message);
-    throw err;
+    throw new Error(err.response?.data?.message || err.message || 'Payment verification failed');
   }
 }
 
