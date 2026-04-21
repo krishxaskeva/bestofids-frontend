@@ -44,7 +44,7 @@ export default function ContactInfoSection({ sectionTitle }) {
             <div className="cs_find_us_card_body">
               <span className="cs_find_us_card_label">Email</span>
               <span className="cs_find_us_card_value">
-                bestof.ids30@gmail.com
+                info@bestofids.in
               </span>
             </div>
           </div>

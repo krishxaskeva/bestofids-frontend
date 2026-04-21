@@ -361,7 +361,7 @@ export default function Header({ logoSrc, variant }) {
           <Spacing md="30" lg="30" xl="30" />
           <IconBox
             title="Email"
-            subTitle="bestof.ids30@gmail.com"
+            subTitle="info@bestofids.in"
             iconSrc={getAssetUrl("/images/contact/icon_2.svg")}
           />
           <Spacing md="30" lg="30" xl="30" />

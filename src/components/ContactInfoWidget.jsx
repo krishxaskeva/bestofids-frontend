@@ -2,7 +2,7 @@ import { Icon } from '@iconify/react';
 import React from 'react';
 
 const PHONE = '+91 98846 42428';
-const EMAIL = 'bestof.ids30@gmail.com';
+const EMAIL = 'info@bestofids.in';
 const LOCATION = 'Chennai';
 
 export default function ContactInfoWidget() {
